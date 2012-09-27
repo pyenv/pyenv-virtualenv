@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+# Provide pyenv completions
+if [ "$1" = "--complete" ]; then
+  exec pyenv versions --bare
+fi
+
+if [ -z "$PYENV_ROOT" ]; then
+  PYENV_ROOT="${HOME}/.pyenv"
+fi
+
+# Load shared library functions
+eval "$(python-virtualenv --lib)"
+
+usage() {
+  { echo "usage: pyenv virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] PYTHON_VERSION NAME"
+    echo
+    echo "  -v/--verbose     Verbose mode: print compilation status to stdout"
+    echo
+  } >&2
+
+  [ -z "$1" ] || exit "$1"
+}
+
+unset VERBOSE
+
+VIRTUALENV_OPTIONS=()
+
+parse_options "$@"
+for option in "${OPTIONS[@]}"; do
+  case "$option" in
+  "h" | "help" )
+    usage 0
+    ;;
+  "v" | "verbose" )
+    VERBOSE="-v"
+    ;;
+  "version" )
+    exec python-virtualenv --version
+    ;;
+  * )
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    ;;
+  esac
+done
+
+VERSION_NAME="${ARGUMENTS[0]}"
+[ -n "$VERSION_NAME" ] || usage 1
+
+for script in $(pyenv-hooks virtualenv); do
+  source "$script"
+done
+
+PYTHON_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
+VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+
+python-virtualenv $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "$PYTHON_PREFIX" "$VIRTUALENV_PATH"
+pyenv rehash

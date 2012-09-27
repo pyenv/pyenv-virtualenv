@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+PYTHON_VIRTUALENV_VERSION="20120927"
+
+set -E
+exec 3<&2 # preserve original stderr at fd 3
+
+
+lib() {
+  parse_options() {
+    OPTIONS=()
+    ARGUMENTS=()
+    local arg option index
+
+    for arg in "$@"; do
+      if [ "${arg:0:1}" = "-" ]; then
+        if [ "${arg:1:1}" = "-" ]; then
+          OPTIONS[${#OPTIONS[*]}]="${arg:2}"
+        else
+          index=1
+          while option="${arg:$index:1}"; do
+            [ -n "$option" ] || break
+            OPTIONS[${#OPTIONS[*]}]="$option"
+            index=$(($index+1))
+          done
+        fi
+      else
+        ARGUMENTS[${#ARGUMENTS[*]}]="$arg"
+      fi
+    done
+  }
+
+  if [ "$1" == "--$FUNCNAME" ]; then
+    declare -f "$FUNCNAME"
+    echo "$FUNCNAME \"\$1\";"
+    exit
+  fi
+}
+lib "$1"
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+version() {
+  echo "python-virtualenv ${PYTHON_VIRTUALENV_VERSION}"
+}
+
+usage() {
+  { version
+    echo "usage: python-virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] python_prefix virtualenv_path"
+  } >&2
+
+  if [ -z "$1" ]; then
+    exit 1
+  fi
+}
+
+unset VERBOSE
+PYTHON_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
+VIRTUALENV_OPTIONS=()
+
+parse_options "$@"
+
+for option in "${OPTIONS[@]}"; do
+  case "$option" in
+  "h" | "help" )
+    usage without_exiting
+    { echo
+      echo "  -v/--verbose     Verbose mode: print compilation status to stdout"
+      echo
+    } >&2
+    exit 0
+    ;;
+  "v" | "verbose" )
+    VERBOSE=true
+    ;;
+  "version" )
+    version
+    exit 0
+    ;;
+  * )
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    ;;
+  esac
+done
+
+PYTHON_PREFIX="${ARGUMENTS[0]}"
+if [ -z "$PYTHON_PREFIX" ]; then
+  usage
+elif [ ! -x "${PYTHON_PREFIX}/bin/python" ]; then
+  echo "python-virtualenv: python not found: ${PYTHON_PREFIX}" >&2
+  exit 1
+fi
+
+VIRTUALENV_PATH="${ARGUMENTS[1]}"
+if [ -z "$VIRTUALENV_PATH" ]; then
+  usage
+fi
+
+PYTHON_BIN="${PYTHON_PREFIX}/bin/python"
+CWD="$(pwd)"
+
+"${PYTHON_BIN}" "${PYTHON_VIRTUALENV_ROOT}/libexec/virtualenv.py" --python="${PYTHON_BIN}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"

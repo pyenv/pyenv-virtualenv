@@ -1,4 +1,6 @@
-*.pyc
-*.pyo
+/libexec/*.class
+/libexec/*.pyc
+/libexec/*.pyo
+/libexec/__pycache__
 *.swo
 *.swp

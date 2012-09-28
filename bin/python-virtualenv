@@ -112,7 +112,23 @@ if [ -z "$VIRTUALENV_PATH" ]; then
   usage
 fi
 
-PYTHON_BIN="${PYTHON_PREFIX}/bin/python"
-CWD="$(pwd)"
+BOOTSTRAP_PYTHON_BIN="${PYTHON_PREFIX}/bin/python"
+PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
 
-"${PYTHON_BIN}" "${PYTHON_VIRTUALENV_ROOT}/libexec/virtualenv.py" --python="${PYTHON_BIN}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
+# obtain actual name of python executable
+while test -L "${BOOTSTRAP_PYTHON_BIN}"; do
+  BOOTSTRAP_PYTHON_BIN="$(dirname "${BOOTSTRAP_PYTHON_BIN}")/$(resolve_link "${BOOTSTRAP_PYTHON_BIN}")"
+done
+
+# create virtualenv
+"${BOOTSTRAP_PYTHON_BIN}" "${PYTHON_VIRTUALENV_ROOT}/libexec/virtualenv.py" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
+
+# create symlink of `python' bound for actual executable
+if [ ! -f "$PYTHON_BIN" ]; then
+  if test -f "${VIRTUALENV_PATH}/bin/$(basename "${BOOTSTRAP_PYTHON_BIN}")"; then
+    {
+      cd ${VIRTUALENV_PATH}/bin
+      ln -fs "$(basename "${BOOTSTRAP_PYTHON_BIN}")" python
+    }
+  fi
+fi

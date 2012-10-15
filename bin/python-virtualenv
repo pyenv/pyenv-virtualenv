@@ -30,6 +30,24 @@ lib() {
     done
   }
 
+  resolve_link() {
+    $(type -p greadlink readlink | head -1) "$1"
+  }
+
+  abs_dirname() {
+    local cwd="$(pwd)"
+    local path="$1"
+
+    while [ -n "$path" ]; do
+      cd "${path%/*}"
+      local name="${path##*/}"
+      path="$(resolve_link "$name" || true)"
+    done
+
+    pwd
+    cd "$cwd"
+  }
+
   if [ "$1" == "--$FUNCNAME" ]; then
     declare -f "$FUNCNAME"
     echo "$FUNCNAME \"\$1\";"
@@ -37,24 +55,6 @@ lib() {
   fi
 }
 lib "$1"
-
-resolve_link() {
-  $(type -p greadlink readlink | head -1) "$1"
-}
-
-abs_dirname() {
-  local cwd="$(pwd)"
-  local path="$1"
-
-  while [ -n "$path" ]; do
-    cd "${path%/*}"
-    local name="${path##*/}"
-    path="$(resolve_link "$name" || true)"
-  done
-
-  pwd
-  cd "$cwd"
-}
 
 version() {
   echo "python-virtualenv ${PYTHON_VIRTUALENV_VERSION}"
@@ -99,11 +99,11 @@ for option in "${OPTIONS[@]}"; do
   esac
 done
 
-PYTHON_PREFIX="${ARGUMENTS[0]}"
-if [ -z "$PYTHON_PREFIX" ]; then
+PYTHON_BIN="${ARGUMENTS[0]}"
+if [ -z "${PYTHON_BIN}" ]; then
   usage
-elif [ ! -x "${PYTHON_PREFIX}/bin/python" ]; then
-  echo "python-virtualenv: python not found: ${PYTHON_PREFIX}" >&2
+elif [ ! -x "${PYTHON_BIN}" ]; then
+  echo "python-virtualenv: given python is not an executable: ${PYTHON_BIN}" >&2
   exit 1
 fi
 
@@ -112,35 +112,17 @@ if [ -z "$VIRTUALENV_PATH" ]; then
   usage
 fi
 
-BOOTSTRAP_PYTHON_BIN="${PYTHON_PREFIX}/bin/python"
-PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
-
-# find canonical name of python executable.
-# virtualenv will create "bin/python" executable as same name as its bootstraped python.
-if test -L "${BOOTSTRAP_PYTHON_BIN}"; then
-  while test -L "${BOOTSTRAP_PYTHON_BIN}"; do # retrieve symlinks
-    BOOTSTRAP_PYTHON_BIN="$(dirname "${BOOTSTRAP_PYTHON_BIN}")/$(resolve_link "${BOOTSTRAP_PYTHON_BIN}")"
-  done
-else
-# python 2.6 and older don't have "bin/python" as symlink.
-# so we must traverse files like "bin/python*" to obtain canonical name.
-  for python in ${PYTHON_PREFIX}/bin/python*; do
-    if ( basename "$python" | grep '^python[0-9][0-9]*\.[0-9][0-9]*$' && cmp "$BOOTSTRAP_PYTHON_BIN" "$python" ) >/dev/null; then
-      BOOTSTRAP_PYTHON_BIN="${python}"
-      break
-    fi
-  done
-fi
+VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
 
 # create virtualenv
-"${BOOTSTRAP_PYTHON_BIN}" "${PYTHON_VIRTUALENV_ROOT}/libexec/virtualenv.py" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
+"${PYTHON_BIN}" "${PYTHON_VIRTUALENV_ROOT}/libexec/virtualenv.py" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
 
 # create symlink of `python' bound for actual executable
-if [ ! -f "$PYTHON_BIN" ]; then
-  if test -f "${VIRTUALENV_PATH}/bin/$(basename "${BOOTSTRAP_PYTHON_BIN}")"; then
+if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
+  if [ -f "${VIRTUALENV_PATH}/bin/$(basename "${PYTHON_BIN}")" ]; then
     {
       cd ${VIRTUALENV_PATH}/bin
-      ln -fs "$(basename "${BOOTSTRAP_PYTHON_BIN}")" python
+      ln -fs "$(basename "${PYTHON_BIN}")" python
     }
   fi
 fi

@@ -53,9 +53,31 @@ for script in $(pyenv-hooks virtualenv); do
   source "$script"
 done
 
-PYTHON_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+PYTHON_BIN=$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)
+if [ ! -x "${PYTHON_BIN}" ]; then
+  echo "pyenv-virtualenv: could not obtain python executable: ${PYTHON_BIN}" >&2
+  exit 1
+fi
+
+# find canonical name of python executable.
+# virtualenv will create "bin/python" executable as same name as its bootstraped python.
+if [ -L "${PYTHON_BIN}" ]; then
+  while [ -L "${PYTHON_BIN}" ]; do # retrieve symlinks
+    PYTHON_BIN="$(dirname "${PYTHON_BIN}")/$(resolve_link "${PYTHON_BIN}")"
+  done
+else
+# python 2.6 and older don't have "bin/python" as symlink.
+# so we must traverse files like "bin/python*" to obtain canonical name.
+  for python in ${PYENV_ROOT}/versions/${VERSION_NAME}/bin/python*; do
+    if ( basename "$python" | grep '^python[0-9][0-9]*\.[0-9][0-9]*$' && cmp "$PYTHON_BIN" "$python" ) >/dev/null; then
+      PYTHON_BIN="${python}"
+      break
+    fi
+  done
+fi
+
 VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
-python-virtualenv $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "$PYTHON_PREFIX" "$VIRTUALENV_PATH"
+python-virtualenv $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "$PYTHON_BIN" "$VIRTUALENV_PATH"
 pyenv rehash

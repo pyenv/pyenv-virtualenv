@@ -15,7 +15,7 @@ fi
 eval "$(python-virtualenv --lib)"
 
 usage() {
-  { echo "usage: pyenv virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] PYTHON_VERSION NAME"
+  { echo "usage: pyenv virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] VERSION VIRTUALENV_NAME"
     echo
     echo "  -v/--verbose     Verbose mode: print compilation status to stdout"
     echo

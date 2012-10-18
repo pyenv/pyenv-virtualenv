@@ -62,7 +62,7 @@ version() {
 
 usage() {
   { version
-    echo "usage: python-virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] python_prefix virtualenv_path"
+    echo "usage: python-virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] python_bin virtualenv_path"
   } >&2
 
   if [ -z "$1" ]; then

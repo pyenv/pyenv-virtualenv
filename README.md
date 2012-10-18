@@ -30,7 +30,7 @@ To create a virtualenv for the Python version use with pyenv, run
 `pyenv virtualenv` with tha exact name of the version you want to create
 virtualenv. For example,
 
-    $ pyenv virtualenv 2.7.3 venv27 --distribute
+    $ pyenv virtualenv --distribute 2.7.3 venv27
 
 virtualenvs will be created into a directory of the same name
 under `~/.pyenv/versions`.

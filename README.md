@@ -56,6 +56,13 @@ under `~/.pyenv/versions`.
 
 ## Version History
 
+#### 20121023
+
+ * Create virtualenv with exact name of python executables.
+ * Changed command-line options of python-virtualenv.
+   First argument should be a path to the python executable.
+ * Add install script.
+
 #### 20120927
 
  * Initial public release.

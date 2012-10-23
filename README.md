@@ -21,6 +21,24 @@ the `~/.pyenv/plugins/python-virtualenv` directory. From that directory, you
 can check out a specific release tag. To update python-virtualenv, run `git
 pull` to download the latest changes.
 
+### Installing as a standalone program (advanced)
+
+Installing python-virtualenv as a standalone program will give you access to
+the `python-virtualenv` command for precise control over Python version
+installation. If you have rbenv installed, you will also be able to
+use the `rbenv install` command.
+
+    $ git clone git://github.com/yyuu/python-virtualenv.git
+    $ cd python-virtualenv
+    $ ./install.sh
+
+This will install python-virtualenv into `/usr/local`. If you do not have
+write permission to `/usr/local`, you will need to run `sudo
+./install.sh` instead. You can install to a different prefix by
+setting the `PREFIX` environment variable.
+
+To update python-virtualenv after it has been installed, run `git pull` in
+your cloned copy of the repository, then re-run the install script.
 
 ## Usage
 

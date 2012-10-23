@@ -115,7 +115,9 @@ fi
 VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
 
 # create virtualenv
-"${PYTHON_BIN}" "${PYTHON_VIRTUALENV_ROOT}/libexec/virtualenv.py" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
+VIRTUALENV="${PYTHON_VIRTUALENV_ROOT}/libexec/python-virtualenv/virtualenv.py"
+[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYTHON_VIRTUALENV_ROOT}/libexec/virtualenv.py"
+"${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
 
 # create symlink of `python' bound for actual executable
 if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then

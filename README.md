@@ -1,15 +1,15 @@
 # python-virtualenv
 
-python-virtualenv is an [pyenv](https://github.com/yyuu/pyenv) plugin
+python-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
 that provides an `pyenv virtualenv` command to create virtualenv for Python
 on UNIX-like systems.
 
 
 ## Installation
 
-### Installing as an pyenv plugin (recommended)
+### Installing as a pyenv plugin (recommended)
 
-Installing python-virtualenv as an pyenv plugin will give you access to the
+Installing python-virtualenv as a pyenv plugin will give you access to the
 `pyenv virtualenv` command.
 
     $ mkdir -p ~/.pyenv/plugins

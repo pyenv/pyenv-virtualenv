@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
+#
+# Summary: Create a Python virtualenv using the python-virtualenv plugin
+#
+# Usage: pyenv virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
+#
+#   -v/--verbose     Verbose mode: print compilation status to stdout
+#
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
 # Provide pyenv completions
 if [ "$1" = "--complete" ]; then
-  exec pyenv versions --bare
+  exec pyenv-versions --bare
 fi
 
 if [ -z "$PYENV_ROOT" ]; then
@@ -15,12 +22,8 @@ fi
 eval "$(python-virtualenv --lib)"
 
 usage() {
-  { echo "usage: pyenv virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] VERSION VIRTUALENV_NAME"
-    echo
-    echo "  -v/--verbose     Verbose mode: print compilation status to stdout"
-    echo
-  } >&2
-
+  # We can remove the sed fallback once pyenv 0.4.0 is widely available.
+  pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
   [ -z "$1" ] || exit "$1"
 }
 

@@ -1,44 +1,25 @@
-# python-virtualenv
+# pyenv-virtualenv
 
-python-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
+pyenv-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
 that provides an `pyenv virtualenv` command to create virtualenv for Python
 on UNIX-like systems.
 
 
 ## Installation
 
-### Installing as a pyenv plugin (recommended)
+### Installing as a pyenv plugin
 
-Installing python-virtualenv as a pyenv plugin will give you access to the
+Installing pyenv-virtualenv as a pyenv plugin will give you access to the
 `pyenv virtualenv` command.
 
     $ mkdir -p ~/.pyenv/plugins
     $ cd ~/.pyenv/plugins
     $ git clone git://github.com/yyuu/python-virtualenv.git
 
-This will install the latest development version of python-virtualenv into
+This will install the latest development version of pyenv-virtualenv into
 the `~/.pyenv/plugins/python-virtualenv` directory. From that directory, you
-can check out a specific release tag. To update python-virtualenv, run `git
+can check out a specific release tag. To update pyenv-virtualenv, run `git
 pull` to download the latest changes.
-
-### Installing as a standalone program (advanced)
-
-Installing python-virtualenv as a standalone program will give you access to
-the `python-virtualenv` command for precise control over Python version
-installation. If you have rbenv installed, you will also be able to
-use the `rbenv install` command.
-
-    $ git clone git://github.com/yyuu/python-virtualenv.git
-    $ cd python-virtualenv
-    $ ./install.sh
-
-This will install python-virtualenv into `/usr/local`. If you do not have
-write permission to `/usr/local`, you will need to run `sudo
-./install.sh` instead. You can install to a different prefix by
-setting the `PREFIX` environment variable.
-
-To update python-virtualenv after it has been installed, run `git pull` in
-your cloned copy of the repository, then re-run the install script.
 
 ## Usage
 
@@ -55,6 +36,12 @@ under `~/.pyenv/versions`.
 
 
 ## Version History
+
+#### 2013XXYY
+
+ * Preparing for renaming project; `s/python-virtualenv/pyenv-virtualenv/g`
+ * The `pyenv-virtualenv` script is not depending on `python-virtualenv` now.
+   `python-virtualenv` will left for compatibility and not continue for next release.
 
 #### 20130218
 

@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 #
-# Summary: Create a Python virtualenv using the python-virtualenv plugin
+# Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
 #
 # Usage: pyenv virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
 #
 #   -v/--verbose     Verbose mode: print compilation status to stdout
 #
+
+PYENV_VIRTUALENV_VERSION="20130218"
+
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
@@ -18,8 +21,51 @@ if [ -z "$PYENV_ROOT" ]; then
   PYENV_ROOT="${HOME}/.pyenv"
 fi
 
-# Load shared library functions
-eval "$(python-virtualenv --lib)"
+# Define library functions
+parse_options() {
+  OPTIONS=()
+  ARGUMENTS=()
+  local arg option index
+
+  for arg in "$@"; do
+    if [ "${arg:0:1}" = "-" ]; then
+      if [ "${arg:1:1}" = "-" ]; then
+        OPTIONS[${#OPTIONS[*]}]="${arg:2}"
+      else
+        index=1
+        while option="${arg:$index:1}"; do
+          [ -n "$option" ] || break
+          OPTIONS[${#OPTIONS[*]}]="$option"
+          index=$(($index+1))
+        done
+      fi
+    else
+      ARGUMENTS[${#ARGUMENTS[*]}]="$arg"
+    fi
+  done
+}
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+version() {
+  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION}"
+}
 
 usage() {
   # We can remove the sed fallback once pyenv 0.2.0 is widely available.
@@ -28,7 +74,7 @@ usage() {
 }
 
 unset VERBOSE
-
+PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 VIRTUALENV_OPTIONS=()
 
 parse_options "$@"
@@ -41,7 +87,8 @@ for option in "${OPTIONS[@]}"; do
     VERBOSE="-v"
     ;;
   "version" )
-    exec python-virtualenv --version
+    version
+    exit 0
     ;;
   * )
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
@@ -82,5 +129,20 @@ fi
 VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
-python-virtualenv $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "$PYTHON_BIN" "$VIRTUALENV_PATH"
-pyenv rehash
+# create virtualenv
+VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
+[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/python-libexec/virtualenv.py" # backward compatibility before v20130218
+[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/virtualenv.py"
+"${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
+
+# create symlink of `python' bound for actual executable
+if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
+  if [ -f "${VIRTUALENV_PATH}/bin/$(basename "${PYTHON_BIN}")" ]; then
+    {
+      cd ${VIRTUALENV_PATH}/bin
+      ln -fs "$(basename "${PYTHON_BIN}")" python
+    }
+  fi
+fi
+
+pyenv-rehash

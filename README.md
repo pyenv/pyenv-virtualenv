@@ -56,6 +56,10 @@ under `~/.pyenv/versions`.
 
 ## Version History
 
+#### 20130218
+
+ * Add pyenv 0.2.x (rbenv 0.4.x) style help messages.
+
 #### 20121023
 
  * Create virtualenv with exact name of python executables.

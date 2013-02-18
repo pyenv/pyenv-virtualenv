@@ -22,7 +22,7 @@ fi
 eval "$(python-virtualenv --lib)"
 
 usage() {
-  # We can remove the sed fallback once pyenv 0.4.0 is widely available.
+  # We can remove the sed fallback once pyenv 0.2.0 is widely available.
   pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
   [ -z "$1" ] || exit "$1"
 }

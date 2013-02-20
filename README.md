@@ -1,4 +1,4 @@
-# pyenv-virtualenv
+# pyenv-virtualenv (a.k.a. [python-virtualenv](https://github.com/yyuu/python-virtualenv))
 
 pyenv-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
 that provides an `pyenv virtualenv` command to create virtualenv for Python
@@ -14,10 +14,10 @@ Installing pyenv-virtualenv as a pyenv plugin will give you access to the
 
     $ mkdir -p ~/.pyenv/plugins
     $ cd ~/.pyenv/plugins
-    $ git clone git://github.com/yyuu/python-virtualenv.git
+    $ git clone git://github.com/yyuu/pyenv-virtualenv.git
 
 This will install the latest development version of pyenv-virtualenv into
-the `~/.pyenv/plugins/python-virtualenv` directory. From that directory, you
+the `~/.pyenv/plugins/pyenv-virtualenv` directory. From that directory, you
 can check out a specific release tag. To update pyenv-virtualenv, run `git
 pull` to download the latest changes.
 

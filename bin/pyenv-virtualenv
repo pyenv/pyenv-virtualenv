@@ -7,7 +7,7 @@
 #   -v/--verbose     Verbose mode: print compilation status to stdout
 #
 
-PYENV_VIRTUALENV_VERSION="20130218"
+PYENV_VIRTUALENV_VERSION="20130307"
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
@@ -131,7 +131,7 @@ VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
 # create virtualenv
 VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/python-libexec/virtualenv.py" # backward compatibility before v20130218
+[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/python-libexec/virtualenv.py" # backward compatibility before v20130307
 [ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/virtualenv.py"
 "${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
 

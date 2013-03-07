@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PYTHON_VIRTUALENV_VERSION="20130218"
+PYTHON_VIRTUALENV_VERSION="20130307"
 
 set -E
 exec 3<&2 # preserve original stderr at fd 3

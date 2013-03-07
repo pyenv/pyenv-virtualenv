@@ -37,9 +37,9 @@ under `~/.pyenv/versions`.
 
 ## Version History
 
-#### 2013XXYY
+#### 20130307
 
- * Preparing for renaming project; `s/python-virtualenv/pyenv-virtualenv/g`
+ * Rename the project; `s/python-virtualenv/pyenv-virtualenv/g`
  * The `pyenv-virtualenv` script is not depending on `python-virtualenv` now.
    `python-virtualenv` will left for compatibility and will not continue for future releases.
  * Update virtualenv version; 1.8.2 -> 1.8.4

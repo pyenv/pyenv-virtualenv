@@ -5,7 +5,7 @@ that provides an `pyenv virtualenv` command to create virtualenv for Python
 on UNIX-like systems.
 
 (NOTICE: If you are an existing user of [virtualenvwrapper](http://pypi.python.org/pypi/virtualenvwrapper)
-and loves it, [pyenv-virtualenvwrapper](https://github.com/yyuu/pyenv-virtualenvwrapper) may help you
+and you love it, [pyenv-virtualenvwrapper](https://github.com/yyuu/pyenv-virtualenvwrapper) may help you
 to manage your virtualenvs.)
 
 ## Installation

@@ -131,7 +131,7 @@ VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
 # create virtualenv
 VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/python-libexec/virtualenv.py" # backward compatibility before v20130307
+[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/python-virtualenv/virtualenv.py" # backward compatibility before v20130307
 [ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/virtualenv.py"
 "${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
 

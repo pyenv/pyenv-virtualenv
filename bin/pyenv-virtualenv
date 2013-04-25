@@ -64,7 +64,8 @@ abs_dirname() {
 }
 
 version() {
-  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION}"
+  local VIRTUALENV_VERSION="$(pyenv-exec python "${VIRTUALENV}" --version)"
+  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${VIRTUALENV_VERSION:-unknown})"
 }
 
 usage() {
@@ -75,6 +76,9 @@ usage() {
 
 unset VERBOSE
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
+VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
+[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/python-virtualenv/virtualenv.py" # backward compatibility before v20130307
+[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/virtualenv.py"
 VIRTUALENV_OPTIONS=()
 
 parse_options "$@"
@@ -130,9 +134,6 @@ VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
 # create virtualenv
-VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/python-virtualenv/virtualenv.py" # backward compatibility before v20130307
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/virtualenv.py"
 "${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
 
 # create symlink of `python' bound for actual executable

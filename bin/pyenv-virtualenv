@@ -64,7 +64,7 @@ abs_dirname() {
 }
 
 version() {
-  local VIRTUALENV_VERSION="$(pyenv-exec python "${VIRTUALENV}" --version)"
+  local VIRTUALENV_VERSION="$(pyenv-exec python "${VIRTUALENV}" --version || true)"
   echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${VIRTUALENV_VERSION:-unknown})"
 }
 

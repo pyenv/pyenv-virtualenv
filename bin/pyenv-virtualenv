@@ -133,8 +133,14 @@ fi
 VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
-# create virtualenv
-"${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
+# virtualenv may download distribute/setuptools in current directory.
+# change to cache directory to reuse them between invocation.
+VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
+mkdir -p "${VIRTUALENV_CACHE_PATH}"
+{
+  cd "${VIRTUALENV_CACHE_PATH}"
+  "${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
+}
 
 # create symlink of `python' bound for actual executable
 if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then

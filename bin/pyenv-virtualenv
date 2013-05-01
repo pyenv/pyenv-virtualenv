@@ -3,6 +3,8 @@
 # Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
 #
 # Usage: pyenv virtualenv [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
+#        pyenv virtualenv --version
+#        pyenv virtualenv --help
 #
 
 PYENV_VIRTUALENV_VERSION="20130307"
@@ -69,6 +71,7 @@ version() {
 usage() {
   # We can remove the sed fallback once pyenv 0.2.0 is widely available.
   pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
+  pyenv-exec python "${VIRTUALENV}" --help 2>/dev/null || true
   [ -z "$1" ] || exit "$1"
 }
 

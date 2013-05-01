@@ -2,9 +2,7 @@
 #
 # Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
 #
-# Usage: pyenv virtualenv [-v|--verbose] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
-#
-#   -v/--verbose     Verbose mode: print compilation status to stdout
+# Usage: pyenv virtualenv [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
 #
 
 PYENV_VIRTUALENV_VERSION="20130307"
@@ -74,7 +72,6 @@ usage() {
   [ -z "$1" ] || exit "$1"
 }
 
-unset VERBOSE
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
 [ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/python-virtualenv/virtualenv.py" # backward compatibility before v20130307
@@ -86,9 +83,6 @@ for option in "${OPTIONS[@]}"; do
   case "$option" in
   "h" | "help" )
     usage 0
-    ;;
-  "v" | "verbose" )
-    VERBOSE="-v"
     ;;
   "version" )
     version

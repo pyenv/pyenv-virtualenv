@@ -77,8 +77,6 @@ usage() {
 
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/python-virtualenv/virtualenv.py" # backward compatibility before v20130307
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/virtualenv.py"
 VIRTUALENV_OPTIONS=()
 
 parse_options "$@"

@@ -16,7 +16,7 @@ for file in bin/*; do
   cp "${file}" "${BIN_PATH}"
 done
 
-for file in libexec/*; do
+for file in libexec/pyenv-virtualenv/*.py; do
   cp "${file}" "${LIBEXEC_PATH}"
 done
 

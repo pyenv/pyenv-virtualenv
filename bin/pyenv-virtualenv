@@ -7,7 +7,7 @@
 #        pyenv virtualenv --help
 #
 
-PYENV_VIRTUALENV_VERSION="20130307"
+PYENV_VIRTUALENV_VERSION="20130507"
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x

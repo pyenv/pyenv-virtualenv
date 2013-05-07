@@ -40,6 +40,11 @@ under `~/.pyenv/versions`.
 
 ## Version History
 
+#### 20130507
+
+ * Display virtualenv information in `--help` and `--version`
+ * Update virtualenv version; 1.8.4 -> 1.9.1
+
 #### 20130307
 
  * Rename the project; `s/python-virtualenv/pyenv-virtualenv/g`

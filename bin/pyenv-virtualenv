@@ -130,10 +130,12 @@ VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
 # virtualenv may download distribute/setuptools in current directory.
 # change to cache directory to reuse them between invocation.
-VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
-mkdir -p "${VIRTUALENV_CACHE_PATH}"
+if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
+  PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
+fi
+mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 {
-  cd "${VIRTUALENV_CACHE_PATH}"
+  cd "${PYENV_VIRTUALENV_CACHE_PATH}"
   "${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
 }
 

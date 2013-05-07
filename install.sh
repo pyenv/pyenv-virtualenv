@@ -16,8 +16,8 @@ for file in bin/*; do
   cp "${file}" "${BIN_PATH}"
 done
 
-for file in libexec/*; do
-  cp "${file}" "${LIBEXEC_PATH}"
+for file in libexec/pyenv-virtualenv/*; do
+  cp -Rp "${file}" "${LIBEXEC_PATH}"
 done
 
 echo "Installed pyenv-virtualenv at ${PREFIX}"

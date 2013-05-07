@@ -8,6 +8,7 @@
 #
 
 PYENV_VIRTUALENV_VERSION="20130507"
+VIRTUALENV_VERSION="${VIRTUALENV_VERSION:-1.9.1}"
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
@@ -63,9 +64,40 @@ abs_dirname() {
   cd "$cwd"
 }
 
+http() {
+  local method="$1"
+  local url="$2"
+  local file="$3"
+  [ -n "$url" ] || return 1
+
+  if type curl &>/dev/null; then
+    "http_${method}_curl" "$url" "$file"
+  elif type wget &>/dev/null; then
+    "http_${method}_wget" "$url" "$file"
+  else
+    echo "error: please install \`curl\` or \`wget\` and try again" >&2
+    exit 1
+  fi
+}
+
+http_head_curl() {
+  curl -qsILf "$1" >&4 2>&1
+}
+
+http_get_curl() {
+  curl -C - -o "${2:--}" -qsSLf "$1"
+}
+
+http_head_wget() {
+  wget -q --spider "$1" >&4 2>&1
+}
+
+http_get_wget() {
+  wget -nv -c -O "${2:--}" "$1"
+}
+
 version() {
-  local VIRTUALENV_VERSION="$(pyenv-exec python "${VIRTUALENV}" --version || true)"
-  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${VIRTUALENV_VERSION:-unknown})"
+  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${VIRTUALENV_VERSION})"
 }
 
 usage() {
@@ -75,11 +107,29 @@ usage() {
   [ -z "$1" ] || exit "$1"
 }
 
+ensure_virtualenv() {
+  local file="$1"
+  local url="$2"
+  [ -f "${file}" ] || {
+    mkdir -p "$(dirname "${file}")"
+    http get "${url}" "${file}"
+  }
+}
+
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
-VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv/virtualenv.py"
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/python-virtualenv/virtualenv.py" # backward compatibility before v20130307
-[ -f "${VIRTUALENV}" ] || VIRTUALENV="${PYENV_VIRTUALENV_ROOT}/libexec/virtualenv.py"
+if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
+  PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
+fi
+if [ -z "${PYENV_VIRTUALENV_SCRIPT_PATH}" ]; then
+  PYENV_VIRTUALENV_SCRIPT_PATH="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv"
+fi
+VIRTUALENV="${PYENV_VIRTUALENV_SCRIPT_PATH}/${VIRTUALENV_VERSION}/virtualenv.py"
 VIRTUALENV_OPTIONS=()
+
+ensure_virtualenv "${VIRTUALENV}" "https://raw.github.com/pypa/virtualenv/${VIRTUALENV_VERSION}/virtualenv.py" || {
+  echo "pyenv-virtualenv: could not find virtualenv script: ${VIRTUALENV}" 1>&2
+  exit 1
+}
 
 parse_options "$@"
 for option in "${OPTIONS[@]}"; do
@@ -106,7 +156,7 @@ done
 
 PYTHON_BIN=$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)
 if [ ! -x "${PYTHON_BIN}" ]; then
-  echo "pyenv-virtualenv: could not obtain python executable: ${PYTHON_BIN}" >&2
+  echo "pyenv-virtualenv: could not find python executable: ${PYTHON_BIN}" 1>&2
   exit 1
 fi
 
@@ -132,10 +182,9 @@ VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
 # virtualenv may download distribute/setuptools in current directory.
 # change to cache directory to reuse them between invocation.
-VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
-mkdir -p "${VIRTUALENV_CACHE_PATH}"
+mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 {
-  cd "${VIRTUALENV_CACHE_PATH}"
+  cd "${PYENV_VIRTUALENV_CACHE_PATH}"
   "${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
 }
 

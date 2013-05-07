@@ -37,8 +37,26 @@ virtualenv. For example,
 virtualenvs will be created into a directory of the same name
 under `~/.pyenv/versions`.
 
+### Special environment variables
+
+You can set certain environment variables to control the pyenv-virtualenv.
+
+* `PYENV_VIRTUALENV_CACHE_PATH`, if set, specifies a directory to use for
+  caching downloaded package files.
+* `PYENV_VIRTUALENV_SCRIPT_PATH`, if set, specified a directory to use for
+  storing virtualenv scripts.
+* `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to use desired
+  version of virtualenv. If the version has not been installed,
+  pyenv-virtualenv will try to download it.
+
 
 ## Version History
+
+#### 2013XXYY
+
+ * Remove `python-virtualenv` which was no longer used.
+ * Change the installation path of the `virtualenv.py` script. (`./libexec` -> `./libexec/pyenv-virtualenv/${VIRTUALENV_VERSION}`)
+ * Download `virtualenv.py` if desired version has not been installed.
 
 #### 20130507
 

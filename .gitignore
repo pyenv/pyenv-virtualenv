@@ -1,6 +1,6 @@
-/libexec/*.class
-/libexec/*.pyc
-/libexec/*.pyo
-/libexec/__pycache__
+/libexec/pyenv-virtualenv/*/*.class
+/libexec/pyenv-virtualenv/*/*.pyc
+/libexec/pyenv-virtualenv/*/*.pyo
+/libexec/pyenv-virtualenv/*/__pycache__
 *.swo
 *.swp

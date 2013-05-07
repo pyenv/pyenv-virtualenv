@@ -43,7 +43,8 @@ under `~/.pyenv/versions`.
 #### 2013XXYY
 
  * Remove `python-virtualenv` which was no longer used.
- * Change the installation path of the `virtualenv.py` script. (`./libexec` -> `./libexec/pyenv-virtualenv`)
+ * Change the installation path of the `virtualenv.py` script. (`./libexec` -> `./libexec/pyenv-virtualenv/${VIRTUALENV_VERSION}`)
+ * Download `virtualenv.py` if specified version has not been installed.
 
 #### 20130507
 

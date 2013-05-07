@@ -107,6 +107,15 @@ usage() {
   [ -z "$1" ] || exit "$1"
 }
 
+ensure_virtualenv() {
+  local file="$1"
+  local url="$2"
+  [ -f "${file}" ] || {
+    mkdir -p "$(dirname "${file}")"
+    http get "${url}" "${file}"
+  }
+}
+
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
   PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
@@ -114,8 +123,13 @@ fi
 if [ -z "${PYENV_VIRTUALENV_SCRIPT_PATH}" ]; then
   PYENV_VIRTUALENV_SCRIPT_PATH="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv"
 fi
-VIRTUALENV="${PYENV_VIRTUALENV_SCRIPT_PATH}/virtualenv.py"
+VIRTUALENV="${PYENV_VIRTUALENV_SCRIPT_PATH}/${VIRTUALENV_VERSION}/virtualenv.py"
 VIRTUALENV_OPTIONS=()
+
+ensure_virtualenv "${VIRTUALENV}" "https://raw.github.com/pypa/virtualenv/${VIRTUALENV_VERSION}/virtualenv.py" || {
+  echo "pyenv-virtualenv: could not find virtualenv script: ${VIRTUALENV}" 1>&2
+  exit 1
+}
 
 parse_options "$@"
 for option in "${OPTIONS[@]}"; do
@@ -142,7 +156,7 @@ done
 
 PYTHON_BIN=$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)
 if [ ! -x "${PYTHON_BIN}" ]; then
-  echo "pyenv-virtualenv: could not find python executable: ${PYTHON_BIN}" >&2
+  echo "pyenv-virtualenv: could not find python executable: ${PYTHON_BIN}" 1>&2
   exit 1
 fi
 

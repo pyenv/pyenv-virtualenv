@@ -40,6 +40,10 @@ under `~/.pyenv/versions`.
 
 ## Version History
 
+#### 2013XXYY
+
+ * Remove `python-virtualenv` which was no longer used.
+
 #### 20130507
 
  * Display virtualenv information in `--help` and `--version`

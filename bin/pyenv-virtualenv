@@ -179,6 +179,7 @@ fi
 
 VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
 
 # virtualenv may download distribute/setuptools in current directory.
 # change to cache directory to reuse them between invocation.

@@ -97,7 +97,8 @@ http_get_wget() {
 }
 
 version() {
-  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${VIRTUALENV_VERSION})"
+  local version="$(pyenv-exec python "${VIRTUALENV}" --version || true)"
+  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
 }
 
 usage() {
@@ -124,12 +125,17 @@ if [ -z "${PYENV_VIRTUALENV_SCRIPT_PATH}" ]; then
   PYENV_VIRTUALENV_SCRIPT_PATH="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv"
 fi
 VIRTUALENV="${PYENV_VIRTUALENV_SCRIPT_PATH}/${VIRTUALENV_VERSION}/virtualenv.py"
+VIRTUALENV_URL="https://raw.github.com/pypa/virtualenv/${VIRTUALENV_VERSION}/virtualenv.py"
 VIRTUALENV_OPTIONS=()
 
-ensure_virtualenv "${VIRTUALENV}" "https://raw.github.com/pypa/virtualenv/${VIRTUALENV_VERSION}/virtualenv.py" || {
+ensure_virtualenv "${VIRTUALENV}" "${VIRTUALENV_URL}" || {
   echo "pyenv-virtualenv: could not find virtualenv script: ${VIRTUALENV}" 1>&2
   exit 1
 }
+
+# Unset environment variables which starts with `VIRTUALENV_`.
+# These variables are reserved for virtualenv.
+unset VIRTUALENV_VERSION
 
 parse_options "$@"
 for option in "${OPTIONS[@]}"; do

@@ -147,12 +147,31 @@ for option in "${OPTIONS[@]}"; do
   esac
 done
 
+# The first argument contains the source version to create virtualenv.
 VERSION_NAME="${ARGUMENTS[0]}"
 [ -n "$VERSION_NAME" ] || usage 1
 
+
+# Define `before_virtualenv` and `after_virtualenv` functions that allow
+# plugin hooks to register a string of code for execution before or
+# after the installation process.
+declare -a before_hooks after_hooks
+
+before_virtualenv() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_virtualenv() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# Load plugin hooks.
 for script in $(pyenv-hooks virtualenv); do
   source "$script"
 done
+
 
 PYTHON_BIN=$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)
 if [ ! -x "${PYTHON_BIN}" ]; then
@@ -181,13 +200,37 @@ VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
 
+[ -d "${VIRTUALENV_PATH}" ] && PREFIX_EXISTS=1
+
+# If the virtualenv exists, prompt for confirmation unless
+# the --force option was specified.
+if [ -z "$FORCE" ] && [ -d "${VIRTUALENV_PATH}/bin" ]; then
+  echo "pyenv: $VIRTUALENV_PATH already exists" >&2
+  read -p "continue with installation? (y/N) "
+
+  case "$REPLY" in
+  y* | Y* ) ;;
+  * ) exit 1 ;;
+  esac
+fi
+
+# Execute `before_virtualenv` hooks.
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
+# Plan cleanup on unsuccessful installation.
+cleanup() {
+  [ -z "${PREFIX_EXISTS}" ] && rm -rf "$VIRTUALENV_PATH"
+}
+
+trap cleanup SIGINT
+
+# Invoke virtualenv and record exit status in $STATUS.
+STATUS=0
 # virtualenv may download distribute/setuptools in current directory.
 # change to cache directory to reuse them between invocation.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
-{
-  cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-  "${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}"
-}
+cd "${PYENV_VIRTUALENV_CACHE_PATH}"
+"${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS=$?
 
 # create symlink of `python' bound for actual executable
 if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
@@ -199,4 +242,14 @@ if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
   fi
 fi
 
-pyenv-rehash
+# Execute `after_virtualenv` hooks
+for hook in "${after_hooks[@]}"; do eval "$hook"; done
+
+# Run `pyenv-rehash` after a successful installation.
+if [ "$STATUS" == "0" ]; then
+  pyenv rehash
+else
+  cleanup
+fi
+
+exit "$STATUS"

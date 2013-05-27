@@ -2,9 +2,11 @@
 #
 # Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
 #
-# Usage: pyenv virtualenv [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
+# Usage: pyenv virtualenv [-f|--force] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
 #        pyenv virtualenv --version
 #        pyenv virtualenv --help
+#
+#   -f/--force       Install even if the version appears to be installed already
 #
 
 PYENV_VIRTUALENV_VERSION="20130527"
@@ -133,6 +135,7 @@ ensure_virtualenv "${VIRTUALENV}" "${VIRTUALENV_URL}" || {
   exit 1
 }
 
+unset FORCE
 # Unset environment variables which starts with `VIRTUALENV_`.
 # These variables are reserved for virtualenv.
 unset VIRTUALENV_VERSION
@@ -140,6 +143,9 @@ unset VIRTUALENV_VERSION
 parse_options "$@"
 for option in "${OPTIONS[@]}"; do
   case "$option" in
+  "f" | "force" )
+    FORCE=true
+    ;;
   "h" | "help" )
     usage 0
     ;;

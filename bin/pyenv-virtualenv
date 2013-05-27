@@ -253,7 +253,7 @@ for hook in "${after_hooks[@]}"; do eval "$hook"; done
 
 # Run `pyenv-rehash` after a successful installation.
 if [ "$STATUS" == "0" ]; then
-  pyenv rehash
+  pyenv-rehash
 else
   cleanup
 fi

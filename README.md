@@ -50,7 +50,7 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
-#### 2013XXYY
+#### 20130527
 
  * Remove `python-virtualenv` which was no longer used.
  * Change the installation path of the `virtualenv.py` script. (`./libexec` -> `./libexec/pyenv-virtualenv/${VIRTUALENV_VERSION}`)

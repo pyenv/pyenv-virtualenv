@@ -180,7 +180,7 @@ UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
 
 
 
-PYTHON_BIN=$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)
+PYTHON_BIN="$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)"
 if [ ! -x "${PYTHON_BIN}" ]; then
   echo "pyenv-virtualenv: could not find python executable: ${PYTHON_BIN}" 1>&2
   exit 1
@@ -277,20 +277,32 @@ cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 # create symlink of `python' bound for actual executable
 if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
   if [ -f "${VIRTUALENV_PATH}/bin/$(basename "${PYTHON_BIN}")" ]; then
-    {
-      cd ${VIRTUALENV_PATH}/bin
-      ln -fs "$(basename "${PYTHON_BIN}")" python
-    }
+    ( cd "${VIRTUALENV_PATH}/bin" && ln -fs "$(basename "${PYTHON_BIN}")" python )
   fi
 fi
 
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
+  UPGRADE_STATUS=0
   if [ -x "${VIRTUALENV_PIP_BIN}" ]; then
-    "${VIRTUALENV_PIP_BIN}" install --requirement "${UPGRADE_LIST}" || STATUS=$?
+    "${VIRTUALENV_PIP_BIN}" install --requirement "${UPGRADE_LIST}" || UPGRADE_STATUS=$?
   else
     echo "pyenv: pip is not installed in ${VIRTUALENV_PATH}" 1>&2
-    STATUS=1
+    UPGRADE_STATUS=1
+  fi
+  if [ "$UPGRADE_STATUS" == "0" ]; then
+    rm -f "${UPGRADE_LIST}"
+    rm -fr "${UPGRADE_PATH}"
+  else
+    { echo
+      echo "UPGRADE FAILED"
+      echo
+      echo "Inspect or clean up the original tree at ${UPGRADE_PATH}"
+      echo
+      echo "Package list:"
+      cat "${UPGRADE_LIST}"
+    } 1>&2
+    STATUS="$UPGRADE_STATUS"
   fi
 fi
 
@@ -300,10 +312,6 @@ for hook in "${after_hooks[@]}"; do eval "$hook"; done
 # Run `pyenv-rehash` after a successful installation.
 if [ "$STATUS" == "0" ]; then
   pyenv-rehash
-  [ -n "$UPGRADE" ] && {
-    rm -f "${UPGRADE_LIST}"
-    rm -fr "${UPGRADE_PATH}"
-  }
 else
   cleanup
 fi

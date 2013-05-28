@@ -164,27 +164,6 @@ VERSION_NAME="${ARGUMENTS[0]}"
 [ -n "$VERSION_NAME" ] || usage 1
 
 
-# Define `before_virtualenv` and `after_virtualenv` functions that allow
-# plugin hooks to register a string of code for execution before or
-# after the installation process.
-declare -a before_hooks after_hooks
-
-before_virtualenv() {
-  local hook="$1"
-  before_hooks["${#before_hooks[@]}"]="$hook"
-}
-
-after_virtualenv() {
-  local hook="$1"
-  after_hooks["${#after_hooks[@]}"]="$hook"
-}
-
-# Load plugin hooks.
-for script in $(pyenv-hooks virtualenv); do
-  source "$script"
-done
-
-
 PYTHON_BIN=$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)
 if [ ! -x "${PYTHON_BIN}" ]; then
   echo "pyenv-virtualenv: could not find python executable: ${PYTHON_BIN}" 1>&2
@@ -211,6 +190,28 @@ fi
 VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
+
+
+# Define `before_virtualenv` and `after_virtualenv` functions that allow
+# plugin hooks to register a string of code for execution before or
+# after the installation process.
+declare -a before_hooks after_hooks
+
+before_virtualenv() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_virtualenv() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# Load plugin hooks.
+for script in $(pyenv-hooks virtualenv); do
+  source "$script"
+done
+
 
 [ -d "${VIRTUALENV_PATH}" ] && PREFIX_EXISTS=1
 

@@ -100,7 +100,7 @@ http_get_wget() {
 }
 
 version() {
-  local version="$(pyenv-exec python "${VIRTUALENV}" --version || true)"
+  local version="$(pyenv-exec python "${VIRTUALENV}" --version 2>/dev/null || true)"
   echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
 }
 

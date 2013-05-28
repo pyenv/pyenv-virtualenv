@@ -176,7 +176,7 @@ fi
 
 SEED="$(date "+%Y%m%d%H%M%S").$$"
 UPGRADE_PATH="${TMP}/pyenv-virtualenv.${SEED}"
-UPGRADE_REQUIREMENTS="${UPGRADE_PATH}/requirements.txt"
+UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
 
 
 
@@ -246,9 +246,13 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    mkdir -p "${UPGRADE_PATH}"
-    [ -x "${VIRTUALENV_PIP_BIN}" ] && "${VIRTUALENV_PIP_BIN}" freeze > "${UPGRADE_REQUIREMENTS}"
-    mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
+    if [ -x "${VIRTUALENV_PIP_BIN}" ]; then
+      "${VIRTUALENV_PIP_BIN}" freeze > "${UPGRADE_LIST}"
+      mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
+    else
+      echo "pyenv: pip is not installed in ${VIRTUALENV_PATH}" 1>&2
+      exit 1
+    fi
   fi
 fi
 
@@ -282,10 +286,12 @@ fi
 
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
-  [ -x "${VIRTUALENV_PIP_BIN}" ] && [ -f "${UPGRADE_REQUIREMENTS}" ] && {
-    "${VIRTUALENV_PIP_BIN}" install --requirement "${UPGRADE_REQUIREMENTS}"
-    rm -fr "${UPGRADE_PATH}"
-  }
+  if [ -x "${VIRTUALENV_PIP_BIN}" ]; then
+    "${VIRTUALENV_PIP_BIN}" install --requirement "${UPGRADE_LIST}" || STATUS=$?
+  else
+    echo "pyenv: pip is not installed in ${VIRTUALENV_PATH}" 1>&2
+    STATUS=1
+  fi
 fi
 
 # Execute `after_virtualenv` hooks
@@ -294,6 +300,10 @@ for hook in "${after_hooks[@]}"; do eval "$hook"; done
 # Run `pyenv-rehash` after a successful installation.
 if [ "$STATUS" == "0" ]; then
   pyenv-rehash
+  [ -n "$UPGRADE" ] && {
+    rm -f "${UPGRADE_LIST}"
+    rm -fr "${UPGRADE_PATH}"
+  }
 else
   cleanup
 fi

@@ -2,10 +2,11 @@
 #
 # Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
 #
-# Usage: pyenv virtualenv [-f|--force] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
+# Usage: pyenv virtualenv [-f|--force] [-u|--upgrade] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
 #        pyenv virtualenv --version
 #        pyenv virtualenv --help
 #
+#   -u/--upgrade     Upgrade existing virtualenv with migrating installed packages
 #   -f/--force       Install even if the version appears to be installed already
 #
 
@@ -136,6 +137,7 @@ ensure_virtualenv "${VIRTUALENV}" "${VIRTUALENV_URL}" || {
 }
 
 unset FORCE
+unset UPGRADE
 # Unset environment variables which starts with `VIRTUALENV_`.
 # These variables are reserved for virtualenv.
 unset VIRTUALENV_VERSION
@@ -148,6 +150,9 @@ for option in "${OPTIONS[@]}"; do
     ;;
   "h" | "help" )
     usage 0
+    ;;
+  "u" | "upgrade" )
+    UPGRADE=true
     ;;
   "version" )
     version
@@ -163,26 +168,16 @@ done
 VERSION_NAME="${ARGUMENTS[0]}"
 [ -n "$VERSION_NAME" ] || usage 1
 
+if [ -z "$TMPDIR" ]; then
+  TMP="/tmp"
+else
+  TMP="${TMPDIR%/}"
+fi
 
-# Define `before_virtualenv` and `after_virtualenv` functions that allow
-# plugin hooks to register a string of code for execution before or
-# after the installation process.
-declare -a before_hooks after_hooks
+SEED="$(date "+%Y%m%d%H%M%S").$$"
+UPGRADE_PATH="${TMP}/pyenv-virtualenv.${SEED}"
+UPGRADE_REQUIREMENTS="${UPGRADE_PATH}/requirements.txt"
 
-before_virtualenv() {
-  local hook="$1"
-  before_hooks["${#before_hooks[@]}"]="$hook"
-}
-
-after_virtualenv() {
-  local hook="$1"
-  after_hooks["${#after_hooks[@]}"]="$hook"
-}
-
-# Load plugin hooks.
-for script in $(pyenv-hooks virtualenv); do
-  source "$script"
-done
 
 
 PYTHON_BIN=$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)
@@ -211,19 +206,50 @@ fi
 VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
+VIRTUALENV_PIP_BIN="${VIRTUALENV_PATH}/bin/pip"
+
+
+# Define `before_virtualenv` and `after_virtualenv` functions that allow
+# plugin hooks to register a string of code for execution before or
+# after the installation process.
+declare -a before_hooks after_hooks
+
+before_virtualenv() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_virtualenv() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# Load plugin hooks.
+for script in $(pyenv-hooks virtualenv); do
+  source "$script"
+done
+
 
 [ -d "${VIRTUALENV_PATH}" ] && PREFIX_EXISTS=1
 
 # If the virtualenv exists, prompt for confirmation unless
 # the --force option was specified.
-if [ -z "$FORCE" ] && [ -d "${VIRTUALENV_PATH}/bin" ]; then
-  echo "pyenv: $VIRTUALENV_PATH already exists" >&2
-  read -p "continue with installation? (y/N) "
+if [ -d "${VIRTUALENV_PATH}/bin" ]; then
+  if [ -z "$FORCE" ]; then
+    echo "pyenv: ${VIRTUALENV_PATH} already exists" 1>&2
+    read -p "continue with installation? (y/N) "
 
-  case "$REPLY" in
-  y* | Y* ) ;;
-  * ) exit 1 ;;
-  esac
+    case "$REPLY" in
+    y* | Y* ) ;;
+    * ) exit 1 ;;
+    esac
+  fi
+
+  if [ -n "$UPGRADE" ]; then
+    mkdir -p "${UPGRADE_PATH}"
+    [ -x "${VIRTUALENV_PIP_BIN}" ] && "${VIRTUALENV_PIP_BIN}" freeze > "${UPGRADE_REQUIREMENTS}"
+    mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
+  fi
 fi
 
 # Execute `before_virtualenv` hooks.
@@ -252,6 +278,14 @@ if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
       ln -fs "$(basename "${PYTHON_BIN}")" python
     }
   fi
+fi
+
+## Migrate previously installed packages from requirements.txt
+if [ -n "$UPGRADE" ]; then
+  [ -x "${VIRTUALENV_PIP_BIN}" ] && [ -f "${UPGRADE_REQUIREMENTS}" ] && {
+    "${VIRTUALENV_PIP_BIN}" install --requirement "${UPGRADE_REQUIREMENTS}"
+    rm -fr "${UPGRADE_PATH}"
+  }
 fi
 
 # Execute `after_virtualenv` hooks

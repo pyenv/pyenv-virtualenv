@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# Summary: List all Python virtualenvs found in `$PYENV_ROOT/versions/*'.
+#
+# Usage: pyenv virtualenvs [--bare]
+#
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+if [ -z "$PYENV_ROOT" ]; then
+  PYENV_ROOT="${HOME}/.pyenv"
+fi
+
+unset BARE
+
+if [ "$1" = "--bare" ]; then
+  BARE=true
+fi
+
+print_version() {
+  local version="$1"
+  if [ -n "${BARE}" ]; then
+    echo "${version}"
+  else
+    echo "${version} (created from $(virtualenv_origin "${version}"))"
+  fi
+}
+
+virtualenv_version() {
+  local version="$1"
+  local prefix="$(pyenv-prefix "${version}")"
+  [ -f "${prefix}/bin/activate" ] && "${prefix}/bin/python" -c 'import sys;sys.real_prefix' 1>/dev/null 2>&1
+}
+
+virtualenv_origin() {
+  local version="$1"
+  local prefix="$(pyenv-prefix "${version}")"
+  local origin="$("${prefix}/bin/python" -c 'from __future__ import print_function;import sys;print(sys.real_prefix)' 2>/dev/null || true)"
+  echo "${origin:-unknown}"
+}
+
+versions=($(pyenv-versions --bare))
+
+for version in "${versions[@]}"; do
+  if virtualenv_version "${version}"; then
+    print_version "${version}"
+  fi
+done

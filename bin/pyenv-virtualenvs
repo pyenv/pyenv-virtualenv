@@ -36,7 +36,7 @@ virtualenv_version() {
 virtualenv_origin() {
   local version="$1"
   local prefix="$(pyenv-prefix "${version}")"
-  local origin="$("${prefix}/bin/python" -c 'from __future__ import print_function;import sys;print(sys.real_prefix)' 2>/dev/null || true)"
+  local origin="$("${prefix}/bin/python" -c 'import sys;print(sys.real_prefix)' 2>/dev/null || true)"
   echo "${origin:-unknown}"
 }
 

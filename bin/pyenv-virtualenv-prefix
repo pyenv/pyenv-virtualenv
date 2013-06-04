@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# Summary: Display real_prefix for a Python virtualenv version
+# Usage: pyenv virtualenv-prefix [<virtualenv>]
+#
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+if [ -z "$PYENV_ROOT" ]; then
+  PYENV_ROOT="${HOME}/.pyenv"
+fi
+
+if [ -n "$1" ]; then
+  export PYENV_VERSION="$1"
+fi
+
+PYTHON_BIN="$(pyenv-which python)"
+"${PYTHON_BIN}" -c 'import sys;print(sys.real_prefix)' 2>/dev/null

@@ -23,7 +23,7 @@ print_version() {
   if [ -n "${BARE}" ]; then
     echo "${version}"
   else
-    echo "${version} (created from $(virtualenv_origin "${version}"))"
+    echo "${version} (created from $(pyenv-virtualenv-prefix "${version}"))"
   fi
 }
 
@@ -31,13 +31,6 @@ virtualenv_version() {
   local version="$1"
   local prefix="$(pyenv-prefix "${version}")"
   [ -f "${prefix}/bin/activate" ] && "${prefix}/bin/python" -c 'import sys;sys.real_prefix' 1>/dev/null 2>&1
-}
-
-virtualenv_origin() {
-  local version="$1"
-  local prefix="$(pyenv-prefix "${version}")"
-  local origin="$("${prefix}/bin/python" -c 'import sys;print(sys.real_prefix)' 2>/dev/null || true)"
-  echo "${origin:-unknown}"
 }
 
 versions=($(pyenv-versions --bare))

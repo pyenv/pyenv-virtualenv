@@ -50,6 +50,11 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20130614
+
+ * Add `pyenv virtualenvs` to list all virtualenv versions.
+ * *EXPERIMENTAL* Add `--upgrade` option to re-create virtualenv with migrating packages
+
 #### 20130527
 
  * Remove `python-virtualenv` which was no longer used.

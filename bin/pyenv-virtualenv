@@ -158,7 +158,10 @@ for option in "${OPTIONS[@]}"; do
     version
     exit 0
     ;;
-  * )
+  "q" ) # virtualenv short options
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="-$option"
+    ;;
+  * ) # virtualenv long options
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
     ;;
   esac

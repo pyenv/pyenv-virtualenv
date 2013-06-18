@@ -11,7 +11,6 @@
 #
 
 PYENV_VIRTUALENV_VERSION="20130614"
-VIRTUALENV_VERSION="${VIRTUALENV_VERSION:-1.9.1}"
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
@@ -67,40 +66,8 @@ abs_dirname() {
   cd "$cwd"
 }
 
-http() {
-  local method="$1"
-  local url="$2"
-  local file="$3"
-  [ -n "$url" ] || return 1
-
-  if type curl &>/dev/null; then
-    "http_${method}_curl" "$url" "$file"
-  elif type wget &>/dev/null; then
-    "http_${method}_wget" "$url" "$file"
-  else
-    echo "error: please install \`curl\` or \`wget\` and try again" >&2
-    exit 1
-  fi
-}
-
-http_head_curl() {
-  curl -qsILf "$1" >&4 2>&1
-}
-
-http_get_curl() {
-  curl -C - -o "${2:--}" -qsSLf "$1"
-}
-
-http_head_wget() {
-  wget -q --spider "$1" >&4 2>&1
-}
-
-http_get_wget() {
-  wget -nv -c -O "${2:--}" "$1"
-}
-
 version() {
-  local version="$(pyenv-exec python "${VIRTUALENV}" --version 2>/dev/null || true)"
+  local version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
   echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
 }
 
@@ -111,36 +78,23 @@ usage() {
   [ -z "$1" ] || exit "$1"
 }
 
-ensure_virtualenv() {
-  local file="$1"
-  local url="$2"
-  [ -f "${file}" ] || {
-    mkdir -p "$(dirname "${file}")"
-    http get "${url}" "${file}"
-  }
+require_executable() {
+  local version="$1"
+  local executable="$2"
+  if ! PYENV_VERSION="${version}" pyenv-which "${executable}" 1>/dev/null 2>&1; then
+    echo "pyenv: ${executable} is not installed in ${version}." 1>&2
+    return 1
+  fi
 }
 
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
   PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
 fi
-if [ -z "${PYENV_VIRTUALENV_SCRIPT_PATH}" ]; then
-  PYENV_VIRTUALENV_SCRIPT_PATH="${PYENV_VIRTUALENV_ROOT}/libexec/pyenv-virtualenv"
-fi
-VIRTUALENV="${PYENV_VIRTUALENV_SCRIPT_PATH}/${VIRTUALENV_VERSION}/virtualenv.py"
-VIRTUALENV_URL="https://raw.github.com/pypa/virtualenv/${VIRTUALENV_VERSION}/virtualenv.py"
 VIRTUALENV_OPTIONS=()
-
-ensure_virtualenv "${VIRTUALENV}" "${VIRTUALENV_URL}" || {
-  echo "pyenv-virtualenv: could not find virtualenv script: ${VIRTUALENV}" 1>&2
-  exit 1
-}
 
 unset FORCE
 unset UPGRADE
-# Unset environment variables which starts with `VIRTUALENV_`.
-# These variables are reserved for virtualenv.
-unset VIRTUALENV_VERSION
 
 parse_options "$@"
 for option in "${OPTIONS[@]}"; do
@@ -167,9 +121,18 @@ for option in "${OPTIONS[@]}"; do
   esac
 done
 
-# The first argument contains the source version to create virtualenv.
-VERSION_NAME="${ARGUMENTS[0]}"
+# If there is only one argument left, use current version as source version of virtualenv
+if [ "${#ARGUMENTS[@]}" -gt 1 ]; then
+  VERSION_NAME="${ARGUMENTS[0]}"
+  VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
+else
+  VERSION_NAME="$(pyenv-version-name)"
+  VIRTUALENV_NAME="${ARGUMENTS[0]}"
+fi
+
+# Set VERSION_NAME as default version in this script
 [ -n "$VERSION_NAME" ] || usage 1
+export PYENV_VERSION="${VERSION_NAME}"
 
 if [ -z "$TMPDIR" ]; then
   TMP="/tmp"
@@ -181,35 +144,18 @@ SEED="$(date "+%Y%m%d%H%M%S").$$"
 UPGRADE_PATH="${TMP}/pyenv-virtualenv.${SEED}"
 UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
 
-
-
-PYTHON_BIN="$(PYENV_VERSION="${VERSION_NAME}" pyenv-which python)"
-if [ ! -x "${PYTHON_BIN}" ]; then
-  echo "pyenv-virtualenv: could not find python executable: ${PYTHON_BIN}" 1>&2
-  exit 1
-fi
-
-# find canonical name of python executable.
-# virtualenv will create "bin/python" executable as same name as its bootstraped python.
-if [ -L "${PYTHON_BIN}" ]; then
-  while [ -L "${PYTHON_BIN}" ]; do # retrieve symlinks
-    PYTHON_BIN="$(dirname "${PYTHON_BIN}")/$(resolve_link "${PYTHON_BIN}")"
-  done
-else
-# python 2.6 and older don't have "bin/python" as symlink.
-# so we must traverse files like "bin/python*" to obtain canonical name.
-  for python in ${PYENV_ROOT}/versions/${VERSION_NAME}/bin/python*; do
-    if ( basename "$python" | grep '^python[0-9][0-9]*\.[0-9][0-9]*$' && cmp "$PYTHON_BIN" "$python" ) >/dev/null; then
-      PYTHON_BIN="${python}"
-      break
-    fi
-  done
-fi
-
-VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
-VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
-VIRTUALENV_PIP_BIN="${VIRTUALENV_PATH}/bin/pip"
+
+require_executable "${VERSION_NAME}" "virtualenv" 2>/dev/null || {
+  require_executable "${VERSION_NAME}" "pip"
+  VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
+  pyenv-exec pip install "virtualenv${VIRTUALENV_VERSION%==}"
+  pyenv-rehash
+}
+
+# Unset environment variables which starts with `VIRTUALENV_`.
+# These variables are reserved for virtualenv.
+unset VIRTUALENV_VERSION
 
 
 # Define `before_virtualenv` and `after_virtualenv` functions that allow
@@ -249,13 +195,9 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    if [ -x "${VIRTUALENV_PIP_BIN}" ]; then
-      "${VIRTUALENV_PIP_BIN}" freeze > "${UPGRADE_LIST}"
-      mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
-    else
-      echo "pyenv: pip is not installed in ${VIRTUALENV_PATH}" 1>&2
-      exit 1
-    fi
+    require_executable "${VIRTUALENV_NAME}" "pip"
+    PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip freeze > "${UPGRADE_LIST}"
+    mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
   fi
 fi
 
@@ -275,24 +217,22 @@ STATUS=0
 # change to cache directory to reuse them between invocation.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-"${PYTHON_BIN}" "${VIRTUALENV}" "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS=$?
+pyenv-exec virtualenv "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
-# create symlink of `python' bound for actual executable
-if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
-  if [ -f "${VIRTUALENV_PATH}/bin/$(basename "${PYTHON_BIN}")" ]; then
-    ( cd "${VIRTUALENV_PATH}/bin" && ln -fs "$(basename "${PYTHON_BIN}")" python )
+# Create symlink of `python' bound for actual executable
+# TODO: remove this if virtualenv treats `python` executable
+if [ ! -e "${VIRTUALENV_PATH}/bin/python" ]; then
+  PYTHON_BIN="$(pyenv-which python)"
+  if [ -L "${PYTHON_BIN}" ] && [ -e "${VIRTUALENV_PATH}/bin/$(basename "$(resolve_link "${PYTHON_BIN}")")" ]; then
+    ( cd "${VIRTUALENV_PATH}/bin" && ln -s "${PYTHON_BIN}" "python" )
   fi
 fi
 
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
   UPGRADE_STATUS=0
-  if [ -x "${VIRTUALENV_PIP_BIN}" ]; then
-    "${VIRTUALENV_PIP_BIN}" install --requirement "${UPGRADE_LIST}" || UPGRADE_STATUS=$?
-  else
-    echo "pyenv: pip is not installed in ${VIRTUALENV_PATH}" 1>&2
-    UPGRADE_STATUS=1
-  fi
+  require_executable "${VIRTUALENV_NAME}" "pip" || UPGRADE_STATUS=1
+  PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip install --requirement "${UPGRADE_LIST}" || UPGRADE_STATUS=$?
   if [ "$UPGRADE_STATUS" == "0" ]; then
     rm -f "${UPGRADE_LIST}"
     rm -fr "${UPGRADE_PATH}"

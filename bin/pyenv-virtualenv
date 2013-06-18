@@ -121,18 +121,28 @@ for option in "${OPTIONS[@]}"; do
   esac
 done
 
-# If there is only one argument left, use current version as source version of virtualenv
-if [ "${#ARGUMENTS[@]}" -gt 1 ]; then
-  VERSION_NAME="${ARGUMENTS[0]}"
-  VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
-else
+if [[ "${#ARGUMENTS[@]}" == 0 ]]; then
+  echo "pyenv: no virtualenv name given." 1>&2
+  exit 1
+elif [[ "${#ARGUMENTS[@]}" == 1 ]]; then
+  # If only one argument given, use current version as source version
   VERSION_NAME="$(pyenv-version-name)"
   VIRTUALENV_NAME="${ARGUMENTS[0]}"
+else
+  # Otherwise, use former as source version, and latter as virtualenv version
+  VERSION_NAME="${ARGUMENTS[0]}"
+  VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
+fi
+
+if [ -z "${VERSION_NAME}" ] || [ -z "${VIRTUALENV_NAME}" ]; then
+  usage 1
 fi
 
 # Set VERSION_NAME as default version in this script
-[ -n "$VERSION_NAME" ] || usage 1
 export PYENV_VERSION="${VERSION_NAME}"
+
+# Source version must exists before creating virtualenv
+pyenv-prefix 1>/dev/null 2>&1 || usage 1
 
 if [ -z "$TMPDIR" ]; then
   TMP="/tmp"
@@ -220,7 +230,7 @@ cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 pyenv-exec virtualenv "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
 # Create symlink of `python' bound for actual executable
-# TODO: remove this if virtualenv treats `python` executable
+# TODO: remove this if virtualenv doesn't really need this
 if [ ! -e "${VIRTUALENV_PATH}/bin/python" ]; then
   PYTHON_BIN="$(pyenv-which python)"
   if [ -L "${PYTHON_BIN}" ] && [ -e "${VIRTUALENV_PATH}/bin/$(basename "$(resolve_link "${PYTHON_BIN}")")" ]; then

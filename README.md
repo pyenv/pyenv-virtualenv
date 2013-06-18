@@ -41,19 +41,21 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 * `PYENV_VIRTUALENV_CACHE_PATH`, if set, specifies a directory to use for
   caching downloaded package files.
-* `PYENV_VIRTUALENV_SCRIPT_PATH`, if set, specified a directory to use for
-  storing virtualenv scripts.
-* `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to use desired
+* `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to install desired
   version of virtualenv. If the version has not been installed,
   pyenv-virtualenv will try to download it.
 
 
 ## Version History
 
+#### 2013XXYY
+
+ * Removed bundled `virtualenv.py` script. Now pyenv-virtualenv installs `virtualenv` package into source version and then use it.
+
 #### 20130614
 
  * Add `pyenv virtualenvs` to list all virtualenv versions.
- * *EXPERIMENTAL* Add `--upgrade` option to re-create virtualenv with migrating packages
+ * *EXPERIMENTAL*: Add `--upgrade` option to re-create virtualenv with migrating packages
 
 #### 20130527
 

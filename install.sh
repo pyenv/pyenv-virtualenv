@@ -7,17 +7,11 @@ if [ -z "${PREFIX}" ]; then
 fi
 
 BIN_PATH="${PREFIX}/bin"
-LIBEXEC_PATH="${PREFIX}/libexec/pyenv-virtualenv"
 
 mkdir -p "${BIN_PATH}"
-mkdir -p "${LIBEXEC_PATH}"
 
 for file in bin/*; do
   cp "${file}" "${BIN_PATH}"
-done
-
-for file in libexec/pyenv-virtualenv/*; do
-  cp -Rp "${file}" "${LIBEXEC_PATH}"
 done
 
 echo "Installed pyenv-virtualenv at ${PREFIX}"

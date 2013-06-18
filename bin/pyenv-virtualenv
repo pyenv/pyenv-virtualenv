@@ -145,7 +145,6 @@ UPGRADE_PATH="${TMP}/pyenv-virtualenv.${SEED}"
 UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
-VIRTUALENV_PYTHON_BIN="${VIRTUALENV_PATH}/bin/python"
 
 require_executable "${VERSION_NAME}" "virtualenv" 2>/dev/null || {
   require_executable "${VERSION_NAME}" "pip"
@@ -220,10 +219,12 @@ mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 pyenv-exec virtualenv "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
-# create symlink of `python' bound for actual executable
-if [ ! -f "$VIRTUALENV_PYTHON_BIN" ]; then
-  if [ -f "${VIRTUALENV_PATH}/bin/$(basename "${PYTHON_BIN}")" ]; then
-    ( cd "${VIRTUALENV_PATH}/bin" && ln -fs "$(basename "${PYTHON_BIN}")" python )
+# Create symlink of `python' bound for actual executable
+# TODO: remove this if virtualenv treats `python` executable
+if [ ! -e "${VIRTUALENV_PATH}/bin/python" ]; then
+  PYTHON_BIN="$(pyenv-which python)"
+  if [ -L "${PYTHON_BIN}" ] && [ -e "${VIRTUALENV_PATH}/bin/$(basename "$(resolve_link "${PYTHON_BIN}")")" ]; then
+    ( cd "${VIRTUALENV_PATH}/bin" && ln -s "${PYTHON_BIN}" "python" )
   fi
 fi
 

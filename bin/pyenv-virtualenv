@@ -94,7 +94,9 @@ fi
 VIRTUALENV_OPTIONS=()
 
 unset FORCE
+unset QUIET
 unset UPGRADE
+unset VERBOSE
 
 parse_options "$@"
 for option in "${OPTIONS[@]}"; do
@@ -105,15 +107,18 @@ for option in "${OPTIONS[@]}"; do
   "h" | "help" )
     usage 0
     ;;
+  "q" | "quiet" )
+    QUIET="--quiet"
+    ;;
   "u" | "upgrade" )
     UPGRADE=true
+    ;;
+  "v" | "verbose" )
+    VERBOSE="--verbose"
     ;;
   "version" )
     version
     exit 0
-    ;;
-  "q" ) # virtualenv short options
-    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="-$option"
     ;;
   * ) # virtualenv long options
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
@@ -159,7 +164,7 @@ VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 require_executable "${VERSION_NAME}" "virtualenv" 2>/dev/null || {
   require_executable "${VERSION_NAME}" "pip"
   VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
-  pyenv-exec pip install "virtualenv${VIRTUALENV_VERSION%==}"
+  pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
   pyenv-rehash
 }
 
@@ -206,7 +211,7 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
 
   if [ -n "$UPGRADE" ]; then
     require_executable "${VIRTUALENV_NAME}" "pip"
-    PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip freeze > "${UPGRADE_LIST}"
+    PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip freeze >"${UPGRADE_LIST}"
     mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
   fi
 fi
@@ -227,7 +232,7 @@ STATUS=0
 # change to cache directory to reuse them between invocation.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-pyenv-exec virtualenv "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
 # Create symlink of `python' bound for actual executable
 # TODO: remove this if virtualenv doesn't really need this
@@ -242,7 +247,7 @@ fi
 if [ -n "$UPGRADE" ]; then
   UPGRADE_STATUS=0
   require_executable "${VIRTUALENV_NAME}" "pip" || UPGRADE_STATUS=1
-  PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip install --requirement "${UPGRADE_LIST}" || UPGRADE_STATUS=$?
+  PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip install $QUIET $VERBOSE --requirement "${UPGRADE_LIST}" || UPGRADE_STATUS=$?
   if [ "$UPGRADE_STATUS" == "0" ]; then
     rm -f "${UPGRADE_LIST}"
     rm -fr "${UPGRADE_PATH}"

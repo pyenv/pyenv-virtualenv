@@ -30,10 +30,31 @@ To create a virtualenv for the Python version use with pyenv, run
 `pyenv virtualenv` with tha exact name of the version you want to create
 virtualenv. For example,
 
-    $ pyenv virtualenv 2.7.3 venv27
+    $ pyenv virtualenv 2.7.5 venv27
 
 virtualenvs will be created into a directory of the same name
 under `~/.pyenv/versions`.
+
+
+### Create virtualenv from current version
+
+If there is only one argument is given to `pyenv virtualenv`,
+virtualenv will be created with given name based on current
+version.
+
+    $ pyenv version
+    3.3.2 (set by /home/yyuu/.pyenv/version)
+    $ pyenv virtualenv venv33
+
+
+### List existing virtualenvs
+
+`pyenv virtualenvs` shows you the list of existing virtualenvs.
+
+    $ pyenv virtualenvs
+    venv27 (created from /home/yyuu/.pyenv/versions/2.7.5)
+    venv33 (created from /home/yyuu/.pyenv/versions/3.3.2)
+
 
 ### Special environment variables
 
@@ -42,8 +63,8 @@ You can set certain environment variables to control the pyenv-virtualenv.
 * `PYENV_VIRTUALENV_CACHE_PATH`, if set, specifies a directory to use for
   caching downloaded package files.
 * `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to install desired
-  version of virtualenv. If the version has not been installed,
-  pyenv-virtualenv will try to download it.
+  version of virtualenv. If the virtualenv has not been installed,
+  pyenv-virtualenv will try to install the given version of virtualenv.
 
 
 ## Version History

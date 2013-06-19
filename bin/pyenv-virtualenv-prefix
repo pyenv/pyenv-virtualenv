@@ -12,8 +12,30 @@ if [ -z "$PYENV_ROOT" ]; then
 fi
 
 if [ -n "$1" ]; then
-  export PYENV_VERSION="$1"
+  versions=($@)
+  IFS=: PYENV_VERSION="${versions[*]}"
+  export PYENV_VERSION
+else
+  IFS=: versions=($(pyenv-version-name))
 fi
 
-PYTHON_BIN="$(pyenv-which python)"
-"${PYTHON_BIN}" -c 'import sys;print(sys.real_prefix)' 2>/dev/null
+real_prefix() { # virtualenv
+  local version="$1"
+  PYENV_VERSION="${version}" pyenv-exec python -c 'import sys;print(sys.real_prefix)' 2>/dev/null
+}
+
+VIRTUALENV_PREFIX_PATHS=()
+for version in "${versions[@]}"; do
+  PREFIX="$(pyenv-prefix "${version}")"
+  if [ -f "${PREFIX}/bin/activate" ]; then
+    VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || true)"
+    if [ -d "${VIRTUALENV_PREFIX_PATH}" ]; then
+      VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "$VIRTUALENV_PREFIX_PATH")
+    fi
+  else
+    echo "pyenv: version \`${version}' is not a virtualenv" 1>&2
+    exit 1
+  fi
+done
+
+IFS=: echo "${VIRTUALENV_PREFIX_PATHS[*]}"

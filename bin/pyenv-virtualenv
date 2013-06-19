@@ -67,14 +67,14 @@ abs_dirname() {
 }
 
 version() {
-  local version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
+  local version="$(virtualenv --version 2>/dev/null || true)"
   echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
 }
 
 usage() {
   # We can remove the sed fallback once pyenv 0.2.0 is widely available.
   pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
-  pyenv-exec virtualenv --help 2>/dev/null || true
+  virtualenv --help 2>/dev/null || true
   [ -z "$1" ] || exit "$1"
 }
 
@@ -87,6 +87,14 @@ require_executable() {
   fi
 }
 
+virtualenv() {
+  if [ -n "$PYVENV" ]; then
+    pyenv-exec pyvenv "$@"
+  else
+    pyenv-exec virtualenv "$@"
+  fi
+}
+
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
   PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
@@ -94,6 +102,7 @@ fi
 VIRTUALENV_OPTIONS=()
 
 unset FORCE
+unset PYVENV
 unset QUIET
 unset UPGRADE
 unset VERBOSE
@@ -106,6 +115,9 @@ for option in "${OPTIONS[@]}"; do
     ;;
   "h" | "help" )
     usage 0
+    ;;
+  "pyvenv" )
+    PYVENV=true
     ;;
   "q" | "quiet" )
     QUIET="--quiet"
@@ -161,12 +173,23 @@ UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
-require_executable "${VERSION_NAME}" "virtualenv" 2>/dev/null || {
-  require_executable "${VERSION_NAME}" "pip"
-  VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
-  pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
-  pyenv-rehash
-}
+if [ -n "$PYVENV" ]; then
+  require_executable "${VERSION_NAME}" "pyvenv"
+  # Unset some arguments not supported by pyvenv
+  unset QUIET
+  unset VERBOSE
+  if [ -n "$UPGRADE" ]; then
+    unset UPGRADE
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
+  fi
+else
+  require_executable "${VERSION_NAME}" "virtualenv" || {
+    require_executable "${VERSION_NAME}" "pip"
+    VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
+    pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
+    pyenv-rehash
+  }
+fi
 
 # Unset environment variables which starts with `VIRTUALENV_`.
 # These variables are reserved for virtualenv.
@@ -232,7 +255,7 @@ STATUS=0
 # change to cache directory to reuse them between invocation.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
 # Create symlink of `python' bound for actual executable
 # TODO: remove this if virtualenv doesn't really need this

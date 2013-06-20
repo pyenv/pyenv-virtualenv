@@ -294,11 +294,11 @@ fi
 
 if virtualenv_is_pyvenv; then
   PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import setuptools' 1>/dev/null 2>&1 || {
-    http get "https://bitbucket.org/pypa/setuptools/raw/0.7.4/ez_setup.py" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+    http get "https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION:-0.7.4}/ez_setup.py" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
   }
 
   PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-which pip 1>/dev/null 2>&1 || {
-    http get "https://raw.github.com/pypa/pip/master/contrib/get-pip.py" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+    http get "https://raw.github.com/pypa/pip/${PIP_VERSION:-master}/contrib/get-pip.py" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
   }
 fi
 

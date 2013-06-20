@@ -100,14 +100,14 @@ http_get_wget() {
 }
 
 version() {
-  local version="$(virtualenv --version 2>/dev/null || true)"
+  local version="$(venv --version 2>/dev/null || true)"
   echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
 }
 
 usage() {
   # We can remove the sed fallback once pyenv 0.2.0 is widely available.
   pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
-  virtualenv --help 2>/dev/null || true
+  venv --help 2>/dev/null || true
   [ -z "$1" ] || exit "$1"
 }
 
@@ -120,7 +120,7 @@ virtualenv_is_pyvenv() {
   fi
 }
 
-virtualenv() {
+venv() {
   if virtualenv_is_pyvenv; then
     pyenv-exec pyvenv "$@"
   else
@@ -281,7 +281,7 @@ STATUS=0
 # change to cache directory to reuse them between invocation.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
 # Create symlink of `python' bound for actual executable
 # TODO: remove this if virtualenv doesn't really need this

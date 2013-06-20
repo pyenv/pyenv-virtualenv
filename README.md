@@ -65,6 +65,10 @@ You can set certain environment variables to control the pyenv-virtualenv.
 * `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to install desired
   version of virtualenv. If the virtualenv has not been installed,
   pyenv-virtualenv will try to install the given version of virtualenv.
+* `EZ_SETUP_URL` and `GET_PIP_URL`, if set and pyvenv is preferred
+  than virtualenv, download `ez_setup.py` and `get_pip.py` from specified URL.
+* `SETUPTOOLS_VERSION` and `PIP_VERSION`, if set and pyvenv is preferred
+  than virtualenv, install specified version of setuptools and pip.
 
 
 ## Version History
@@ -72,6 +76,8 @@ You can set certain environment variables to control the pyenv-virtualenv.
 #### 2013XXYY
 
  * Removed bundled `virtualenv.py` script. Now pyenv-virtualenv installs `virtualenv` package into source version and then use it.
+ * On Python 3.3+, use `pyvenv` as virtualenv command if `virtualenv` is not available.
+ * Install setuptools and pip into environments created by `pyvenv`.
 
 #### 20130614
 

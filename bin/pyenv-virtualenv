@@ -6,7 +6,8 @@
 #        pyenv virtualenv --version
 #        pyenv virtualenv --help
 #
-#   -u/--upgrade     Upgrade existing virtualenv with migrating installed packages
+#   -u/--upgrade     Upgrade existing virtualenv to use new version of Python,
+#                    assuming Python has been upgraded in-place.
 #   -f/--force       Install even if the version appears to be installed already
 #
 
@@ -66,24 +67,64 @@ abs_dirname() {
   cd "$cwd"
 }
 
+http() {
+  local method="$1"
+  local url="$2"
+  local file="$3"
+  [ -n "$url" ] || return 1
+
+  if type curl &>/dev/null; then
+    "http_${method}_curl" "$url" "$file"
+  elif type wget &>/dev/null; then
+    "http_${method}_wget" "$url" "$file"
+  else
+    echo "error: please install \`curl\` or \`wget\` and try again" >&2
+    exit 1
+  fi
+}
+
+http_head_curl() {
+  curl -qsILf "$1" >&4 2>&1
+}
+
+http_get_curl() {
+  curl -C - -o "${2:--}" -qsSLf "$1"
+}
+
+http_head_wget() {
+  wget -q --spider "$1" >&4 2>&1
+}
+
+http_get_wget() {
+  wget -nv -c -O "${2:--}" "$1"
+}
+
 version() {
-  local version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
+  local version="$(venv --version 2>/dev/null || true)"
   echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
 }
 
 usage() {
   # We can remove the sed fallback once pyenv 0.2.0 is widely available.
   pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
-  pyenv-exec virtualenv --help 2>/dev/null || true
+  venv --help 2>/dev/null || true
   [ -z "$1" ] || exit "$1"
 }
 
-require_executable() {
-  local version="$1"
-  local executable="$2"
-  if ! PYENV_VERSION="${version}" pyenv-which "${executable}" 1>/dev/null 2>&1; then
-    echo "pyenv: ${executable} is not installed in ${version}." 1>&2
+virtualenv_is_pyvenv() {
+  # Use pyvenv only if virtualenv is not installed and there is pyvenv
+  if pyenv-which "virtualenv" 1>/dev/null 2>&1; then
     return 1
+  else
+    pyenv-which "pyvenv" 1>/dev/null 2>&1
+  fi
+}
+
+venv() {
+  if virtualenv_is_pyvenv; then
+    pyenv-exec pyvenv "$@"
+  else
+    pyenv-exec virtualenv "$@"
   fi
 }
 
@@ -161,12 +202,21 @@ UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
-require_executable "${VERSION_NAME}" "virtualenv" 2>/dev/null || {
-  require_executable "${VERSION_NAME}" "pip"
-  VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
-  pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
-  pyenv-rehash
-}
+if virtualenv_is_pyvenv; then
+  # Unset some arguments not supported by pyvenv
+  unset QUIET
+  unset VERBOSE
+  if [ -n "$UPGRADE" ]; then
+    unset UPGRADE
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
+  fi
+else
+  pyenv-which "virtualenv" 1>/dev/null 2>&1 || {
+    VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
+    pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
+    pyenv-rehash
+  }
+fi
 
 # Unset environment variables which starts with `VIRTUALENV_`.
 # These variables are reserved for virtualenv.
@@ -210,7 +260,6 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    require_executable "${VIRTUALENV_NAME}" "pip"
     PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip freeze >"${UPGRADE_LIST}"
     mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
   fi
@@ -232,7 +281,21 @@ STATUS=0
 # change to cache directory to reuse them between invocation.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" && {
+  if virtualenv_is_pyvenv; then
+    [ -n "${EZ_SETUP_URL}" ] || EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION:-0.7.4}/ez_setup.py"
+    PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import setuptools' 1>/dev/null 2>&1 || {
+      echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
+      http get "${EZ_SETUP_URL}" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+    }
+
+    [ -n "${GET_PIP_URL}" ] || GET_PIP_URL="https://raw.github.com/pypa/pip/${PIP_VERSION:-master}/contrib/get-pip.py"
+    PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-which pip 1>/dev/null 2>&1 || {
+      echo "Installing pip from ${GET_PIP_URL}..." 1>&2
+      http get "${GET_PIP_URL}" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+    }
+  fi
+} || STATUS="$?"
 
 # Create symlink of `python' bound for actual executable
 # TODO: remove this if virtualenv doesn't really need this
@@ -246,7 +309,6 @@ fi
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
   UPGRADE_STATUS=0
-  require_executable "${VIRTUALENV_NAME}" "pip" || UPGRADE_STATUS=1
   PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip install $QUIET $VERBOSE --requirement "${UPGRADE_LIST}" || UPGRADE_STATUS=$?
   if [ "$UPGRADE_STATUS" == "0" ]; then
     rm -f "${UPGRADE_LIST}"

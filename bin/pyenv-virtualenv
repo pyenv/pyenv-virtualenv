@@ -67,6 +67,38 @@ abs_dirname() {
   cd "$cwd"
 }
 
+http() {
+  local method="$1"
+  local url="$2"
+  local file="$3"
+  [ -n "$url" ] || return 1
+
+  if type curl &>/dev/null; then
+    "http_${method}_curl" "$url" "$file"
+  elif type wget &>/dev/null; then
+    "http_${method}_wget" "$url" "$file"
+  else
+    echo "error: please install \`curl\` or \`wget\` and try again" >&2
+    exit 1
+  fi
+}
+
+http_head_curl() {
+  curl -qsILf "$1" >&4 2>&1
+}
+
+http_get_curl() {
+  curl -C - -o "${2:--}" -qsSLf "$1"
+}
+
+http_head_wget() {
+  wget -q --spider "$1" >&4 2>&1
+}
+
+http_get_wget() {
+  wget -nv -c -O "${2:--}" "$1"
+}
+
 version() {
   local version="$(virtualenv --version 2>/dev/null || true)"
   echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
@@ -258,6 +290,16 @@ if [ ! -e "${VIRTUALENV_PATH}/bin/python" ]; then
   if [ -L "${PYTHON_BIN}" ] && [ -e "${VIRTUALENV_PATH}/bin/$(basename "$(resolve_link "${PYTHON_BIN}")")" ]; then
     ( cd "${VIRTUALENV_PATH}/bin" && ln -s "${PYTHON_BIN}" "python" )
   fi
+fi
+
+if virtualenv_is_pyvenv; then
+  PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import setuptools' 1>/dev/null 2>&1 || {
+    http get "https://bitbucket.org/pypa/setuptools/raw/0.7.4/ez_setup.py" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+  }
+
+  PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-which pip 1>/dev/null 2>&1 || {
+    http get "https://raw.github.com/pypa/pip/master/contrib/get-pip.py" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+  }
 fi
 
 ## Migrate previously installed packages from requirements.txt

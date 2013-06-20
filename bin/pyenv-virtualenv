@@ -297,15 +297,6 @@ venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" && {
   fi
 } || STATUS="$?"
 
-# Create symlink of `python' bound for actual executable
-# TODO: remove this if virtualenv doesn't really need this
-if [ ! -e "${VIRTUALENV_PATH}/bin/python" ]; then
-  PYTHON_BIN="$(pyenv-which python)"
-  if [ -L "${PYTHON_BIN}" ] && [ -e "${VIRTUALENV_PATH}/bin/$(basename "$(resolve_link "${PYTHON_BIN}")")" ]; then
-    ( cd "${VIRTUALENV_PATH}/bin" && ln -s "${PYTHON_BIN}" "python" )
-  fi
-fi
-
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
   UPGRADE_STATUS=0

@@ -48,9 +48,8 @@ print_version() {
 
 for version in $(pyenv-versions --bare); do
   if [[ "${version}" != "system" ]]; then
-    prefix="$(pyenv-prefix "${version}" 2>/dev/null || true)"
     virtualenv_prefix="$(pyenv-virtualenv-prefix "${version}" 2>/dev/null || true)"
-    if [ -d "${prefix}" ] && [ -d "${virtualenv_prefix}" ]; then
+    if [ -d "${virtualenv_prefix}" ]; then
       print_version "${version}" " (created from ${virtualenv_prefix})"
     fi
   fi

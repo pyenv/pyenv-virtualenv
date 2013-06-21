@@ -12,27 +12,46 @@ if [ -z "$PYENV_ROOT" ]; then
   PYENV_ROOT="${HOME}/.pyenv"
 fi
 
-unset BARE
-
 if [ "$1" = "--bare" ]; then
-  BARE=true
+  hit_prefix=""
+  miss_prefix=""
+  current_versions=()
+  print_origin=""
+else
+  hit_prefix="* "
+  miss_prefix="  "
+  current_versions=($(IFS=:; for version in $(pyenv-version-name); do echo "$version"; done))
+  print_origin="1"
 fi
 
+array_exists() {
+  local x car="$1"
+  shift
+  for x in "$@"; do
+    [ "${x}" = "${car}" ] && return 0
+  done
+  return 1
+}
+
 print_version() {
-  local version="$1"
-  if [ -n "${BARE}" ]; then
-    echo "${version}"
+  if [ -n "${print_origin}" ]; then
+    local version_origin="$2"
   else
-    local prefix="$(pyenv-virtualenv-prefix "${version}")"
-    echo "${version} (created from ${prefix:-unknown})"
+    local version_origin=""
+  fi
+  if array_exists "$1" "${current_versions[@]}"; then
+    echo "${hit_prefix}${1}${version_origin}"
+  else
+    echo "${miss_prefix}${1}${version_origin}"
   fi
 }
 
-versions=($(pyenv-versions --bare))
-
-for version in "${versions[@]}"; do
-  prefix="$(pyenv-prefix "${version}")"
-  if [ -f "${prefix}/bin/activate" ]; then
-    print_version "${version}"
+for version in $(pyenv-versions --bare); do
+  if [[ "${version}" != "system" ]]; then
+    prefix="$(pyenv-prefix "${version}" 2>/dev/null || true)"
+    virtualenv_prefix="$(pyenv-virtualenv-prefix "${version}" 2>/dev/null || true)"
+    if [ -d "${prefix}" ] && [ -d "${virtualenv_prefix}" ]; then
+      print_version "${version}" " (created from ${virtualenv_prefix})"
+    fi
   fi
 done

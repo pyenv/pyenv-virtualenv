@@ -51,9 +51,10 @@ version.
 
 `pyenv virtualenvs` shows you the list of existing virtualenvs.
 
+    $ pyenv shell venv27
     $ pyenv virtualenvs
-    venv27 (created from /home/yyuu/.pyenv/versions/2.7.5)
-    venv33 (created from /home/yyuu/.pyenv/versions/3.3.2)
+    * venv27 (created from /home/yyuu/.pyenv/versions/2.7.5)
+      venv33 (created from /home/yyuu/.pyenv/versions/3.3.2)
 
 
 ### Special environment variables

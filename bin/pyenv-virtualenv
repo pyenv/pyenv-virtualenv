@@ -283,7 +283,7 @@ mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" && {
   if virtualenv_is_pyvenv; then
-    [ -n "${EZ_SETUP_URL}" ] || EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION:-0.7.7}/ez_setup.py"
+    [ -n "${EZ_SETUP_URL}" ] || EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION:-0.8}/ez_setup.py"
     PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import setuptools' 1>/dev/null 2>&1 || {
       echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
       http get "${EZ_SETUP_URL}" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python

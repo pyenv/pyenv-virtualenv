@@ -22,6 +22,23 @@ the `~/.pyenv/plugins/pyenv-virtualenv` directory. From that directory, you
 can check out a specific release tag. To update pyenv-virtualenv, run `git
 pull` to download the latest changes.
 
+### Installing with Homebrew (for OS X users)
+
+Mac OS X users can install pyenv-virtualenv with the
+[Homebrew](http://brew.sh) package manager. This
+will give you access to the `pyenv-virtualenv` command. If you have pyenv
+installed, you will also be able to use the `pyenv virtualenv` command.
+
+*This is recommended method of installation if you installed pyenv
+ with Homebrew.*
+
+    brew install pyenv-virtualenv
+
+Or, if you would like to install the latest development release:
+
+    brew install --HEAD pyenv-virtualenv
+
+
 ## Usage
 
 ### Using `pyenv virtualenv` with pyenv

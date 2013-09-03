@@ -18,9 +18,13 @@ Installing pyenv-virtualenv as a pyenv plugin will give you access to the
     $ git clone git://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
 
 This will install the latest development version of pyenv-virtualenv into
-the `~/.pyenv/plugins/pyenv-virtualenv` directory. From that directory, you
-can check out a specific release tag. To update pyenv-virtualenv, run `git
-pull` to download the latest changes.
+the `~/.pyenv/plugins/pyenv-virtualenv` directory. 
+**Important note:**  If you installed pyenv into a non-standard directory, make sure that you clone this
+repo into the 'plugins' directory of wherever you installed into.
+
+From inside that directory you can:
+ - Check out a specific release tag. 
+ - Get the latest development release by running `git pull` to download the latest changes.
 
 ### Installing with Homebrew (for OS X users)
 

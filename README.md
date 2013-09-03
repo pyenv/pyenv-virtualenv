@@ -48,13 +48,13 @@ Or, if you would like to install the latest development release:
 ### Using `pyenv virtualenv` with pyenv
 
 To create a virtualenv for the Python version use with pyenv, run
-`pyenv virtualenv` with tha exact name of the version you want to create
-virtualenv. For example,
+`pyenv virtualenv`, specifying the Python version you want and the name
+of the virtualenv directory. For example,
 
-    $ pyenv virtualenv 2.7.5 venv27
+    $ pyenv virtualenv 2.7.5 my-virtual-env-2.7.5
 
-virtualenvs will be created into a directory of the same name
-under `~/.pyenv/versions`.
+will create a virtualenv based on Python 2.7.5 
+under `~/.pyenv/versions` in a folder called `my-virtual-env-2.7.5`. 
 
 
 ### Create virtualenv from current version

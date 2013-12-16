@@ -95,6 +95,10 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20131216
+
+ * Use latest release of setuptools and pip if the version not given via environment variables.
+
 #### 20130622
 
  * Removed bundled `virtualenv.py` script. Now pyenv-virtualenv installs `virtualenv` package into source version and then use it.

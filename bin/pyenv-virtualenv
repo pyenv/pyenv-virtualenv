@@ -148,6 +148,10 @@ for option in "${OPTIONS[@]}"; do
   "h" | "help" )
     usage 0
     ;;
+  "p" )
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${ARGUMENTS[0]}"
+    ARGUMENTS=("${ARGUMENTS[@]:1}") # shift 1
+    ;;
   "q" | "quiet" )
     QUIET="--quiet"
     ;;

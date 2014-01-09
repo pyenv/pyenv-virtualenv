@@ -128,6 +128,44 @@ venv() {
   fi
 }
 
+install_setuptools() {
+  local version="$1"
+  { if [ "${EZ_SETUP+defined}" ] && [ -f "${EZ_SETUP}" ]; then
+      echo "Installing setuptools from ${EZ_SETUP}..." 1>&2
+      cat "${EZ_SETUP}"
+    else
+      [ -n "${EZ_SETUP_URL}" ] || {
+        if [ -n "${SETUPTOOLS_VERSION}" ]; then
+          EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION}/ez_setup.py"
+        else
+          EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/downloads/ez_setup.py"
+        fi
+      }
+      echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
+      http get "${EZ_SETUP_URL}"
+    fi
+  } | PYENV_VERSION="${version}" pyenv-exec python
+}
+
+install_pip() {
+  local version="$1"
+  { if [ "${GET_PIP+defined}" ] && [ -f "${GET_PIP}" ]; then
+      echo "Installing pip from ${GET_PIP}..." 1>&2
+      cat "${GET_PIP}"
+    else
+      [ -n "${GET_PIP_URL}" ] || {
+        if [ -n "${PIP_VERSION}" ]; then
+          GET_PIP_URL="https://raw.github.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
+        else
+          GET_PIP_URL="https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
+        fi
+      }
+      echo "Installing pip from ${GET_PIP_URL}..." 1>&2
+      http get "${GET_PIP_URL}"
+    fi
+  } | PYENV_VERSION="${version}" pyenv-exec python
+}
+
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
   PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
@@ -287,28 +325,12 @@ mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" && {
   if virtualenv_is_pyvenv; then
-    [ -n "${EZ_SETUP_URL}" ] || {
-      if [ -n "${SETUPTOOLS_VERSION}" ]; then
-        EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION}/ez_setup.py"
-      else
-        EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/downloads/ez_setup.py"
-      fi
-    }
     PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import setuptools' 1>/dev/null 2>&1 || {
-      echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
-      http get "${EZ_SETUP_URL}" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+      install_setuptools "${VIRTUALENV_NAME}" 1>&2
     }
 
-    [ -n "${GET_PIP_URL}" ] || {
-      if [ -n "${PIP_VERSION}" ]; then
-        GET_PIP_URL="https://raw.github.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
-      else
-        GET_PIP_URL="https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
-      fi
-    }
     PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-which pip 1>/dev/null 2>&1 || {
-      echo "Installing pip from ${GET_PIP_URL}..." 1>&2
-      http get "${GET_PIP_URL}" | PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python
+      install_pip "${VIRTUALENV_NAME}" 1>&2
     }
   fi
 } || STATUS="$?"

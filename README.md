@@ -51,10 +51,10 @@ To create a virtualenv for the Python version use with pyenv, run
 `pyenv virtualenv`, specifying the Python version you want and the name
 of the virtualenv directory. For example,
 
-    $ pyenv virtualenv 2.7.5 my-virtual-env-2.7.5
+    $ pyenv virtualenv 2.7.6 my-virtual-env-2.7.6
 
-will create a virtualenv based on Python 2.7.5 
-under `~/.pyenv/versions` in a folder called `my-virtual-env-2.7.5`. 
+will create a virtualenv based on Python 2.7.6
+under `~/.pyenv/versions` in a folder called `my-virtual-env-2.7.6`. 
 
 
 ### Create virtualenv from current version
@@ -64,7 +64,7 @@ virtualenv will be created with given name based on current
 version.
 
     $ pyenv version
-    3.3.2 (set by /home/yyuu/.pyenv/version)
+    3.3.3 (set by /home/yyuu/.pyenv/version)
     $ pyenv virtualenv venv33
 
 
@@ -74,8 +74,8 @@ version.
 
     $ pyenv shell venv27
     $ pyenv virtualenvs
-    * venv27 (created from /home/yyuu/.pyenv/versions/2.7.5)
-      venv33 (created from /home/yyuu/.pyenv/versions/3.3.2)
+    * venv27 (created from /home/yyuu/.pyenv/versions/2.7.6)
+      venv33 (created from /home/yyuu/.pyenv/versions/3.3.3)
 
 
 ### Special environment variables
@@ -96,6 +96,11 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 
 ## Version History
+
+#### 20140110
+
+ * Support environment variables of `EZ_SETUP` and `GET_PIP`.
+ * Support a short option `-p` of `virtualenv`.
 
 #### 20131216
 

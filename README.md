@@ -97,6 +97,10 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20140110.1
+
+ * Fix install script
+
 #### 20140110
 
  * Support environment variables of `EZ_SETUP` and `GET_PIP`.

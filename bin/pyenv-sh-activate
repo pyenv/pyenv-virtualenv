@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+#
+# Summary: Activate virtual environment
+#
+# Usage: pyenv activate <virtualenv>
+#        pyenv activate --unset
+#
+# Activate a Python virtualenv environment in current shell.
+# This acts almost as same as `pyenv shell`, but this invokes the `activate`
+# script in your shell.
+#
+# <virtualenv> should be a string matching a Python version known to pyenv.
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+# Provide pyenv completions
+if [ "$1" = "--complete" ]; then
+  echo --unset
+  exec pyenv-virtualenvs --bare
+fi
+
+versions=("$@")
+shell="$(basename "${PYENV_SHELL:-$SHELL}")"
+
+if [ -z "$versions" ]; then
+  OLDIFS="$IFS"
+  IFS=: versions=($(pyenv-version-name))
+  IFS="$OLDIFS"
+fi
+
+if [ "$1" = "--unset" ]; then
+  echo "pyenv deactivate"
+  exit
+fi
+
+if [ "${#versions[@]}" -gt 1 ]; then
+  echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
+  exit 1
+fi
+
+pyenv-virtualenv-prefix "${versions}" 1>/dev/null
+
+echo "pyenv shell \"${versions}\""
+case "$shell" in
+fish ) echo ". \"$(pyenv-prefix "${versions}")/bin/activate.fish\"" ;;
+*    ) echo "source \"$(pyenv-prefix "${versions}")/bin/activate\"" ;;
+esac

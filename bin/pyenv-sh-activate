@@ -39,7 +39,7 @@ if [ "${#versions[@]}" -gt 1 ]; then
   exit 1
 fi
 
-pyenv-virtualenv-prefix "${versions}"
+pyenv-virtualenv-prefix "${versions}" 1>/dev/null
 
 echo "pyenv shell \"${versions}\""
 case "$shell" in

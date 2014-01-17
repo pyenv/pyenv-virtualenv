@@ -230,7 +230,7 @@ for option in "${OPTIONS[@]}"; do
 done
 
 if [[ "${#ARGUMENTS[@]}" == 0 ]]; then
-  echo "pyenv: no virtualenv name given." 1>&2
+  echo "pyenv-virtualenv: no virtualenv name given." 1>&2
   exit 1
 elif [[ "${#ARGUMENTS[@]}" == 1 ]]; then
   # If only one argument given, use current version as source version
@@ -312,7 +312,7 @@ done
 # the --force option was specified.
 if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   if [ -z "$FORCE" ]; then
-    echo "pyenv: ${VIRTUALENV_PATH} already exists" 1>&2
+    echo "pyenv-virtualenv: ${VIRTUALENV_PATH} already exists" 1>&2
     read -p "continue with installation? (y/N) "
 
     case "$REPLY" in

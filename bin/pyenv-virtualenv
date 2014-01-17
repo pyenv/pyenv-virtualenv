@@ -344,7 +344,9 @@ STATUS=0
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" && {
-  virtualenv_is_pyvenv && ensurepip "${VIRTUALENV_NAME}"
+  if virtualenv_is_pyvenv; then
+    ensurepip "${VIRTUALENV_NAME}"
+  fi
 } 1>&2 || STATUS="$?"
 
 ## Migrate previously installed packages from requirements.txt

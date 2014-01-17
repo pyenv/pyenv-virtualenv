@@ -78,6 +78,23 @@ version.
       venv33 (created from /home/yyuu/.pyenv/versions/3.3.3)
 
 
+### Activate virtualenv
+
+Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might require you to `activate` the virtualenv.
+`pyenv activate` lets you to activate the virtualenv into your shell.
+
+    $ pyenv activate venv27
+
+`pyenv activate` acts almost like following commands.
+
+    $ pyenv shell venv27
+    $ source "$(pyenv prefix venv27)/bin/activate"
+
+You can deactivate the activate'd virtualenv by `pyenv deactivate`.
+
+    $ pyenv deactivate
+
+
 ### Special environment variables
 
 You can set certain environment variables to control the pyenv-virtualenv.

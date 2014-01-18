@@ -111,20 +111,15 @@ usage() {
   [ -z "$1" ] || exit "$1"
 }
 
-virtualenv_is_pyvenv() {
-  # Use pyvenv only if virtualenv is not installed and there is pyvenv
-  if pyenv-which "virtualenv" 1>/dev/null 2>&1; then
-    return 1
-  else
-    pyenv-which "pyvenv" 1>/dev/null 2>&1
-  fi
-}
-
 venv() {
-  if virtualenv_is_pyvenv; then
-    pyenv-exec pyvenv "$@"
+  local args=("$@")
+  if [ -n "${USE_PYVENV}" ]; then
+    pyenv-exec pyvenv "${args[@]}"
+
+    local last="${args[${#args[@]}-1]}"
+    ensurepip "${last##*/}"
   else
-    pyenv-exec virtualenv "$@"
+    pyenv-exec virtualenv "${args[@]}"
   fi
 }
 
@@ -172,6 +167,12 @@ install_pip() {
       http get "${GET_PIP_URL}"
     fi
   } | PYENV_VERSION="${version}" pyenv-exec python
+}
+
+install_virtualenv() {
+  local version="$1"
+  VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
+  PYENV_VERSION="${version}" pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
 }
 
 ensurepip() {
@@ -272,7 +273,22 @@ UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
-if virtualenv_is_pyvenv; then
+unset HAS_VIRTUALENV
+unset HAS_PYVENV
+unset USE_PYVENV
+
+if pyenv-which "virtualenv" 1>/dev/null 2>&1; then
+  HAS_VIRTUALENV=1
+fi
+if pyenv-which "pyvenv" 1>/dev/null 2>&1; then
+  HAS_PYVENV=1
+fi
+# Use pyvenv only if virtualenv is not installed and there is pyvenv
+if [ -n "${HAS_PYVENV}" ] && [ -z "${HAS_VIRTUALENV}" ]; then
+  USE_PYVENV=1
+fi
+
+if [ -n "${USE_PYVENV}" ]; then
   # Unset some arguments not supported by pyvenv
   unset QUIET
   unset VERBOSE
@@ -281,11 +297,10 @@ if virtualenv_is_pyvenv; then
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
   fi
 else
-  pyenv-which "virtualenv" 1>/dev/null 2>&1 || {
-    VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
-    pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
-    pyenv-rehash
-  }
+  if [ -z "${HAS_VIRTUALENV}" ]; then
+    install_virtualenv "${PYENV_VERSION}"
+    HAS_VIRTUALENV=1
+  fi
 fi
 
 # Unset environment variables which starts with `VIRTUALENV_`.
@@ -352,11 +367,7 @@ STATUS=0
 # change to cache directory to reuse them between invocation.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" && {
-  if virtualenv_is_pyvenv; then
-    ensurepip "${VIRTUALENV_NAME}"
-  fi
-} 1>&2 || STATUS="$?"
+venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then

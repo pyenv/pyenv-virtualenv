@@ -1,5 +1,7 @@
 # pyenv-virtualenv (a.k.a. [python-virtualenv](https://github.com/yyuu/python-virtualenv))
 
+[![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.png)](https://travis-ci.org/yyuu/pyenv-virtualenv)
+
 pyenv-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
 that provides a `pyenv virtualenv` command to create virtualenv for Python
 on UNIX-like systems.

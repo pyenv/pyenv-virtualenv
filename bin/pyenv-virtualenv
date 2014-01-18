@@ -195,6 +195,32 @@ ensurepip() {
   fi
 }
 
+prepare_upgrade() {
+  local version="$1"
+  local prefix="$2"
+  PYENV_VERSION="${version}" pyenv-exec pip freeze >"${UPGRADE_LIST}"
+  mv -f "${prefix}" "${UPGRADE_PATH}"
+}
+
+upgrade() {
+  local version="$1"
+  local prefix="$2"
+  ## Migrate previously installed packages from requirements.txt
+  if ! PYENV_VERSION="${version}" pyenv-exec pip install $QUIET $VERBOSE --requirement "${UPGRADE_LIST}"; then
+    { echo
+      echo "UPGRADE FAILED"
+      echo
+      echo "Inspect or clean up the original tree at ${UPGRADE_PATH}"
+      echo
+      echo "Package list:"
+      cat "${UPGRADE_LIST}"
+    } 1>&2
+    return 1
+  fi
+  rm -f "${UPGRADE_LIST}"
+  rm -fr "${UPGRADE_PATH}"
+}
+
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
   PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
@@ -346,8 +372,7 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip freeze >"${UPGRADE_LIST}"
-    mv -f "${VIRTUALENV_PATH}" "${UPGRADE_PATH}"
+    prepare_upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}"
   fi
 fi
 
@@ -371,22 +396,7 @@ venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="
 
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
-  UPGRADE_STATUS=0
-  PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec pip install $QUIET $VERBOSE --requirement "${UPGRADE_LIST}" || UPGRADE_STATUS=$?
-  if [ "$UPGRADE_STATUS" == "0" ]; then
-    rm -f "${UPGRADE_LIST}"
-    rm -fr "${UPGRADE_PATH}"
-  else
-    { echo
-      echo "UPGRADE FAILED"
-      echo
-      echo "Inspect or clean up the original tree at ${UPGRADE_PATH}"
-      echo
-      echo "Package list:"
-      cat "${UPGRADE_LIST}"
-    } 1>&2
-    STATUS="$UPGRADE_STATUS"
-  fi
+  upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}" || STATUS="$?"
 fi
 
 # Execute `after_virtualenv` hooks

@@ -309,9 +309,10 @@ after_virtualenv() {
 }
 
 # Load plugin hooks.
-for script in $(pyenv-hooks virtualenv); do
-  source "$script"
-done
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`pyenv-hooks virtualenv`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
 
 
 [ -d "${VIRTUALENV_PATH}" ] && PREFIX_EXISTS=1

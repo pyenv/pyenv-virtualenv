@@ -35,9 +35,7 @@ for version in "${versions[@]}"; do
   PREFIX="$(pyenv-prefix "${version}")"
   if [ -f "${PREFIX}/bin/activate" ]; then
     VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"
-    if [ -d "${VIRTUALENV_PREFIX_PATH}" ]; then
-      VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "$VIRTUALENV_PREFIX_PATH")
-    fi
+    VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "$VIRTUALENV_PREFIX_PATH")
   else
     echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
     exit 1

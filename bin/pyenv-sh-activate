@@ -20,6 +20,11 @@ if [ "$1" = "--complete" ]; then
   exec pyenv-virtualenvs --bare
 fi
 
+if [ "$1" = "--unset" ]; then
+  echo "pyenv deactivate"
+  exit
+fi
+
 versions=("$@")
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 
@@ -27,11 +32,6 @@ if [ -z "$versions" ]; then
   OLDIFS="$IFS"
   IFS=: versions=($(pyenv-version-name))
   IFS="$OLDIFS"
-fi
-
-if [ "$1" = "--unset" ]; then
-  echo "pyenv deactivate"
-  exit
 fi
 
 if [ "${#versions[@]}" -gt 1 ]; then

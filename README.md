@@ -17,7 +17,7 @@ to manage your virtualenvs.)
 Installing pyenv-virtualenv as a pyenv plugin will give you access to the
 `pyenv virtualenv` command.
 
-    $ git clone git://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+    $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
 
 This will install the latest development version of pyenv-virtualenv into
 the `~/.pyenv/plugins/pyenv-virtualenv` directory. 

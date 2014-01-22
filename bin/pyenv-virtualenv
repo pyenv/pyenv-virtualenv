@@ -25,6 +25,9 @@ if [ -z "$PYENV_ROOT" ]; then
   PYENV_ROOT="${HOME}/.pyenv"
 fi
 
+unset PIP_REQUIRE_VENV
+unset PIP_REQUIRE_VIRTUALENV
+
 # Define library functions
 parse_options() {
   OPTIONS=()

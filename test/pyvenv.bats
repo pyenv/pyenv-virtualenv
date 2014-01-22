@@ -97,6 +97,27 @@ rehashed
 OUT
 }
 
+@test "install virtualenv with unsetting troublesome pip options" {
+  stub_pyenv "3.2.1"
+  stub pyenv-which "virtualenv : false" \
+                   "pyvenv : false"
+  stub pyenv-exec "echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\"" \
+                  "echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+
+  PIP_REQUIRE_VENV="true" run pyenv-virtualenv venv
+
+  unstub_pyenv
+  unstub pyenv-which
+  unstub pyenv-exec
+
+  assert_success
+  assert_output <<OUT
+PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 pip install virtualenv
+PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
+rehashed
+OUT
+}
+
 @test "install pip without using ensurepip" {
   stub_pyenv "3.3.0"
   stub pyenv-which "virtualenv : false" \

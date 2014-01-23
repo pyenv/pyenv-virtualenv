@@ -103,8 +103,17 @@ http_get_wget() {
 }
 
 version() {
-  local version="$(venv --version 2>/dev/null || true)"
-  echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
+  detect_venv
+  local version
+  if [ -n "$USE_PYVENV" ]; then
+    version="$(pyenv-which pyvenv 2>/dev/null || true)"
+    version="${version#$(pyenv-root)/versions/}"
+    version="${version%/bin/pyvenv}"
+    echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv ${version:-unknown})"
+  else
+    version="$(venv --version 2>/dev/null || true)"
+    echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
+  fi
 }
 
 usage() {
@@ -112,6 +121,19 @@ usage() {
   pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
   venv --help 2>/dev/null || true
   [ -z "$1" ] || exit "$1"
+}
+
+detect_venv() {
+  if pyenv-which "virtualenv" 1>/dev/null 2>&1; then
+    HAS_VIRTUALENV=1
+  fi
+  if pyenv-which "pyvenv" 1>/dev/null 2>&1; then
+    HAS_PYVENV=1
+  fi
+  # Use pyvenv only if virtualenv is not installed and there is pyvenv
+  if [ -n "${HAS_PYVENV}" ] && [ -z "${HAS_VIRTUALENV}" ]; then
+    USE_PYVENV=1
+  fi
 }
 
 venv() {
@@ -305,17 +327,7 @@ VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 unset HAS_VIRTUALENV
 unset HAS_PYVENV
 unset USE_PYVENV
-
-if pyenv-which "virtualenv" 1>/dev/null 2>&1; then
-  HAS_VIRTUALENV=1
-fi
-if pyenv-which "pyvenv" 1>/dev/null 2>&1; then
-  HAS_PYVENV=1
-fi
-# Use pyvenv only if virtualenv is not installed and there is pyvenv
-if [ -n "${HAS_PYVENV}" ] && [ -z "${HAS_VIRTUALENV}" ]; then
-  USE_PYVENV=1
-fi
+detect_venv
 
 if [ -n "${USE_PYVENV}" ]; then
   # Unset some arguments not supported by pyvenv

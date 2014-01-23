@@ -1,4 +1,4 @@
-# pyenv-virtualenv (a.k.a. [python-virtualenv](https://github.com/yyuu/python-virtualenv))
+# pyenv-virtualenv
 
 [![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.png)](https://travis-ci.org/yyuu/pyenv-virtualenv)
 

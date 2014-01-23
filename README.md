@@ -116,7 +116,7 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
-#### 2014MMDD
+#### 20140123
 
  * Add `activate` and `deactivate` to make `pyenv-virtualenv` work with [jedi](https://github.com/davidhalter/jedi) (#9)
  * Use `ensurepip` to install `pip` if it is available

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Summary: Activate virtual environment
+#
+# Usage: pyenv activate <virtualenv>
+#        pyenv activate --unset
+#
+# Activate a Python virtualenv environment in current shell.
+# This acts almost as same as `pyenv shell`, but this invokes the `activate`
+# script in your shell.
+#
+# <virtualenv> should be a string matching a Python version known to pyenv.
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+{ printf "\x1B[31;1m"
+  echo
+  echo "Failed to activate virtualenv."
+  echo
+  echo "Perhaps pyenv-virtualenv has not been loaded into your shell properly."
+  echo "Please restart current shell and try again."
+  echo
+  printf "\x1B[0m"
+} 1>&2
+exit 1

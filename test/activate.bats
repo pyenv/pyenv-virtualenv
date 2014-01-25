@@ -85,3 +85,9 @@ EOS
 pyenv-virtualenv: cannot activate multiple versions at once: venv venv27
 EOS
 }
+
+@test "should fail if activate is invoked as a command" {
+  run pyenv-activate
+
+  assert_failure
+}

@@ -25,3 +25,9 @@ functions -q deactivate; and deactivate
 pyenv shell --unset
 EOS
 }
+
+@test "should fail if deactivate is invoked as a command" {
+  run pyenv-deactivate
+
+  assert_failure
+}

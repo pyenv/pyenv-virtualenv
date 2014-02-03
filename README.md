@@ -89,14 +89,28 @@ Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might req
     $ pyenv activate venv27
 
 `pyenv activate` acts almost like following commands.
+The activate'd virtualenv will be persisted as _shell_ version.
 
     $ pyenv shell venv27
     $ source "$(pyenv prefix venv27)/bin/activate"
 
-You can deactivate the activate'd virtualenv by `pyenv deactivate`.
+### Deactivate virtualenv
+
+You can `deactivate` the activate'd virtualenv by `pyenv deactivate`.
 
     $ pyenv deactivate
 
+Or, there is an alias in `activate` command.
+This is prepared for similality between other `pyenv` commands like `shell` and `local`.
+
+    $ pyenv activate --unset
+
+`pyenv deactivate` acts almost like following commands.
+You can also use virtualenv's `deactivate` in place of `pyenv deactivate`,
+but be careful with the _shell_ version because it will be persisted even if `deactivate` has invoked.
+
+    $ deactivate
+    $ pyenv shell --unset
 
 ### Special environment variables
 

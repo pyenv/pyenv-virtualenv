@@ -97,6 +97,48 @@ rehashed
 OUT
 }
 
+@test "install virtualenv if -p has given" {
+  stub_pyenv "3.4.0"
+  stub pyenv-which "virtualenv : false"
+  stub pyenv-which "pyvenv : echo '${PYENV_ROOT}/versions/bin/pyvenv'"
+  stub pyenv-exec "echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+
+  run pyenv-virtualenv -p python3 venv
+
+  unstub_pyenv
+  unstub pyenv-which
+  unstub pyenv-exec
+
+  assert_success
+  assert_output <<OUT
+PYENV_VERSION=3.4.0 pip install virtualenv
+PYENV_VERSION=3.4.0 virtualenv --python=python3 ${PYENV_ROOT}/versions/venv
+rehashed
+OUT
+}
+
+@test "install virtualenv if --python has given" {
+  stub_pyenv "3.4.0"
+  stub pyenv-which "virtualenv : false"
+  stub pyenv-which "pyvenv : echo '${PYENV_ROOT}/versions/bin/pyvenv'"
+  stub pyenv-exec "echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+
+  run pyenv-virtualenv --python=python3 venv
+
+  unstub_pyenv
+  unstub pyenv-which
+  unstub pyenv-exec
+
+  assert_success
+  assert_output <<OUT
+PYENV_VERSION=3.4.0 pip install virtualenv
+PYENV_VERSION=3.4.0 virtualenv --python=python3 ${PYENV_ROOT}/versions/venv
+rehashed
+OUT
+}
+
 @test "install virtualenv with unsetting troublesome pip options" {
   stub_pyenv "3.2.1"
   stub pyenv-which "virtualenv : false" \

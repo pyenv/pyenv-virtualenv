@@ -130,8 +130,8 @@ detect_venv() {
   if pyenv-which "pyvenv" 1>/dev/null 2>&1; then
     HAS_PYVENV=1
   fi
-  # Use pyvenv only if virtualenv is not installed and there is pyvenv
-  if [ -n "${HAS_PYVENV}" ] && [ -z "${HAS_VIRTUALENV}" ]; then
+  # Use pyvenv only if there is pyvenv, virtualenv is not installed, and `-p` not given
+  if [ -n "${HAS_PYVENV}" ] && [ -z "${HAS_VIRTUALENV}" ] && [ -z "${VIRTUALENV_PYTHON}" ]; then
     USE_PYVENV=1
   fi
 }
@@ -253,6 +253,7 @@ fi
 VIRTUALENV_OPTIONS=()
 
 unset FORCE
+unset VIRTUALENV_PYTHON
 unset QUIET
 unset UPGRADE
 unset VERBOSE
@@ -266,8 +267,8 @@ for option in "${OPTIONS[@]}"; do
   "h" | "help" )
     usage 0
     ;;
-  "p" )
-    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${ARGUMENTS[0]}"
+  "p" | "python" )
+    VIRTUALENV_PYTHON="${ARGUMENTS[0]}"
     ARGUMENTS=("${ARGUMENTS[@]:1}") # shift 1
     ;;
   "q" | "quiet" )
@@ -284,7 +285,11 @@ for option in "${OPTIONS[@]}"; do
     exit 0
     ;;
   * ) # virtualenv long options
-    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    if [[ "$option" == "python="* ]]; then
+      VIRTUALENV_PYTHON="${option#python=}"
+    else
+      VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    fi
     ;;
   esac
 done
@@ -338,6 +343,9 @@ if [ -n "${USE_PYVENV}" ]; then
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
   fi
 else
+  if [ -n "${VIRTUALENV_PYTHON}" ]; then
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"
+  fi
   if [ -z "${HAS_VIRTUALENV}" ]; then
     install_virtualenv "${PYENV_VERSION}"
     HAS_VIRTUALENV=1

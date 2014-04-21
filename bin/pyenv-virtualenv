@@ -11,7 +11,7 @@
 #   -f/--force       Install even if the version appears to be installed already
 #
 
-PYENV_VIRTUALENV_VERSION="20140123"
+PYENV_VIRTUALENV_VERSION="20140421"
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x

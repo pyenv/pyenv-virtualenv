@@ -131,6 +131,12 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20140421
+
+ * Display error if `pyenv activate` was invoked as a command
+ * Fix completion of `pyenv activate` (#15)
+ * Use `virtualenv` instead of `pyvenv` if `-p` has given (yyuu/pyenv#158)
+
 #### 20140123
 
  * Add `activate` and `deactivate` to make `pyenv-virtualenv` work with [jedi](https://github.com/davidhalter/jedi) (#9)

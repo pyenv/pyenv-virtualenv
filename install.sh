@@ -12,7 +12,10 @@ if [ -z "${PREFIX}" ]; then
 fi
 
 BIN_PATH="${PREFIX}/bin"
+ETC_PATH="${PREFIX}/etc/pyenv.d"
 
 mkdir -p "$BIN_PATH"
+mkdir -p "$ETC_PATH"
 
 install -p bin/* "$BIN_PATH"
+cp -RPp etc/pyenv.d/* "$ETC_PATH"

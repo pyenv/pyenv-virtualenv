@@ -181,9 +181,9 @@ install_pip() {
     else
       [ -n "${GET_PIP_URL}" ] || {
         if [ -n "${PIP_VERSION}" ]; then
-          GET_PIP_URL="https://raw.github.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
+          GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
         else
-          GET_PIP_URL="https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
+          GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/master/contrib/get-pip.py"
         fi
       }
       if [ -n "$VERBOSE" ]; then

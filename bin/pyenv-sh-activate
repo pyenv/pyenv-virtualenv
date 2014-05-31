@@ -41,7 +41,7 @@ fi
 
 pyenv-virtualenv-prefix "${versions}" 1>/dev/null
 
-echo "pyenv shell \"${versions}\""
+echo "pyenv shell \"${versions}\";"
 case "$shell" in
 fish ) echo ". \"$(pyenv-prefix "${versions}")/bin/activate.fish\"" ;;
 *    ) echo "source \"$(pyenv-prefix "${versions}")/bin/activate\"" ;;

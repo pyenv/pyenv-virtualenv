@@ -21,7 +21,7 @@ EOS
 
   assert_success
   assert_output <<EOS
-functions -q deactivate; and deactivate
+functions -q deactivate; and deactivate;
 pyenv shell --unset
 EOS
 }

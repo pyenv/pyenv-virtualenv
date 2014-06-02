@@ -131,6 +131,11 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20140602
+
+ * Use new style GH raw url to avoid redirects (raw.github.com -> raw.githubusercontent.com)
+ * Repaired virtualenv activation and deactivation for the fish shell (#23)
+
 #### 20140421
 
  * Display error if `pyenv activate` was invoked as a command

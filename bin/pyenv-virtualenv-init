@@ -80,8 +80,8 @@ fish )
   cat <<EOS
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
-    pyenv deactivate
-    pyenv activate 2>/dev/null; or true
+    eval (pyenv sh-deactivate)
+    eval (pyenv sh-activate 2>/dev/null); or true
   end
 end
 EOS

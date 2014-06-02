@@ -11,7 +11,7 @@ setup() {
 
   assert_success
   assert_output <<EOS
-declare -f deactivate 1>/dev/null 2>&1 && deactivate
+declare -f deactivate 1>/dev/null 2>&1 && deactivate;
 pyenv shell --unset
 EOS
 }

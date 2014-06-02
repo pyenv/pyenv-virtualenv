@@ -12,6 +12,6 @@ set -e
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in
 fish ) echo "functions -q deactivate; and deactivate;";;
-*    ) echo "declare -f deactivate 1>/dev/null 2>&1 && deactivate";;
+*    ) echo "declare -f deactivate 1>/dev/null 2>&1 && deactivate;";;
 esac
 echo "pyenv shell --unset"

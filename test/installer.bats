@@ -9,9 +9,12 @@ load test_helper
 
   cd usr
 
+  assert [ -x bin/pyenv-activate ]
+  assert [ -x bin/pyenv-deactivate ]
   assert [ -x bin/pyenv-sh-activate ]
   assert [ -x bin/pyenv-sh-deactivate ]
   assert [ -x bin/pyenv-virtualenv ]
+  assert [ -x bin/pyenv-virtualenv-init ]
   assert [ -x bin/pyenv-virtualenv-prefix ]
   assert [ -x bin/pyenv-virtualenvs ]
 }

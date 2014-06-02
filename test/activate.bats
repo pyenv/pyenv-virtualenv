@@ -19,7 +19,6 @@ setup() {
 
   assert_success
   assert_output <<EOS
-pyenv shell "venv";
 source "${PYENV_ROOT}/versions/venv/bin/activate"
 EOS
 }
@@ -37,7 +36,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv shell "venv";
 . "${PYENV_ROOT}/versions/venv/bin/activate.fish"
 EOS
 }

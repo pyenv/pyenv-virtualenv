@@ -26,9 +26,8 @@ if [ "$1" = "--unset" ]; then
 fi
 
 versions=("$@")
-shell="$(basename "${PYENV_SHELL:-$SHELL}")"
-
 if [ -z "$versions" ]; then
+  no_shell=1
   OLDIFS="$IFS"
   IFS=: versions=($(pyenv-version-name))
   IFS="$OLDIFS"
@@ -41,7 +40,11 @@ fi
 
 pyenv-virtualenv-prefix "${versions}" 1>/dev/null
 
-echo "pyenv shell \"${versions}\";"
+if [ -z "$no_shell" ]; then
+  echo "pyenv shell \"${versions}\";"
+fi
+
+shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in
 fish ) echo ". \"$(pyenv-prefix "${versions}")/bin/activate.fish\"" ;;
 *    ) echo "source \"$(pyenv-prefix "${versions}")/bin/activate\"" ;;

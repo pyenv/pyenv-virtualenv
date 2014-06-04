@@ -40,11 +40,48 @@ fi
 
 pyenv-virtualenv-prefix "${versions}" 1>/dev/null
 
+shell="$(basename "${PYENV_SHELL:-$SHELL}")"
+
+case "$shell" in
+bash )
+  profile="$HOME/.bash_profile"
+  ;;
+zsh )
+  profile="$HOME/.zshrc"
+  ;;
+ksh )
+  profile="$HOME/.profile"
+  ;;
+fish )
+  profile="$HOME/.config/fish/config.fish"
+  ;;
+* )
+  profile="$HOME/.profile"
+  ;;
+esac
+
+if [ -f "$profile" ]; then
+  if grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init' "$profile"; then
+    { echo "# Load pyenv-virtualenv automatically by adding"
+      echo "# the following to ${profile}:"
+      echo
+      case "$shell" in
+      fish )
+        echo 'status --is-interactive; and . (pyenv virtualenv-init -|psub)'
+        ;;
+      * )
+        echo 'eval "$(pyenv virtualenv-init -)"'
+        ;;
+      esac
+      echo
+    } >&2
+  fi
+fi
+
 if [ -z "$no_shell" ]; then
   echo "pyenv shell \"${versions}\";"
 fi
 
-shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in
 fish ) echo ". \"$(pyenv-prefix "${versions}")/bin/activate.fish\"" ;;
 *    ) echo "source \"$(pyenv-prefix "${versions}")/bin/activate\"" ;;

@@ -14,20 +14,30 @@ to manage your virtualenvs.)
 
 ### Installing as a pyenv plugin
 
-Installing pyenv-virtualenv as a pyenv plugin will give you access to the
-`pyenv virtualenv` command.
-
-    $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
-    $ exec "$SHELL"
-
 This will install the latest development version of pyenv-virtualenv into
 the `~/.pyenv/plugins/pyenv-virtualenv` directory. 
+
 **Important note:**  If you installed pyenv into a non-standard directory, make sure that you clone this
 repo into the 'plugins' directory of wherever you installed into.
 
 From inside that directory you can:
  - Check out a specific release tag. 
  - Get the latest development release by running `git pull` to download the latest changes.
+
+1. **Check out pyenv-virtualenv into plugin directory**
+
+        $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+
+2. **Add `pyenv virtualenv-init` to your shell** to enable activation of virtualenv
+
+        $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
+
+    **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
+
+3. **Restart your shell to the enable pyenv-virtualenv**
+
+        $ exec "$SHELL"
+
 
 ### Installing with Homebrew (for OS X users)
 
@@ -39,11 +49,18 @@ installed, you will also be able to use the `pyenv virtualenv` command.
 *This is recommended method of installation if you installed pyenv
  with Homebrew.*
 
-    brew install pyenv-virtualenv
+```
+$ brew install pyenv-virtualenv
+```
 
 Or, if you would like to install the latest development release:
 
-    brew install --HEAD pyenv-virtualenv
+```
+$ brew install --HEAD pyenv-virtualenv
+```
+
+After installation, you'll still need to add `eval "$(pyenv virtualenv-init -)"` to your
+profile (as stated in the caveats). You'll only ever have to do this once.
 
 
 ## Usage
@@ -54,10 +71,12 @@ To create a virtualenv for the Python version use with pyenv, run
 `pyenv virtualenv`, specifying the Python version you want and the name
 of the virtualenv directory. For example,
 
-    $ pyenv virtualenv 2.7.6 my-virtual-env-2.7.6
+```
+$ pyenv virtualenv 2.7.7 my-virtual-env-2.7.7
+```
 
-will create a virtualenv based on Python 2.7.6
-under `~/.pyenv/versions` in a folder called `my-virtual-env-2.7.6`. 
+will create a virtualenv based on Python 2.7.7
+under `~/.pyenv/versions` in a folder called `my-virtual-env-2.7.7`. 
 
 
 ### Create virtualenv from current version
@@ -66,51 +85,29 @@ If there is only one argument is given to `pyenv virtualenv`,
 virtualenv will be created with given name based on current
 version.
 
-    $ pyenv version
-    3.3.3 (set by /home/yyuu/.pyenv/version)
-    $ pyenv virtualenv venv33
+```
+  $ pyenv version
+  3.4.1 (set by /home/yyuu/.pyenv/version)
+  $ pyenv virtualenv venv34
+```
 
 
 ### List existing virtualenvs
 
 `pyenv virtualenvs` shows you the list of existing virtualenvs.
 
-    $ pyenv shell venv27
-    $ pyenv virtualenvs
-    * venv27 (created from /home/yyuu/.pyenv/versions/2.7.6)
-      venv33 (created from /home/yyuu/.pyenv/versions/3.3.3)
+```
+$ pyenv shell venv27
+$ pyenv virtualenvs
+* venv27 (created from /home/yyuu/.pyenv/versions/2.7.7)
+  venv34 (created from /home/yyuu/.pyenv/versions/3.4.1)
+```
 
 
 ### Activate virtualenv
 
 Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might require you to `activate` the virtualenv.
-`pyenv activate` lets you to activate the virtualenv into your shell.
-
-    $ pyenv activate venv27
-
-`pyenv activate` acts almost like following commands.
-The activate'd virtualenv will be persisted as _shell_ version.
-
-    $ pyenv shell venv27
-    $ source "$(pyenv prefix venv27)/bin/activate"
-
-### Deactivate virtualenv
-
-You can `deactivate` the activate'd virtualenv by `pyenv deactivate`.
-
-    $ pyenv deactivate
-
-Or, there is an alias in `activate` command.
-This is prepared for similality between other `pyenv` commands like `shell` and `local`.
-
-    $ pyenv activate --unset
-
-`pyenv deactivate` acts almost like following commands.
-You can also use virtualenv's `deactivate` in place of `pyenv deactivate`,
-but be careful with the _shell_ version because it will be persisted even if `deactivate` has invoked.
-
-    $ deactivate
-    $ pyenv shell --unset
+The `pyenv-virtualenv` will automatically activate/deactivate the virtualenv if the `eval "$(pyenv virtualenv-init -)"` is properly configured in your shell.
 
 ### Special environment variables
 

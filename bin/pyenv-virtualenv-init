@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# Summary: Configure the shell environment for pyenv-virtualenv
+# Usage: eval "$(pyenv virtualenv-init - [<shell>])"
+#
+# Automatically activates a Python virtualenv environment based on current
+# pyenv version.
+#
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+print=""
+for args in "$@"
+do
+  if [ "$args" = "-" ]; then
+    print=1
+    shift
+  fi
+done
+
+shell="$1"
+if [ -z "$shell" ]; then
+  shell="$(ps c -p "$PPID" -o 'ucomm=' 2>/dev/null || true)"
+  shell="${shell##-}"
+  shell="${shell%% *}"
+  shell="$(basename "${shell:-$SHELL}")"
+fi
+
+if [ -z "$print" ]; then
+  case "$shell" in
+  bash )
+    profile='~/.bash_profile'
+    ;;
+  zsh )
+    profile='~/.zshrc'
+    ;;
+  ksh )
+    profile='~/.profile'
+    ;;
+  fish )
+    profile='~/.config/fish/config.fish'
+    ;;
+  * )
+    profile='your profile'
+    ;;
+  esac
+
+  { echo "# Load pyenv-virtualenv automatically by adding"
+    echo "# the following to ${profile}:"
+    echo
+    case "$shell" in
+    fish )
+      echo 'status --is-interactive; and . (pyenv virtualenv-init -|psub)'
+      ;;
+    * )
+      echo 'eval "$(pyenv virtualenv-init -)"'
+      ;;
+    esac
+    echo
+  } >&2
+
+  exit 1
+fi
+
+case "$shell" in
+bash )
+  cat <<EOS
+_pyenv_virtualenv_hook() {
+  if [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
+    pyenv deactivate;
+    pyenv activate 2>/dev/null || true
+  fi
+};
+if ! [[ "\$PROMPT_COMMAND" =~ _pyenv_virtualenv_hook ]]; then
+  PROMPT_COMMAND="_pyenv_virtualenv_hook;\$PROMPT_COMMAND";
+fi
+EOS
+  ;;
+fish )
+  cat <<EOS
+function _pyenv_virtualenv_hook --on-event fish_prompt;
+  if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
+    eval (pyenv sh-deactivate)
+    eval (pyenv sh-activate 2>/dev/null); or true
+  end
+end
+EOS
+  ;;
+zsh )
+  cat <<EOS
+_pyenv_virtualenv_hook() {
+  if [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
+    pyenv deactivate
+    pyenv activate 2>/dev/null || true
+  fi
+}
+typeset -a precmd_functions
+if [[ -z \$precmd_functions[(r)_pyenv_virtualenv_hook] ]]; then
+  precmd_functions+=_pyenv_virtualenv_hook;
+fi
+EOS
+  ;;
+* )
+  # FIXME: what should i do here??
+  ;;
+esac

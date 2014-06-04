@@ -3,6 +3,7 @@
 load test_helper
 
 setup() {
+  export HOME="${TMP}"
   export PYENV_ROOT="${TMP}/pyenv"
 }
 

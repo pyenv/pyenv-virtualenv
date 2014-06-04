@@ -62,18 +62,7 @@ esac
 
 if [ -f "$profile" ]; then
   if grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init' "$profile"; then
-    { echo "# Load pyenv-virtualenv automatically by adding"
-      echo "# the following to ${profile}:"
-      echo
-      case "$shell" in
-      fish )
-        echo 'status --is-interactive; and . (pyenv virtualenv-init -|psub)'
-        ;;
-      * )
-        echo 'eval "$(pyenv virtualenv-init -)"'
-        ;;
-      esac
-      echo
+    { pyenv-virtualenv-init || true
     } >&2
   fi
 fi

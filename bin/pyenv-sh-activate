@@ -41,7 +41,6 @@ fi
 pyenv-virtualenv-prefix "${versions}" 1>/dev/null
 
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
-
 case "$shell" in
 bash )
   profile="$HOME/.bash_profile"
@@ -60,11 +59,9 @@ fish )
   ;;
 esac
 
-if [ -f "$profile" ]; then
-  if grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init' "$profile"; then
-    { pyenv-virtualenv-init || true
-    } >&2
-  fi
+# Display setup instruction if 'pyenv virtualenv-init -' is not found in "$profile"
+if [ -f "$profile" ] && grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init -' "$profile"; then
+  pyenv-virtualenv-init >&2 || true
 fi
 
 if [ -z "$no_shell" ]; then

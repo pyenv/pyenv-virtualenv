@@ -202,22 +202,35 @@ install_virtualenv() {
 
 ensurepip() {
   local version="$1"
-  if PYENV_VERSION="${version}" pyenv-exec python -m ensurepip 2>/dev/null; then
-    local PREFIX_PATH="$(pyenv-prefix "${version}")"
-    if [ ! -e "${PREFIX_PATH}/bin/pip" ]; then
-      local pip="$(PYENV_VERSION="${version}" pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("pip%d.%d"%(v[0],v[1]))')"
-      if [ -e "${PREFIX_PATH}/bin/${pip}" ]; then
-        ( cd "${PREFIX_PATH}/bin" && ln -fs "${pip}" "pip" )
-      fi
-    fi
-  else
+  PYENV_VERSION="${version}" pyenv-exec python -m ensurepip 2>/dev/null || {
     PYENV_VERSION="${version}" pyenv-exec python -c "import setuptools" 1>/dev/null 2>&1 || {
       install_setuptools "${version}"
     } 1>&2
     PYENV_VERSION="${version}" pyenv-which pip 1>/dev/null 2>&1 || {
       install_pip "${version}"
     } 1>&2
-  fi
+  }
+}
+
+create_symlinks() {
+  local version="$1"
+  local suffix="$(PYENV_VERSION="${version}" pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("%d.%d"%(v[0],v[1]))')"
+
+  local file link
+  shopt -s nullglob
+  for file in "${VIRTUALENV_PATH}/bin"/*; do
+    if [[ "${file##*/}" == *"${suffix}" ]]; then
+      if [[ "${file}" == *"-${suffix}" ]]; then
+        link="${file%%-${suffix}}"
+      else
+        link="${file%%${suffix}}"
+      fi
+      if [ ! -e "${link}" ]; then
+        ( cd "${file%/*}" && ln -fs "${file##*/}" "${link##*/}" )
+      fi
+    fi
+  done
+  shopt -u nullglob
 }
 
 prepare_upgrade() {
@@ -421,6 +434,8 @@ venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="
 if [ -n "$UPGRADE" ]; then
   upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}" || STATUS="$?"
 fi
+
+create_symlinks "${VIRTUALENV_NAME}"
 
 # Execute `after_virtualenv` hooks
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

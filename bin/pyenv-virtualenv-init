@@ -66,8 +66,10 @@ case "$shell" in
 bash )
   cat <<EOS
 _pyenv_virtualenv_hook() {
-  if [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
-    pyenv deactivate;
+  if [[ "\$(pyenv version-name)" == "system" ]]; then
+    pyenv deactivate || true;
+  elif [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
+    pyenv deactivate || true;
     pyenv activate 2>/dev/null || true
   fi
 };
@@ -79,8 +81,10 @@ EOS
 fish )
   cat <<EOS
 function _pyenv_virtualenv_hook --on-event fish_prompt;
-  if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
-    eval (pyenv sh-deactivate)
+  if [ (pyenv version-name) = "system" ]
+    eval (pyenv sh-deactivate); or true
+  else if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
+    eval (pyenv sh-deactivate); or true
     eval (pyenv sh-activate 2>/dev/null); or true
   end
 end
@@ -89,8 +93,10 @@ EOS
 zsh )
   cat <<EOS
 _pyenv_virtualenv_hook() {
-  if [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
-    pyenv deactivate
+  if [[ "\$(pyenv version-name)" == "system" ]]; then
+    pyenv deactivate || true
+  elif [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
+    pyenv deactivate || true
     pyenv activate 2>/dev/null || true
   fi
 }

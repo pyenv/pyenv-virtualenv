@@ -128,6 +128,11 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20140614
+
+ * Add `pyenv virtualenv-init` to enable auto-activation feature (#24)
+ * Create symlinks for executables with version suffix (yyuu/pyenv#182)
+
 #### 20140602
 
  * Use new style GH raw url to avoid redirects (raw.github.com -> raw.githubusercontent.com)

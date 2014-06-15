@@ -124,10 +124,12 @@ usage() {
 }
 
 detect_venv() {
-  if pyenv-which "virtualenv" 1>/dev/null 2>&1; then
+  # Check the existence of executables as a workaround for the issue with pyenv-which-ext
+  # https://github.com/yyuu/pyenv-virtualenv/issues/26
+  if [ -x "$(pyenv-prefix)/bin/virtualenv" ]; then
     HAS_VIRTUALENV=1
   fi
-  if pyenv-which "pyvenv" 1>/dev/null 2>&1; then
+  if [ -x "$(pyenv-prefix)/bin/pyvenv" ]; then
     HAS_PYVENV=1
   fi
   # Use pyvenv only if there is pyvenv, virtualenv is not installed, and `-p` not given

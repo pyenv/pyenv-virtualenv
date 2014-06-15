@@ -13,14 +13,16 @@ setup() {
 before_virtualenv 'echo before: \$VIRTUALENV_PATH'
 after_virtualenv 'echo after: \$STATUS'
 OUT
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/\${PYENV_VERSION}'"
-  stub pyenv-which "virtualenv : echo '${PYENV_ROOT}/versions/bin/virtualenv'" \
-                   "pyvenv : false"
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.2.1'"
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.2.1'"
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.2.1'"
   stub pyenv-hooks "virtualenv : echo '$HOOK_PATH'/virtualenv.bash"
-  stub pyenv-exec "echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "echo PYENV_VERSION=3.2.1 \"\$@\""
   stub pyenv-rehash "echo rehashed"
 
-  mkdir -p "${PYENV_ROOT}/versions/3.2.1"
+  create_executable "3.2.1" "virtualenv"
+  remove_executable "3.2.1" "pyvenv"
+
   run pyenv-virtualenv "3.2.1" venv
 
   assert_success

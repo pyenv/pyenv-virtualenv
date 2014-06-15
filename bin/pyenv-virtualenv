@@ -162,7 +162,7 @@ install_setuptools() {
         if [ -n "${SETUPTOOLS_VERSION}" ]; then
           EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION}/ez_setup.py"
         else
-          EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/downloads/ez_setup.py"
+          EZ_SETUP_URL="https://bootstrap.pypa.io/ez_setup.py"
         fi
       }
       if [ -n "$VERBOSE" ]; then
@@ -185,7 +185,7 @@ install_pip() {
         if [ -n "${PIP_VERSION}" ]; then
           GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
         else
-          GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/master/contrib/get-pip.py"
+          GET_PIP_URL="https://bootstrap.pypa.io/get-pip.py"
         fi
       }
       if [ -n "$VERBOSE" ]; then

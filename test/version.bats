@@ -8,30 +8,36 @@ setup() {
 }
 
 @test "display virtualenv version" {
-  stub pyenv-which "virtualenv : true"
-  stub pyenv-which "pyvenv : true"
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/2.7.7'"
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/2.7.7'"
   stub pyenv-exec "virtualenv --version : echo \"1.11\""
 
-  run pyenv-virtualenv --version
+  create_executable "2.7.7" "virtualenv"
+  remove_executable "2.7.7" "pyvenv"
 
-  unstub pyenv-which
-  unstub pyenv-exec
+  run pyenv-virtualenv --version
 
   assert_success
   assert_output "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv 1.11)"
+
+  unstub pyenv-prefix
+  unstub pyenv-exec
 }
 
 @test "display pyvenv version" {
-  stub pyenv-which "virtualenv : false"
-  stub pyenv-which "pyvenv : echo \"${PYENV_ROOT}/versions/3.3.3/bin/pyvenv\""
-  stub pyenv-which "pyvenv : echo \"${PYENV_ROOT}/versions/3.3.3/bin/pyvenv\""
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
+  stub pyenv-which "pyvenv : echo \"${PYENV_ROOT}/versions/3.4.1/bin/pyvenv\""
   stub pyenv-root "echo \"${PYENV_ROOT}\""
+
+  remove_executable "3.4.1" "virtualenv"
+  create_executable "3.4.1" "pyvenv"
 
   run pyenv-virtualenv --version
 
-  unstub pyenv-which
-  unstub pyenv-root
-
   assert_success
-  assert_output "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv 3.3.3)"
+  assert_output "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv 3.4.1)"
+
+  unstub pyenv-prefix
+  unstub pyenv-root
 }

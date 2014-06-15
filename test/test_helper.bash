@@ -96,3 +96,13 @@ assert_output_contains() {
     } | flunk
   }
 }
+
+create_executable() {
+  mkdir -p "${PYENV_ROOT}/versions/$1/bin"
+  touch "${PYENV_ROOT}/versions/$1/bin/$2"
+  chmod +x "${PYENV_ROOT}/versions/$1/bin/$2"
+}
+
+remove_executable() {
+  rm -f "${PYENV_ROOT}/versions/$1/bin/$2"
+}

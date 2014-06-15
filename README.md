@@ -86,9 +86,9 @@ virtualenv will be created with given name based on current
 version.
 
 ```
-  $ pyenv version
-  3.4.1 (set by /home/yyuu/.pyenv/version)
-  $ pyenv virtualenv venv34
+$ pyenv version
+3.4.1 (set by /home/yyuu/.pyenv/version)
+$ pyenv virtualenv venv34
 ```
 
 
@@ -127,6 +127,11 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 
 ## Version History
+
+#### 20140615
+
+ * Fix incompatibility issue of `pyenv activate` and `pyenv deactivate` (#26)
+ * Workaround for the issue with pyenv-which-ext (#26)
 
 #### 20140614
 

@@ -8,6 +8,8 @@ setup() {
 }
 
 @test "activate virtualenv from current version" {
+  export PYENV_VIRTUALENV_INIT=1
+
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
@@ -24,7 +26,29 @@ source "${PYENV_ROOT}/versions/venv/bin/activate"
 EOS
 }
 
+@test "activate virtualenv from current version (without pyenv-virtualenv-init)" {
+  export PYENV_VIRTUALENV_INIT=
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+
+  PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+
+  assert_success
+  assert_output <<EOS
+pyenv shell "venv";
+source "${PYENV_ROOT}/versions/venv/bin/activate"
+EOS
+}
+
 @test "activate virtualenv from current version (fish)" {
+  export PYENV_VIRTUALENV_INIT=1
+
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
@@ -41,7 +65,47 @@ EOS
 EOS
 }
 
+@test "activate virtualenv from current version (fish) (without pyenv-virtualenv-init)" {
+  export PYENV_VIRTUALENV_INIT=
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+
+  PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+
+  assert_success
+  assert_output <<EOS
+pyenv shell "venv";
+. "${PYENV_ROOT}/versions/venv/bin/activate.fish"
+EOS
+}
+
 @test "activate virtualenv from command-line argument" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+
+  run pyenv-sh-activate "venv27"
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+
+  assert_success
+  assert_output <<EOS
+pyenv shell "venv27";
+source "${PYENV_ROOT}/versions/venv27/bin/activate"
+EOS
+}
+
+@test "activate virtualenv from command-line argument (without pyenv-virtualenv-init)" {
+  export PYENV_VIRTUALENV_INIT=
+
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 

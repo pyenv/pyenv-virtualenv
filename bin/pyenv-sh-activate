@@ -33,6 +33,12 @@ if [ -z "$versions" ]; then
   IFS="$OLDIFS"
 fi
 
+if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
+  # Backward compatibility issue
+  # https://github.com/yyuu/pyenv-virtualenv/issues/26
+  no_shell=
+fi
+
 if [ "${#versions[@]}" -gt 1 ]; then
   echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
   exit 1

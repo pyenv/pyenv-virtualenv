@@ -158,13 +158,7 @@ install_setuptools() {
       fi
       cat "${EZ_SETUP}"
     else
-      [ -n "${EZ_SETUP_URL}" ] || {
-        if [ -n "${SETUPTOOLS_VERSION}" ]; then
-          EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION}/ez_setup.py"
-        else
-          EZ_SETUP_URL="https://bootstrap.pypa.io/ez_setup.py"
-        fi
-      }
+      [ -n "${EZ_SETUP_URL}" ] || EZ_SETUP_URL="https://bootstrap.pypa.io/ez_setup.py"
       if [ -n "$VERBOSE" ]; then
         echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
       fi
@@ -181,13 +175,7 @@ install_pip() {
       fi
       cat "${GET_PIP}"
     else
-      [ -n "${GET_PIP_URL}" ] || {
-        if [ -n "${PIP_VERSION}" ]; then
-          GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
-        else
-          GET_PIP_URL="https://bootstrap.pypa.io/get-pip.py"
-        fi
-      }
+      [ -n "${GET_PIP_URL}" ] || GET_PIP_URL="https://bootstrap.pypa.io/get-pip.py"
       if [ -n "$VERBOSE" ]; then
         echo "Installing pip from ${GET_PIP_URL}..." 1>&2
       fi
@@ -370,6 +358,15 @@ fi
 # Unset environment variables which starts with `VIRTUALENV_`.
 # These variables are reserved for virtualenv.
 unset VIRTUALENV_VERSION
+
+
+# Download specified version of ez_setup.py/get-pip.py
+if [ -n "${SETUPTOOLS_VERSION}" ]; then
+  EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION}/ez_setup.py"
+fi
+if [ -n "${PIP_VERSION}" ]; then
+  GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
+fi
 
 
 # Define `before_virtualenv` and `after_virtualenv` functions that allow

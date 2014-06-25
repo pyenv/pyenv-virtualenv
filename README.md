@@ -109,6 +109,11 @@ $ pyenv virtualenvs
 Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might require you to `activate` the virtualenv.
 The `pyenv-virtualenv` will automatically activate/deactivate the virtualenv if the `eval "$(pyenv virtualenv-init -)"` is properly configured in your shell.
 
+You can also activate and deactivate a pyenv virtualenv this way:
+
+    pyenv activate <name>
+    pyenv deactivate
+
 ### Special environment variables
 
 You can set certain environment variables to control the pyenv-virtualenv.

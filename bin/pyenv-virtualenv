@@ -142,46 +142,53 @@ venv() {
   local args=("$@")
   if [ -n "${USE_PYVENV}" ]; then
     pyenv-exec pyvenv "${args[@]}"
-
-    local last="${args[${#args[@]}-1]}"
-    ensurepip "${last##*/}"
   else
     pyenv-exec virtualenv "${args[@]}"
   fi
 }
 
-install_setuptools() {
-  local version="$1"
+build_package_ez_setup() {
+  local ez_setup="${PYENV_VIRTUALENV_CACHE_PATH}/ez_setup.py"
+  rm -f "${ez_setup}"
   { if [ "${EZ_SETUP+defined}" ] && [ -f "${EZ_SETUP}" ]; then
-      if [ -n "$VERBOSE" ]; then
-        echo "Installing setuptools from ${EZ_SETUP}..." 1>&2
-      fi
+      echo "Installing setuptools from ${EZ_SETUP}..." 1>&2
       cat "${EZ_SETUP}"
     else
       [ -n "${EZ_SETUP_URL}" ] || EZ_SETUP_URL="https://bootstrap.pypa.io/ez_setup.py"
-      if [ -n "$VERBOSE" ]; then
-        echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
-      fi
+      echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
       http get "${EZ_SETUP_URL}"
     fi
-  } | PYENV_VERSION="${version}" pyenv-exec python
+  } 1> "${ez_setup}"
+  pyenv-exec python "${ez_setup}" ${EZ_SETUP_OPTS} 1>&2 || {
+    echo "error: failed to install setuptools via ez_setup.py" >&2
+    return 1
+  }
 }
 
-install_pip() {
-  local version="$1"
+build_package_get_pip() {
+  local get_pip="${PYENV_VIRTUALENV_CACHE_PATH}/get-pip.py"
+  rm -f "${get_pip}"
   { if [ "${GET_PIP+defined}" ] && [ -f "${GET_PIP}" ]; then
-      if [ -n "$VERBOSE" ]; then
-        echo "Installing pip from ${GET_PIP}..." 1>&2
-      fi
+      echo "Installing pip from ${GET_PIP}..." 1>&2
       cat "${GET_PIP}"
     else
       [ -n "${GET_PIP_URL}" ] || GET_PIP_URL="https://bootstrap.pypa.io/get-pip.py"
-      if [ -n "$VERBOSE" ]; then
-        echo "Installing pip from ${GET_PIP_URL}..." 1>&2
-      fi
+      echo "Installing pip from ${GET_PIP_URL}..." 1>&2
       http get "${GET_PIP_URL}"
     fi
-  } | PYENV_VERSION="${version}" pyenv-exec python
+  } 1> "${get_pip}"
+  pyenv-exec python "${get_pip}" ${GET_PIP_OPTS} 1>&2 || {
+    echo "error: failed to install pip via get-pip.py" >&2
+    return 1
+  }
+}
+
+build_package_ensurepip() {
+  pyenv-exec python -m ensurepip 2>/dev/null|| {
+    build_package_ez_setup "$@" && build_package_get_pip "$@"
+  } || return 1
+
+# create_symlinks "$(pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("python%d.%d"%(v[0],v[1]))')"
 }
 
 install_virtualenv() {
@@ -190,21 +197,8 @@ install_virtualenv() {
   PYENV_VERSION="${version}" pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
 }
 
-ensurepip() {
-  local version="$1"
-  PYENV_VERSION="${version}" pyenv-exec python -m ensurepip 2>/dev/null || {
-    PYENV_VERSION="${version}" pyenv-exec python -c "import setuptools" 1>/dev/null 2>&1 || {
-      install_setuptools "${version}"
-    } 1>&2
-    PYENV_VERSION="${version}" pyenv-which pip 1>/dev/null 2>&1 || {
-      install_pip "${version}"
-    } 1>&2
-  }
-}
-
 create_symlinks() {
-  local version="$1"
-  local suffix="$(PYENV_VERSION="${version}" pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("%d.%d"%(v[0],v[1]))')"
+  local suffix="$1"
 
   local file link
   shopt -s nullglob
@@ -429,12 +423,17 @@ mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
+## Install setuptools and pip
+( export PYENV_VERSION="${VIRTUALENV_NAME}"
+  build_package_ensurepip
+)
+
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
   upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}" || STATUS="$?"
 fi
 
-create_symlinks "${VIRTUALENV_NAME}"
+create_symlinks "$(PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("python%d.%d"%(v[0],v[1]))')"
 
 # Execute `after_virtualenv` hooks
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

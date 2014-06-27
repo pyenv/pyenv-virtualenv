@@ -142,11 +142,6 @@ venv() {
   local args=("$@")
   if [ -n "${USE_PYVENV}" ]; then
     pyenv-exec pyvenv "${args[@]}"
-
-    local last="${args[${#args[@]}-1]}"
-    ( export PYENV_VERSION="${last##*/}"
-      build_package_ensurepip
-    )
   else
     pyenv-exec virtualenv "${args[@]}"
   fi
@@ -203,8 +198,7 @@ install_virtualenv() {
 }
 
 create_symlinks() {
-  local version="$1"
-  local suffix="$(PYENV_VERSION="${version}" pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("%d.%d"%(v[0],v[1]))')"
+  local suffix="$1"
 
   local file link
   shopt -s nullglob
@@ -429,12 +423,17 @@ mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
+## Install setuptools and pip
+( export PYENV_VERSION="${VIRTUALENV_NAME}"
+  build_package_ensurepip
+)
+
 ## Migrate previously installed packages from requirements.txt
 if [ -n "$UPGRADE" ]; then
   upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}" || STATUS="$?"
 fi
 
-create_symlinks "${VIRTUALENV_NAME}"
+create_symlinks "$(PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("python%d.%d"%(v[0],v[1]))')"
 
 # Execute `after_virtualenv` hooks
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

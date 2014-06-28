@@ -2,12 +2,10 @@
 #
 # Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
 #
-# Usage: pyenv virtualenv [-f|--force] [-u|--upgrade] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
+# Usage: pyenv virtualenv [-f|--force] [VIRTUALENV_OPTIONS] <version> <virtualenv-name>
 #        pyenv virtualenv --version
 #        pyenv virtualenv --help
 #
-#   -u/--upgrade     Upgrade existing virtualenv to use new version of Python,
-#                    assuming Python has been upgraded in-place.
 #   -f/--force       Install even if the version appears to be installed already
 #
 
@@ -320,10 +318,6 @@ else
   TMP="${TMPDIR%/}"
 fi
 
-SEED="$(date "+%Y%m%d%H%M%S").$$"
-UPGRADE_PATH="${TMP}/pyenv-virtualenv.${SEED}"
-UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
-
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 
 unset HAS_VIRTUALENV
@@ -331,14 +325,25 @@ unset HAS_PYVENV
 unset USE_PYVENV
 detect_venv
 
+# Upgrade existing virtualenv
+if [ -n "$UPGRADE" ]; then
+  FORCE=1
+  # pyvenv has `--upgrade` by default
+  if [ -n "${USE_PYVENV}" ]; then
+    unset UPGRADE
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
+  else
+    echo "WARNING: The \`--upgrade' has been deprecated with virtualenv and might be removed from future releases." 1>&2
+    SEED="$(date "+%Y%m%d%H%M%S").$$"
+    UPGRADE_PATH="${TMP}/pyenv-virtualenv.${SEED}"
+    UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
+  fi
+fi
+
 if [ -n "${USE_PYVENV}" ]; then
   # Unset some arguments not supported by pyvenv
   unset QUIET
   unset VERBOSE
-  if [ -n "$UPGRADE" ]; then
-    unset UPGRADE
-    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
-  fi
 else
   if [ -n "${VIRTUALENV_PYTHON}" ]; then
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"

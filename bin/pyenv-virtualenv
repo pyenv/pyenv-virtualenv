@@ -186,7 +186,7 @@ build_package_ensurepip() {
     build_package_ez_setup "$@" && build_package_get_pip "$@"
   } || return 1
 
-# create_symlinks "$(pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("python%d.%d"%(v[0],v[1]))')"
+  create_symlinks "$(pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("python%d.%d"%(v[0],v[1]))')"
 }
 
 install_virtualenv() {
@@ -437,8 +437,6 @@ venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="
 if [ -n "$UPGRADE" ]; then
   upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}" || STATUS="$?"
 fi
-
-create_symlinks "$(PYENV_VERSION="${VIRTUALENV_NAME}" pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("python%d.%d"%(v[0],v[1]))')"
 
 # Execute `after_virtualenv` hooks
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

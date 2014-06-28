@@ -189,12 +189,6 @@ build_package_ensurepip() {
   create_symlinks "$(pyenv-exec python -c 'import sys;v=sys.version_info;sys.stdout.write("python%d.%d"%(v[0],v[1]))')"
 }
 
-install_virtualenv() {
-  local version="$1"
-  VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
-  PYENV_VERSION="${version}" pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
-}
-
 create_symlinks() {
   local suffix="$1"
 
@@ -349,7 +343,8 @@ else
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"
   fi
   if [ -z "${HAS_VIRTUALENV}" ]; then
-    install_virtualenv "${PYENV_VERSION}"
+    VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
+    pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
     HAS_VIRTUALENV=1
   fi
 fi

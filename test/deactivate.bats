@@ -13,7 +13,10 @@ setup() {
 
   assert_success
   assert_output <<EOS
-declare -f deactivate 1>/dev/null 2>&1 && deactivate;
+if declare -f deactivate 1>/dev/null 2>&1; then
+  export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
+  deactivate;
+fi;
 EOS
 }
 
@@ -24,8 +27,11 @@ EOS
 
   assert_success
   assert_output <<EOS
-declare -f deactivate 1>/dev/null 2>&1 && deactivate;
-pyenv shell --unset
+if declare -f deactivate 1>/dev/null 2>&1; then
+  export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
+  deactivate;
+fi;
+pyenv shell --unset;
 EOS
 }
 
@@ -36,7 +42,10 @@ EOS
 
   assert_success
   assert_output <<EOS
-functions -q deactivate; and deactivate;
+if functions -q deactivate
+  setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
+  deactivate;
+end;
 EOS
 }
 
@@ -47,8 +56,11 @@ EOS
 
   assert_success
   assert_output <<EOS
-functions -q deactivate; and deactivate;
-pyenv shell --unset
+if functions -q deactivate
+  setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
+  deactivate;
+end;
+pyenv shell --unset;
 EOS
 }
 

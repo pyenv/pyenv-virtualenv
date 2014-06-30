@@ -75,6 +75,16 @@ if [ -z "$no_shell" ]; then
 fi
 
 case "$shell" in
-fish ) echo ". \"$(pyenv-prefix "${versions}")/bin/activate.fish\"" ;;
-*    ) echo "source \"$(pyenv-prefix "${versions}")/bin/activate\"" ;;
+fish )
+  cat <<EOS
+set -e PYENV_DEACTIVATE;
+. "$(pyenv-prefix "${versions}")/bin/activate.fish";
+EOS
+ ;;
+*    )
+  cat <<EOS
+unset PYENV_DEACTIVATE;
+source "$(pyenv-prefix "${versions}")/bin/activate";
+EOS
+  ;;
 esac

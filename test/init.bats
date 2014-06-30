@@ -28,17 +28,54 @@ load test_helper
 @test "outputs bash-specific syntax" {
   run pyenv-virtualenv-init - bash
   assert_success
-  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+  assert_output <<EOS
+export PYENV_VIRTUALENV_INIT=1
+_pyenv_virtualenv_hook() {
+  if [[ "\$(pyenv version-name)" == "system" ]]; then
+    pyenv deactivate || true;
+  elif [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
+    pyenv deactivate || true;
+    pyenv activate 2>/dev/null || true
+  fi
+};
+if ! [[ "\$PROMPT_COMMAND" =~ _pyenv_virtualenv_hook ]]; then
+  PROMPT_COMMAND="_pyenv_virtualenv_hook;\$PROMPT_COMMAND";
+fi
+EOS
 }
 
 @test "outputs fish-specific syntax" {
   run pyenv-virtualenv-init - fish
   assert_success
-  assert_output_contains 'function _pyenv_virtualenv_hook --on-event fish_prompt;'
+  assert_output <<EOS
+setenv PYENV_VIRTUALENV_INIT 1;
+function _pyenv_virtualenv_hook --on-event fish_prompt;
+  if [ (pyenv version-name) = "system" ]
+    eval (pyenv sh-deactivate); or true
+  else if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
+    eval (pyenv sh-deactivate); or true
+    eval (pyenv sh-activate 2>/dev/null); or true
+  end
+end
+EOS
 }
 
 @test "outputs zsh-specific syntax" {
   run pyenv-virtualenv-init - zsh
   assert_success
-  assert_output_contains '  precmd_functions+=_pyenv_virtualenv_hook;'
+  assert_output <<EOS
+export PYENV_VIRTUALENV_INIT=1
+_pyenv_virtualenv_hook() {
+  if [[ "\$(pyenv version-name)" == "system" ]]; then
+    pyenv deactivate || true
+  elif [[ "\$VIRTUAL_ENV" != "\$(pyenv prefix)" ]]; then
+    pyenv deactivate || true
+    pyenv activate 2>/dev/null || true
+  fi
+}
+typeset -a precmd_functions
+if [[ -z \$precmd_functions[(r)_pyenv_virtualenv_hook] ]]; then
+  precmd_functions+=_pyenv_virtualenv_hook;
+fi
+EOS
 }

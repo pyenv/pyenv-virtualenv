@@ -22,7 +22,8 @@ setup() {
 
   assert_success
   assert_output <<EOS
-source "${PYENV_ROOT}/versions/venv/bin/activate"
+unset PYENV_DEACTIVATE;
+source "${PYENV_ROOT}/versions/venv/bin/activate";
 EOS
 }
 
@@ -42,7 +43,8 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv shell "venv";
-source "${PYENV_ROOT}/versions/venv/bin/activate"
+unset PYENV_DEACTIVATE;
+source "${PYENV_ROOT}/versions/venv/bin/activate";
 EOS
 }
 
@@ -61,7 +63,8 @@ EOS
 
   assert_success
   assert_output <<EOS
-. "${PYENV_ROOT}/versions/venv/bin/activate.fish"
+set -e PYENV_DEACTIVATE;
+. "${PYENV_ROOT}/versions/venv/bin/activate.fish";
 EOS
 }
 
@@ -81,7 +84,8 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv shell "venv";
-. "${PYENV_ROOT}/versions/venv/bin/activate.fish"
+set -e PYENV_DEACTIVATE;
+. "${PYENV_ROOT}/versions/venv/bin/activate.fish";
 EOS
 }
 
@@ -99,7 +103,8 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv shell "venv27";
-source "${PYENV_ROOT}/versions/venv27/bin/activate"
+unset PYENV_DEACTIVATE;
+source "${PYENV_ROOT}/versions/venv27/bin/activate";
 EOS
 }
 
@@ -117,7 +122,8 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv shell "venv27";
-source "${PYENV_ROOT}/versions/venv27/bin/activate"
+unset PYENV_DEACTIVATE;
+source "${PYENV_ROOT}/versions/venv27/bin/activate";
 EOS
 }
 

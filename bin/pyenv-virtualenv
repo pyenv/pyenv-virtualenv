@@ -317,8 +317,8 @@ unset USE_PYVENV
 detect_venv
 
 SEED="$(date "+%Y%m%d%H%M%S").$$"
-VIRTUALENV_ORIG="${TMP}/pyenv-virtualenv.${SEED}"
-REQUIREMENTS="${TMP}/pyenv-virtualenv.${SEED}.txt"
+VIRTUALENV_ORIG="${VIRTUALENV_PATH}.${SEED}"
+REQUIREMENTS="${TMP}/requirements.${SEED}.txt"
 
 # Upgrade existing virtualenv
 if [ -n "$UPGRADE" ]; then

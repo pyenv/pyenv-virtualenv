@@ -209,30 +209,27 @@ create_symlinks() {
   shopt -u nullglob
 }
 
-prepare_upgrade() {
-  local version="$1"
-  local prefix="$2"
-  PYENV_VERSION="${version}" pyenv-exec pip freeze >"${UPGRADE_LIST}"
-  mv -f "${prefix}" "${UPGRADE_PATH}"
+prepare_requirements() {
+  pyenv-exec pip freeze > "${REQUIREMENTS}"
+  mv -f "${VIRTUALENV_PATH}" "${VIRTUALENV_ORIG}"
 }
 
-upgrade() {
-  local version="$1"
-  local prefix="$2"
-  ## Migrate previously installed packages from requirements.txt
-  if ! PYENV_VERSION="${version}" pyenv-exec pip install $QUIET $VERBOSE --requirement "${UPGRADE_LIST}"; then
-    { echo
-      echo "UPGRADE FAILED"
+install_requirements() {
+  if [ -f "${REQUIREMENTS}" ]; then
+    ## Migrate previously installed packages from requirements.txt
+    pyenv-exec pip install $QUIET $VERBOSE --requirement "${REQUIREMENTS}" || {
       echo
-      echo "Inspect or clean up the original tree at ${UPGRADE_PATH}"
+      echo "PIP INSTALL FAILED"
+      echo
+      echo "Inspect or clean up the original tree at ${VIRTUALENV_ORIG}"
       echo
       echo "Package list:"
-      cat "${UPGRADE_LIST}"
+      cat "${REQUIREMENTS}" | sed 's/^/ * /'
+      return 1
     } 1>&2
-    return 1
+    rm -f "${REQUIREMENTS}"
+    rm -fr "${VIRTUALENV_ORIG}"
   fi
-  rm -f "${UPGRADE_LIST}"
-  rm -fr "${UPGRADE_PATH}"
 }
 
 PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
@@ -319,6 +316,10 @@ unset HAS_PYVENV
 unset USE_PYVENV
 detect_venv
 
+SEED="$(date "+%Y%m%d%H%M%S").$$"
+VIRTUALENV_ORIG="${TMP}/pyenv-virtualenv.${SEED}"
+REQUIREMENTS="${TMP}/pyenv-virtualenv.${SEED}.txt"
+
 # Upgrade existing virtualenv
 if [ -n "$UPGRADE" ]; then
   FORCE=1
@@ -326,11 +327,6 @@ if [ -n "$UPGRADE" ]; then
   if [ -n "${USE_PYVENV}" ]; then
     unset UPGRADE
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
-  else
-    echo "WARNING: The \`--upgrade' has been deprecated with virtualenv and might be removed from future releases." 1>&2
-    SEED="$(date "+%Y%m%d%H%M%S").$$"
-    UPGRADE_PATH="${TMP}/pyenv-virtualenv.${SEED}"
-    UPGRADE_LIST="${TMP}/pyenv-virtualenv.${SEED}.txt"
   fi
 fi
 
@@ -401,7 +397,7 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    prepare_upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}"
+    PYENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
   fi
 fi
 
@@ -424,14 +420,10 @@ cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
 ## Install setuptools and pip
-( export PYENV_VERSION="${VIRTUALENV_NAME}"
-  build_package_ensurepip
-)
+PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
 
 ## Migrate previously installed packages from requirements.txt
-if [ -n "$UPGRADE" ]; then
-  upgrade "${VIRTUALENV_NAME}" "${VIRTUALENV_PATH}" || STATUS="$?"
-fi
+PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
 
 # Execute `after_virtualenv` hooks
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

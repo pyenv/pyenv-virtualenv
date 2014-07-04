@@ -27,6 +27,27 @@ source "${PYENV_ROOT}/versions/venv/bin/activate";
 EOS
 }
 
+@test "activate virtualenv from current version (verbose)" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+
+  PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate --verbose
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+
+  assert_success
+  assert_output <<EOS
+pyenv-virtualenv: activate venv
+unset PYENV_DEACTIVATE;
+source "${PYENV_ROOT}/versions/venv/bin/activate";
+EOS
+}
+
 @test "activate virtualenv from current version (without pyenv-virtualenv-init)" {
   export PYENV_VIRTUALENV_INIT=
 

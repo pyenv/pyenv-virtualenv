@@ -14,23 +14,32 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
-# Provide pyenv completions
-if [ "$1" = "--complete" ]; then
-  echo --unset
-  exec pyenv-virtualenvs --bare
-fi
-
 unset NOERROR
+unset VERBOSE
 
-if [ "$1" = "--no-error" ]; then
-  NOERROR=1
+while [ $# -gt 0 ]; do
+  case "$1" in
+  "--complete" )
+    # Provide pyenv completions
+    echo --unset
+    exec pyenv-virtualenvs --bare
+    ;;
+  "--no-error" )
+    NOERROR=1
+    ;;
+  "--unset" )
+    echo "pyenv deactivate"
+    exit
+    ;;
+  "--verbose" )
+    VERBOSE=1
+    ;;
+  * )
+    break
+    ;;
+  esac
   shift 1
-fi
-
-if [ "$1" = "--unset" ]; then
-  echo "pyenv deactivate"
-  exit
-fi
+done
 
 versions=("$@")
 if [ -z "$versions" ]; then
@@ -78,10 +87,12 @@ fish )
 esac
 
 # Display setup instruction if 'pyenv virtualenv-init -' is not found in "$profile"
-if [ -z "$NOERROR" ]; then
-  if [ -f "$profile" ] && grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init -' "$profile"; then
-    pyenv-virtualenv-init >&2 || true
-  fi
+if [ -f "$profile" ] && grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init -' "$profile"; then
+  pyenv-virtualenv-init >&2 || true
+fi
+
+if [ -n "$VERBOSE" ]; then
+  echo "pyenv-virtualenv: activate ${versions}" 1>&2
 fi
 
 if [ -z "$no_shell" ]; then

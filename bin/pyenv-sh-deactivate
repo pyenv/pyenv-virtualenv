@@ -10,11 +10,22 @@ set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
 unset NOERROR
+unset VERBOSE
 
-if [ "$1" = "--no-error" ]; then
-  NOERROR=1
+while [ $# -gt 0 ]; do
+  case "$1" in
+  "--no-error" )
+    NOERROR=1
+    ;;
+  "--verbose" )
+    VERBOSE=1
+    ;;
+  * )
+    break
+    ;;
+  esac
   shift 1
-fi
+done
 
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in
@@ -26,6 +37,10 @@ fish )
   ;;
 esac
 
+if [ -n "$VERBOSE" ]; then
+  echo "  echo \"pyenv-virtualenv: deactivate ${VIRTUAL_ENV##*/}\" 1>&2;"
+fi
+
 if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
   # Backward compatibility issue
   # https://github.com/yyuu/pyenv-virtualenv/issues/26
@@ -35,14 +50,14 @@ fi
 case "$shell" in
 fish )
   cat <<EOS
-  setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
+  setenv PYENV_DEACTIVATE "$VIRTUAL_ENV";
   deactivate;
 else;
 EOS
   ;;
 *    )
   cat <<EOS
-  export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
+  export PYENV_DEACTIVATE="$VIRTUAL_ENV";
   deactivate;
 else
 EOS

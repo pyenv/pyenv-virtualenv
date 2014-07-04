@@ -33,16 +33,16 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$VIRTUAL_ENV" ]; then
     if [ "x\`pyenv version-name\`" = "xsystem" ]; then
-      pyenv deactivate || true
+      pyenv deactivate --no-error --verbose
       return 0
     fi
     if [ "x\$VIRTUAL_ENV" != "x\`pyenv prefix\`" ]; then
-      pyenv deactivate || true
-      pyenv activate 2>/dev/null || true
+      pyenv deactivate --no-error --verbose
+      pyenv activate --no-error --verbose
     fi
   else
     if [ "x\$PYENV_DEACTIVATE" != "x\`pyenv prefix\`" ]; then
-      pyenv activate 2>/dev/null || true
+      pyenv activate --no-error --verbose
     fi
   fi
 };
@@ -60,16 +60,16 @@ setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   if [ -n "\$VIRTUAL_ENV" ]
     if [ (pyenv version-name) = "system" ]
-      eval (pyenv sh-deactivate); or true
+      eval (pyenv sh-deactivate --no-error --verbose)
       return 0
     end
     if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
-      eval (pyenv sh-deactivate); or true
-      eval (pyenv sh-activate 2>/dev/null); or true
+      eval (pyenv sh-deactivate --no-error --verbose)
+      eval (pyenv sh-activate --no-error --verbose)
     end
   else
     if [ "\$PYENV_DEACTIVATE" != (pyenv prefix) ]
-      eval (pyenv sh-activate 2>/dev/null); or true
+      eval (pyenv sh-activate --no-error --verbose)
     end
   end
 end
@@ -84,16 +84,16 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$VIRTUAL_ENV" ]; then
     if [ "x\`pyenv version-name\`" = "xsystem" ]; then
-      pyenv deactivate || true
+      pyenv deactivate --no-error --verbose
       return 0
     fi
     if [ "x\$VIRTUAL_ENV" != "x\`pyenv prefix\`" ]; then
-      pyenv deactivate || true
-      pyenv activate 2>/dev/null || true
+      pyenv deactivate --no-error --verbose
+      pyenv activate --no-error --verbose
     fi
   else
     if [ "x\$PYENV_DEACTIVATE" != "x\`pyenv prefix\`" ]; then
-      pyenv activate 2>/dev/null || true
+      pyenv activate --no-error --verbose
     fi
   fi
 };

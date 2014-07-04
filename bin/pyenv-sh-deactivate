@@ -9,6 +9,12 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+unset QUIET
+if [ "$1" = "--quiet" ]; then
+  QUIET=1
+  shift 1
+fi
+
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in
 fish )
@@ -27,23 +33,29 @@ fi
 
 case "$shell" in
 fish )
-  cat <<EOS
-  setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
-  deactivate;
-else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-end;
-EOS
+  echo "  setenv PYENV_DEACTIVATE \"\$VIRTUAL_ENV\";"
   ;;
 *    )
-  cat <<EOS
-  export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
+  echo "  export PYENV_DEACTIVATE=\"\$VIRTUAL_ENV\";"
+  ;;
+esac
+
+cat <<EOS
   deactivate;
 else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-fi;
 EOS
+
+if [ -z "$QUIET" ]; then
+  echo "  echo \"pyenv-virtualenv: no virtualenv has been activated.\" 1>&2;"
+fi
+
+echo "  false;"
+
+case "$shell" in
+fish )
+  echo "end;"
+  ;;
+*    )
+  echo "fi;"
   ;;
 esac

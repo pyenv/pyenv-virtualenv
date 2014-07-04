@@ -20,6 +20,12 @@ if [ "$1" = "--complete" ]; then
   exec pyenv-virtualenvs --bare
 fi
 
+unset QUIET
+if [ "$1" = "--quiet" ]; then
+  QUIET=1
+  shift 1
+fi
+
 if [ "$1" = "--unset" ]; then
   echo "pyenv deactivate"
   exit
@@ -40,12 +46,13 @@ if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
 fi
 
 if [ "${#versions[@]}" -gt 1 ]; then
-  echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
+  [ -n "$QUIET" ] || echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
   echo "false"
   exit 1
 fi
 
-if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null; then
+if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
+  [ -n "$QUIET" ] || echo "pyenv-virtualenv: version \`${versions}' is not a virtualenv" 1>&2
   echo "false"
   exit 1
 fi
@@ -70,8 +77,10 @@ fish )
 esac
 
 # Display setup instruction if 'pyenv virtualenv-init -' is not found in "$profile"
-if [ -f "$profile" ] && grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init -' "$profile"; then
-  pyenv-virtualenv-init >&2 || true
+if [ -z "$QUIET" ]; then
+  if [ -f "$profile" ] && grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init -' "$profile"; then
+    pyenv-virtualenv-init >&2 || true
+  fi
 fi
 
 if [ -z "$no_shell" ]; then

@@ -102,6 +102,19 @@ ${PYENV_ROOT}/versions/3.3.3:${PYENV_ROOT}/versions/3.4.0
 OUT
 }
 
+@test "should fail if the version is the system" {
+  stub pyenv-version-name "echo system"
+
+  PYENV_VERSION="system" run pyenv-virtualenv-prefix
+
+  unstub pyenv-version-name
+
+  assert_failure
+  assert_output <<OUT
+pyenv-virtualenv: version \`system' is not a virtualenv
+OUT
+}
+
 @test "should fail if the version is not a virtualenv" {
   stub pyenv-version-name "echo 3.4.0"
   stub pyenv-prefix "3.4.0 : echo \"${PYENV_ROOT}/versions/3.4.0\""

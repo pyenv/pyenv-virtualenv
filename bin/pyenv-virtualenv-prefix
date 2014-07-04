@@ -32,6 +32,10 @@ base_prefix() { # pyvenv
 
 VIRTUALENV_PREFIX_PATHS=()
 for version in "${versions[@]}"; do
+  if [ "$version" = "system" ]; then
+    echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
+    exit 1
+  fi
   PREFIX="$(pyenv-prefix "${version}")"
   if [ -f "${PREFIX}/bin/activate" ]; then
     VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"

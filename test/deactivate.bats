@@ -28,10 +28,10 @@ EOS
   assert_success
   assert_output <<EOS
 if declare -f deactivate 1>/dev/null 2>&1; then
+  pyenv shell --unset;
   export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
   deactivate;
 fi;
-pyenv shell --unset;
 EOS
 }
 
@@ -57,10 +57,10 @@ EOS
   assert_success
   assert_output <<EOS
 if functions -q deactivate
+  pyenv shell --unset;
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
 end;
-pyenv shell --unset;
 EOS
 }
 

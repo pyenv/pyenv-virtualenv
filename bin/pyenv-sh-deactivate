@@ -12,8 +12,22 @@ set -e
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in
 fish )
+  echo "if functions -q deactivate"
+  ;;
+*    )
+  echo "if declare -f deactivate 1>/dev/null 2>&1; then"
+  ;;
+esac
+
+if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
+  # Backward compatibility issue
+  # https://github.com/yyuu/pyenv-virtualenv/issues/26
+  echo "  pyenv shell --unset;"
+fi
+
+case "$shell" in
+fish )
   cat <<EOS
-if functions -q deactivate
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
 end;
@@ -21,16 +35,9 @@ EOS
   ;;
 *    )
   cat <<EOS
-if declare -f deactivate 1>/dev/null 2>&1; then
   export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
   deactivate;
 fi;
 EOS
   ;;
 esac
-
-if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
-  # Backward compatibility issue
-  # https://github.com/yyuu/pyenv-virtualenv/issues/26
-  echo "pyenv shell --unset;"
-fi

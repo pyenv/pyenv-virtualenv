@@ -110,7 +110,7 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate
+if functions -q deactivate;
   setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
   set -e PYENV_ACTIVATE;
   deactivate;
@@ -129,7 +129,7 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate
+if functions -q deactivate;
   setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
   set -e PYENV_ACTIVATE;
   deactivate;
@@ -147,7 +147,7 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate
+if functions -q deactivate;
   pyenv shell --unset;
   setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
   set -e PYENV_ACTIVATE;
@@ -167,7 +167,7 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate
+if functions -q deactivate;
   pyenv shell --unset;
   setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
   set -e PYENV_ACTIVATE;

@@ -30,7 +30,7 @@ done
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in
 fish )
-  echo "if functions -q deactivate"
+  echo "if functions -q deactivate;"
   ;;
 *    )
   echo "if declare -f deactivate 1>/dev/null 2>&1; then"

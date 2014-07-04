@@ -30,6 +30,9 @@ fish )
   cat <<EOS
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
+else
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
 end;
 EOS
   ;;
@@ -37,6 +40,9 @@ EOS
   cat <<EOS
   export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
   deactivate;
+else
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
 fi;
 EOS
   ;;

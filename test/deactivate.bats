@@ -16,6 +16,9 @@ setup() {
 if declare -f deactivate 1>/dev/null 2>&1; then
   export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
   deactivate;
+else
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
 fi;
 EOS
 }
@@ -31,6 +34,9 @@ if declare -f deactivate 1>/dev/null 2>&1; then
   pyenv shell --unset;
   export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
   deactivate;
+else
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
 fi;
 EOS
 }
@@ -45,6 +51,9 @@ EOS
 if functions -q deactivate
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
+else
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
 end;
 EOS
 }
@@ -60,6 +69,9 @@ if functions -q deactivate
   pyenv shell --unset;
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
+else
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
 end;
 EOS
 }

@@ -33,17 +33,20 @@ fi
 
 case "$shell" in
 fish )
-  echo "  setenv PYENV_DEACTIVATE \"\$VIRTUAL_ENV\";"
+  cat <<EOS
+  setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
+  deactivate;
+else;
+EOS
   ;;
 *    )
-  echo "  export PYENV_DEACTIVATE=\"\$VIRTUAL_ENV\";"
-  ;;
-esac
-
-cat <<EOS
+  cat <<EOS
+  export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
   deactivate;
 else
 EOS
+  ;;
+esac
 
 if [ -z "$QUIET" ]; then
   echo "  echo \"pyenv-virtualenv: no virtualenv has been activated.\" 1>&2;"

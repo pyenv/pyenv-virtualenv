@@ -84,7 +84,7 @@ EOS
 if functions -q deactivate
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
-else
+else;
   echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
   false;
 end;
@@ -101,7 +101,7 @@ EOS
 if functions -q deactivate
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
-else
+else;
   false;
 end;
 EOS
@@ -118,7 +118,7 @@ if functions -q deactivate
   pyenv shell --unset;
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
-else
+else;
   echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
   false;
 end;
@@ -136,7 +136,7 @@ if functions -q deactivate
   pyenv shell --unset;
   setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
   deactivate;
-else
+else;
   false;
 end;
 EOS

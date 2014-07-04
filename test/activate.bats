@@ -137,13 +137,17 @@ EOS
 }
 
 @test "should fail if the version is not a virtualenv" {
-  stub pyenv-virtualenv-prefix "3.3.3 : false"
+  stub pyenv-virtualenv-prefix "3.3.3 : echo \"not a virtualenv\" 1>&2; false"
 
   run pyenv-sh-activate "3.3.3"
 
   unstub pyenv-virtualenv-prefix
 
   assert_failure
+  assert_output <<EOS
+not a virtualenv
+false
+EOS
 }
 
 @test "should fail if there are multiple versions" {
@@ -152,6 +156,7 @@ EOS
   assert_failure
   assert_output <<EOS
 pyenv-virtualenv: cannot activate multiple versions at once: venv venv27
+false
 EOS
 }
 

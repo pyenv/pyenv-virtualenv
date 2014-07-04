@@ -41,10 +41,14 @@ fi
 
 if [ "${#versions[@]}" -gt 1 ]; then
   echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
+  echo "false"
   exit 1
 fi
 
-pyenv-virtualenv-prefix "${versions}" 1>/dev/null
+if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null; then
+  echo "false"
+  exit 1
+fi
 
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 case "$shell" in

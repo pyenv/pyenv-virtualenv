@@ -78,13 +78,15 @@ case "$shell" in
 fish )
   cat <<EOS
 set -e PYENV_DEACTIVATE;
-. "$(pyenv-prefix "${versions}")/bin/activate.fish";
+setenv PYENV_ACTIVATE "$(pyenv-prefix "${versions}")";
+. "\${PYENV_ACTIVATE}/bin/activate.fish";
 EOS
  ;;
 *    )
   cat <<EOS
 unset PYENV_DEACTIVATE;
-source "$(pyenv-prefix "${versions}")/bin/activate";
+export PYENV_ACTIVATE="$(pyenv-prefix "${versions}")";
+source "\${PYENV_ACTIVATE}/bin/activate";
 EOS
   ;;
 esac

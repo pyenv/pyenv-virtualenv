@@ -75,12 +75,12 @@ case "$shell" in
 fish )
   cat <<EOS
 function _pyenv_virtualenv_hook --on-event fish_prompt;
-  if [ -n "\$VIRTUAL_ENV" ]
+  if [ -n "\$PYENV_ACTIVATE" ]
     if [ (pyenv version-name) = "system" ]
       eval (pyenv sh-deactivate); or true
       return 0
     end
-    if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
+    if [ "\$PYENV_ACTIVATE" != (pyenv prefix) ]
       eval (pyenv sh-deactivate); or true
       eval (pyenv sh-activate 2>/dev/null); or true
     end
@@ -106,12 +106,12 @@ esac
 
 if [[ "$shell" != "fish" ]]; then
   cat <<EOS
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "x\`pyenv version-name\`" = "xsystem" ]; then
       pyenv deactivate || true
       return 0
     fi
-    if [ "x\$VIRTUAL_ENV" != "x\`pyenv prefix\`" ]; then
+    if [ "x\$PYENV_ACTIVATE" != "x\`pyenv prefix\`" ]; then
       pyenv deactivate || true
       pyenv activate 2>/dev/null || true
     fi

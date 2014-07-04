@@ -14,7 +14,8 @@ case "$shell" in
 fish )
   cat <<EOS
 if functions -q deactivate
-  setenv PYENV_DEACTIVATE "\$VIRTUAL_ENV";
+  setenv PYENV_DEACTIVATE "\$PYENV_ACTIVATE";
+  set -e PYENV_ACTIVATE;
   deactivate;
 end;
 EOS
@@ -22,7 +23,8 @@ EOS
 *    )
   cat <<EOS
 if declare -f deactivate 1>/dev/null 2>&1; then
-  export PYENV_DEACTIVATE="\$VIRTUAL_ENV";
+  export PYENV_DEACTIVATE="\$PYENV_ACTIVATE";
+  unset PYENV_ACTIVATE;
   deactivate;
 fi;
 EOS

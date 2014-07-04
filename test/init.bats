@@ -31,12 +31,12 @@ load test_helper
   assert_output <<EOS
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "x\`pyenv version-name\`" = "xsystem" ]; then
       pyenv deactivate --no-error --verbose
       return 0
     fi
-    if [ "x\$VIRTUAL_ENV" != "x\`pyenv prefix\`" ]; then
+    if [ "x\$PYENV_ACTIVATE" != "x\`pyenv prefix\`" ]; then
       pyenv deactivate --no-error --verbose
       pyenv activate --no-error --verbose
     fi
@@ -58,12 +58,12 @@ EOS
   assert_output <<EOS
 setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
-  if [ -n "\$VIRTUAL_ENV" ]
+  if [ -n "\$PYENV_ACTIVATE" ]
     if [ (pyenv version-name) = "system" ]
       eval (pyenv sh-deactivate --no-error --verbose)
       return 0
     end
-    if [ "\$VIRTUAL_ENV" != (pyenv prefix) ]
+    if [ "\$PYENV_ACTIVATE" != (pyenv prefix) ]
       eval (pyenv sh-deactivate --no-error --verbose)
       eval (pyenv sh-activate --no-error --verbose)
     end
@@ -82,12 +82,12 @@ EOS
   assert_output <<EOS
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "x\`pyenv version-name\`" = "xsystem" ]; then
       pyenv deactivate --no-error --verbose
       return 0
     fi
-    if [ "x\$VIRTUAL_ENV" != "x\`pyenv prefix\`" ]; then
+    if [ "x\$PYENV_ACTIVATE" != "x\`pyenv prefix\`" ]; then
       pyenv deactivate --no-error --verbose
       pyenv activate --no-error --verbose
     fi

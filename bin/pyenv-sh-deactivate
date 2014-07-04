@@ -9,9 +9,10 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
-unset QUIET
-if [ "$1" = "--quiet" ]; then
-  QUIET=1
+unset NOERROR
+
+if [ "$1" = "--no-error" ]; then
+  NOERROR=1
   shift 1
 fi
 
@@ -48,7 +49,7 @@ EOS
   ;;
 esac
 
-if [ -z "$QUIET" ]; then
+if [ -z "$NOERROR" ]; then
   echo "  echo \"pyenv-virtualenv: no virtualenv has been activated.\" 1>&2;"
 fi
 

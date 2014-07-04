@@ -23,10 +23,10 @@ fi;
 EOS
 }
 
-@test "deactivate virtualenv (quiet)" {
+@test "deactivate virtualenv (no-error)" {
   export PYENV_VIRTUALENV_INIT=1
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --quiet
+  PYENV_SHELL="bash" run pyenv-sh-deactivate --no-error
 
   assert_success
   assert_output <<EOS
@@ -57,10 +57,10 @@ fi;
 EOS
 }
 
-@test "deactivate virtualenv (w/o pyenv-virtualenv-init) (quiet)" {
+@test "deactivate virtualenv (w/o pyenv-virtualenv-init) (no-error)" {
   export PYENV_VIRTUALENV_INIT=
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --quiet
+  PYENV_SHELL="bash" run pyenv-sh-deactivate --no-error
 
   assert_success
   assert_output <<EOS
@@ -91,10 +91,10 @@ end;
 EOS
 }
 
-@test "deactivate virtualenv (fish) (quiet)" {
+@test "deactivate virtualenv (fish) (no-error)" {
   export PYENV_VIRTUALENV_INIT=1
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate --quiet
+  PYENV_SHELL="fish" run pyenv-sh-deactivate --no-error
 
   assert_success
   assert_output <<EOS
@@ -125,10 +125,10 @@ end;
 EOS
 }
 
-@test "deactivate virtualenv (fish) (w/o pyenv-virtualenv-init) (quiet)" {
+@test "deactivate virtualenv (fish) (w/o pyenv-virtualenv-init) (no-error)" {
   export PYENV_VIRTUALENV_INIT=
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate --quiet
+  PYENV_SHELL="fish" run pyenv-sh-deactivate --no-error
 
   assert_success
   assert_output <<EOS

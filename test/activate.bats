@@ -150,10 +150,10 @@ false
 EOS
 }
 
-@test "should fail if the version is not a virtualenv (quiet)" {
+@test "should fail if the version is not a virtualenv (no-error)" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
 
-  run pyenv-sh-activate --quiet "3.3.3"
+  run pyenv-sh-activate --no-error "3.3.3"
 
   unstub pyenv-virtualenv-prefix
 
@@ -173,8 +173,8 @@ false
 EOS
 }
 
-@test "should fail if there are multiple versions (quiet)" {
-  run pyenv-sh-activate --quiet "venv" "venv27"
+@test "should fail if there are multiple versions (no-error)" {
+  run pyenv-sh-activate --no-error "venv" "venv27"
 
   assert_failure
   assert_output <<EOS

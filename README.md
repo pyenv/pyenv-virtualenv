@@ -133,6 +133,14 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20140705
+
+ * Display information on auto-(de)?activation
+ * Support manual (de)?activation with auto-activation enabled (#32, #34)
+ * Exit as error when (de)?activation failed
+ * Use https://bootstrap.pypa.io/ to install setuptools and pip
+ * Create backup of original virtualenv within `$(pyenv root)/versions` when `--upgrade`
+
 #### 20140615
 
  * Fix incompatibility issue of `pyenv activate` and `pyenv deactivate` (#26)

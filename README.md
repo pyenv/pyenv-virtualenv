@@ -60,7 +60,7 @@ $ brew install --HEAD pyenv-virtualenv
 ```
 
 After installation, you'll still need to add `eval "$(pyenv virtualenv-init -)"` to your
-profile (as stated in the caveats). You'll only ever have to do this once.
+profile (as stated in the caveats). You'll only ever have to do this once. Make sure you add this to `.bashrc` if you maintain `.bash_profile` and `.bashrc` separately, as it needs to be initialised with every new shell session.
 
 
 ## Usage

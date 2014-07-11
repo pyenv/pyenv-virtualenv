@@ -102,6 +102,25 @@ fi;
 EOS
 }
 
+@test "deactivate virtualenv which has been activated manually" {
+  export PYENV_VIRTUALENV_INIT=1
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
+
+  PYENV_SHELL="bash" run pyenv-sh-deactivate
+
+  assert_success
+  assert_output <<EOS
+if declare -f deactivate 1>/dev/null 2>&1; then
+  export PYENV_DEACTIVATE="$VIRTUAL_ENV";
+  unset PYENV_ACTIVATE;
+  deactivate;
+else
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
+fi;
+EOS
+}
+
 @test "deactivate virtualenv (fish)" {
   export PYENV_VIRTUALENV_INIT=1
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
@@ -177,6 +196,26 @@ else;
 end;
 EOS
 }
+
+@test "deactivate virtualenv which has been activated manually (fish)" {
+  export PYENV_VIRTUALENV_INIT=1
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
+
+  PYENV_SHELL="fish" run pyenv-sh-deactivate
+
+  assert_success
+  assert_output <<EOS
+if functions -q deactivate;
+  setenv PYENV_DEACTIVATE "$VIRTUAL_ENV";
+  set -e PYENV_ACTIVATE;
+  deactivate;
+else;
+  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
+  false;
+end;
+EOS
+}
+
 @test "should fail if deactivate is invoked as a command" {
   run pyenv-deactivate
 

@@ -37,8 +37,10 @@ fish )
   ;;
 esac
 
+prefix="${PYENV_ACTIVATE:-${VIRTUAL_ENV}}"
+
 if [ -n "$VERBOSE" ]; then
-  echo "  echo \"pyenv-virtualenv: deactivate ${PYENV_ACTIVATE##*/}\" 1>&2;"
+  echo "  echo \"pyenv-virtualenv: deactivate ${prefix##*/}\" 1>&2;"
 fi
 
 if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
@@ -50,7 +52,7 @@ fi
 case "$shell" in
 fish )
   cat <<EOS
-  setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
+  setenv PYENV_DEACTIVATE "$prefix";
   set -e PYENV_ACTIVATE;
   deactivate;
 else;
@@ -58,7 +60,7 @@ EOS
   ;;
 *    )
   cat <<EOS
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+  export PYENV_DEACTIVATE="$prefix";
   unset PYENV_ACTIVATE;
   deactivate;
 else

@@ -114,6 +114,15 @@ You can also activate and deactivate a pyenv virtualenv this way:
     pyenv activate <name>
     pyenv deactivate
 
+
+### virtualenv and pyvenv
+
+There is [venv](http://docs.python.jp/3/library/venv.html) module available for CPython 3.3 and newer.
+It provides a command-line tool `pyvenv` which is the successor of `virtualenv` and distributed by default.
+
+The `pyenv-virtualenv` uses `pyvenv` if it is available and the `virtualenv` is not available.
+
+
 ### Special environment variables
 
 You can set certain environment variables to control the pyenv-virtualenv.

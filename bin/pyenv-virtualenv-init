@@ -115,7 +115,7 @@ if [[ "$shell" != "fish" ]]; then
           return 0
       fi
       if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix)" ]; then
-          if [ pyenv deactivate --no-error --verbose ]; then
+          if pyenv deactivate --no-error --verbose; then
               pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
           else
               pyenv activate --no-error --verbose

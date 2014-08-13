@@ -112,7 +112,7 @@ EOS
   cat <<EOS
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${prefix}";
-source "${prefix}/bin/activate";
+. "${prefix}/bin/activate";
 EOS
   ;;
 esac

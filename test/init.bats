@@ -32,11 +32,11 @@ load test_helper
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "x\`pyenv version-name\`" = "xsystem" ]; then
+    if [ "\$(pyenv version-name)" = "system" ]; then
       pyenv deactivate --no-error --verbose
       return 0
     fi
-    if [ "x\$PYENV_ACTIVATE" != "x\`pyenv prefix\`" ]; then
+    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix)" ]; then
       if pyenv deactivate --no-error --verbose; then
         pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
       else
@@ -44,7 +44,7 @@ _pyenv_virtualenv_hook() {
       fi
     fi
   else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "x\$PYENV_DEACTIVATE" != "x\`pyenv prefix\`" ]; then
+    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix)" ]; then
       pyenv activate --no-error --verbose
     fi
   fi
@@ -89,11 +89,11 @@ EOS
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "x\`pyenv version-name\`" = "xsystem" ]; then
+    if [ "\$(pyenv version-name)" = "system" ]; then
       pyenv deactivate --no-error --verbose
       return 0
     fi
-    if [ "x\$PYENV_ACTIVATE" != "x\`pyenv prefix\`" ]; then
+    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix)" ]; then
       if pyenv deactivate --no-error --verbose; then
         pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
       else
@@ -101,7 +101,7 @@ _pyenv_virtualenv_hook() {
       fi
     fi
   else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "x\$PYENV_DEACTIVATE" != "x\`pyenv prefix\`" ]; then
+    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix)" ]; then
       pyenv activate --no-error --verbose
     fi
   fi

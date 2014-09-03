@@ -297,6 +297,11 @@ if [ -z "${VERSION_NAME}" ] || [ -z "${VIRTUALENV_NAME}" ]; then
   usage 1
 fi
 
+if [ "$VIRTUALENV_NAME" != "${VIRTUALENV_NAME%[[:space:]]*}" ]; then
+  echo "pyenv-virtualenv: no whitespace allowed in virtualenv name." 1>&2
+  exit 1
+fi
+
 # Set VERSION_NAME as default version in this script
 export PYENV_VERSION="${VERSION_NAME}"
 

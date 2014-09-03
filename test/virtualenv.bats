@@ -132,3 +132,21 @@ OUT
   unstub pyenv-exec
   unstub curl
 }
+
+@test "no whitespace allowed in virtualenv name" {
+  run pyenv-virtualenv "3.2.1" "foo bar"
+
+  assert_failure
+  assert_output <<OUT
+pyenv-virtualenv: no whitespace allowed in virtualenv name.
+OUT
+}
+
+@test "no tab allowed in virtualenv name" {
+  run pyenv-virtualenv "3.2.1" "foo	bar baz"
+
+  assert_failure
+  assert_output <<OUT
+pyenv-virtualenv: no whitespace allowed in virtualenv name.
+OUT
+}

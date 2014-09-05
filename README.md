@@ -115,6 +115,13 @@ You can also activate and deactivate a pyenv virtualenv this way:
     pyenv deactivate
 
 
+### Delete existing virtualenv
+
+Removing the directory in `~/.pyenv/versions` will delete the virtualenv, or you can run:
+
+    pyenv uninstall my-virtual-env
+    
+
 ### virtualenv and pyvenv
 
 There is [venv](http://docs.python.jp/3/library/venv.html) module available for CPython 3.3 and newer.

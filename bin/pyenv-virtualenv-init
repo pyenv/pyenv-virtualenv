@@ -112,6 +112,7 @@ if [[ "$shell" != "fish" ]]; then
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name)" = "system" ]; then
       pyenv deactivate --no-error --verbose
+      unset PYENV_DEACTIVATE
       return 0
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix)" ]; then

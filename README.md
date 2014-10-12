@@ -149,6 +149,12 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20141012
+
+ * Fix warnings from `shellcheck` to improve support for POSIX sh (#40)
+ * Do not allow whitespace in `VIRTUALENV_NAME` (#44)
+ * Should not persist `PYENV_DEACTIVATE` after automatic deactivation (#47, #48)
+
 #### 20140705
 
  * Display information on auto-(de)?activation

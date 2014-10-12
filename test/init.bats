@@ -34,10 +34,12 @@ _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name)" = "system" ]; then
       pyenv deactivate --no-error --verbose
+      unset PYENV_DEACTIVATE
       return 0
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix)" ]; then
       if pyenv deactivate --no-error --verbose; then
+        unset PYENV_DEACTIVATE
         pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
       else
         pyenv activate --no-error --verbose
@@ -64,10 +66,12 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
   if [ -n "\$PYENV_ACTIVATE" ]
     if [ (pyenv version-name) = "system" ]
       pyenv deactivate --no-error --verbose
+      set -e PYENV_DEACTIVATE
       return 0
     end
     if [ "\$PYENV_ACTIVATE" != (pyenv prefix) ]
       if pyenv deactivate --no-error --verbose
+        set -e PYENV_DEACTIVATE
         pyenv activate --no-error --verbose; or set -e PYENV_DEACTIVATE
       else
         pyenv activate --no-error --verbose
@@ -91,10 +95,12 @@ _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name)" = "system" ]; then
       pyenv deactivate --no-error --verbose
+      unset PYENV_DEACTIVATE
       return 0
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix)" ]; then
       if pyenv deactivate --no-error --verbose; then
+        unset PYENV_DEACTIVATE
         pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
       else
         pyenv activate --no-error --verbose

@@ -27,7 +27,6 @@ unstub_pyenv() {
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pyvenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
 
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
@@ -51,7 +50,6 @@ OUT
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
 
   create_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
@@ -78,7 +76,6 @@ OUT
   stub pyenv-exec "python -m ensurepip : false"
   stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
   stub curl true
   stub curl true
 
@@ -109,7 +106,6 @@ OUT
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv --python=python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
 
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
@@ -135,7 +131,6 @@ OUT
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv --python=python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
 
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
@@ -163,7 +158,6 @@ OUT
   stub pyenv-exec "python -m ensurepip : false"
   stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
   stub curl true
   stub curl true
 

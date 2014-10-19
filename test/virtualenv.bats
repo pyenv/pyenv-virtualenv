@@ -30,7 +30,6 @@ unstub_pyenv() {
   stub pyenv-exec "python -m ensurepip : false"
   stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
   stub curl true
   stub curl true
 
@@ -57,7 +56,6 @@ OUT
   stub pyenv-exec "python -m ensurepip : false"
   stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
   stub curl true
   stub curl true
 
@@ -85,7 +83,6 @@ OUT
   stub pyenv-exec "python -m ensurepip : false"
   stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
   stub curl true
   stub curl true
 
@@ -113,7 +110,6 @@ OUT
   stub pyenv-exec "python -m ensurepip : false"
   stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub pyenv-exec "python -c * : echo ${PYENV_VERSION%.*}"
   stub curl true
   stub curl true
 

@@ -28,7 +28,7 @@ From inside that directory you can:
 
         $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
 
-2. **Add `pyenv virtualenv-init` to your shell** to enable activation of virtualenv
+2. **Add `pyenv virtualenv-init` to your shell** to enable activation of virtualenv. This is entirely optional but pretty useful.
 
         $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
 

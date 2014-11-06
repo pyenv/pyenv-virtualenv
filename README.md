@@ -149,6 +149,11 @@ You can set certain environment variables to control the pyenv-virtualenv.
 
 ## Version History
 
+#### 20141106
+
+ * Stop creating after `ensurepip` since it has done by `ensurepip` itself
+ * Suppress some useless warnings from `pyenv virtualenv-init`
+
 #### 20141012
 
  * Fix warnings from `shellcheck` to improve support for POSIX sh (#40)

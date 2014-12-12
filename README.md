@@ -3,26 +3,28 @@
 [![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.png)](https://travis-ci.org/yyuu/pyenv-virtualenv)
 
 pyenv-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
-that provides a `pyenv virtualenv` command to create virtualenv for Python
+that provides a `pyenv virtualenv` command to create virtualenvs for Python
 on UNIX-like systems.
 
 (NOTICE: If you are an existing user of [virtualenvwrapper](http://pypi.python.org/pypi/virtualenvwrapper)
 and you love it, [pyenv-virtualenvwrapper](https://github.com/yyuu/pyenv-virtualenvwrapper) may help you
-to manage your virtualenvs.)
+(additionally) to manage your virtualenvs.)
 
 ## Installation
 
 ### Installing as a pyenv plugin
 
 This will install the latest development version of pyenv-virtualenv into
-the `~/.pyenv/plugins/pyenv-virtualenv` directory. 
+the `~/.pyenv/plugins/pyenv-virtualenv` directory.
 
-**Important note:**  If you installed pyenv into a non-standard directory, make sure that you clone this
-repo into the 'plugins' directory of wherever you installed into.
+**Important note:**  If you installed pyenv into a non-standard directory, make
+sure that you clone this repo into the 'plugins' directory of wherever you
+installed into.
 
 From inside that directory you can:
- - Check out a specific release tag. 
- - Get the latest development release by running `git pull` to download the latest changes.
+ - Check out a specific release tag.
+ - Get the latest development release by running `git pull` to download the
+   latest changes.
 
 1. **Check out pyenv-virtualenv into plugin directory**
 
@@ -34,7 +36,7 @@ From inside that directory you can:
 
     **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
 
-3. **Restart your shell to the enable pyenv-virtualenv**
+3. **Restart your shell to enable pyenv-virtualenv**
 
         $ exec "$SHELL"
 
@@ -42,11 +44,11 @@ From inside that directory you can:
 ### Installing with Homebrew (for OS X users)
 
 Mac OS X users can install pyenv-virtualenv with the
-[Homebrew](http://brew.sh) package manager. This
-will give you access to the `pyenv-virtualenv` command. If you have pyenv
+[Homebrew](http://brew.sh) package manager.
+This will give you access to the `pyenv-virtualenv` command. If you have pyenv
 installed, you will also be able to use the `pyenv virtualenv` command.
 
-*This is recommended method of installation if you installed pyenv
+*This is the recommended method of installation if you installed pyenv
  with Homebrew.*
 
 ```
@@ -59,15 +61,16 @@ Or, if you would like to install the latest development release:
 $ brew install --HEAD pyenv-virtualenv
 ```
 
-After installation, you'll still need to add `eval "$(pyenv virtualenv-init -)"` to your
-profile (as stated in the caveats). You'll only ever have to do this once.
+After installation, you'll still need to add `eval "$(pyenv virtualenv-init
+-)"` to your profile (as stated in the caveats). You'll only ever have to do
+this once.
 
 
 ## Usage
 
 ### Using `pyenv virtualenv` with pyenv
 
-To create a virtualenv for the Python version use with pyenv, run
+To create a virtualenv for the Python version used with pyenv, run
 `pyenv virtualenv`, specifying the Python version you want and the name
 of the virtualenv directory. For example,
 
@@ -75,26 +78,25 @@ of the virtualenv directory. For example,
 $ pyenv virtualenv 2.7.7 my-virtual-env-2.7.7
 ```
 
-will create a virtualenv based on Python 2.7.7
-under `~/.pyenv/versions` in a folder called `my-virtual-env-2.7.7`. 
+will create a virtualenv based on Python 2.7.7 under `~/.pyenv/versions` in a
+folder called `my-virtual-env-2.7.7`.
 
 
 ### Create virtualenv from current version
 
-If there is only one argument is given to `pyenv virtualenv`,
-virtualenv will be created with given name based on current
-version.
+If there is only one argument given to `pyenv virtualenv`, the virtualenv will
+be created with the given name based on the current pyenv Python version.
 
 ```
 $ pyenv version
-3.4.1 (set by /home/yyuu/.pyenv/version)
+3.4.2 (set by /home/yyuu/.pyenv/version)
 $ pyenv virtualenv venv34
 ```
 
 
 ### List existing virtualenvs
 
-`pyenv virtualenvs` shows you the list of existing virtualenvs.
+`pyenv virtualenvs` shows you the list of existing virtualenvs:
 
 ```
 $ pyenv shell venv27
@@ -106,10 +108,13 @@ $ pyenv virtualenvs
 
 ### Activate virtualenv
 
-Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might require you to `activate` the virtualenv.
-The `pyenv-virtualenv` will automatically activate/deactivate the virtualenv if the `eval "$(pyenv virtualenv-init -)"` is properly configured in your shell.
+Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might
+require you to `activate` the virtualenv.
 
-You can also activate and deactivate a pyenv virtualenv this way:
+`pyenv-virtualenv` will automatically activate/deactivate the virtualenv if
+the `eval "$(pyenv virtualenv-init -)"` is properly configured in your shell.
+
+You can also activate and deactivate a pyenv virtualenv manually:
 
     pyenv activate <name>
     pyenv deactivate
@@ -117,27 +122,30 @@ You can also activate and deactivate a pyenv virtualenv this way:
 
 ### virtualenv and pyvenv
 
-There is [venv](http://docs.python.jp/3/library/venv.html) module available for CPython 3.3 and newer.
-It provides a command-line tool `pyvenv` which is the successor of `virtualenv` and distributed by default.
+There is a [venv](http://docs.python.jp/3/library/venv.html) module available
+for CPython 3.3 and newer.
+It provides a command-line tool `pyvenv` which is the successor of `virtualenv`
+and distributed by default.
 
-The `pyenv-virtualenv` uses `pyvenv` if it is available and the `virtualenv` is not available.
+`pyenv-virtualenv` uses `pyvenv` if it is available and the `virtualenv`
+command is not available.
 
 
 ### Special environment variables
 
-You can set certain environment variables to control the pyenv-virtualenv.
+You can set certain environment variables to control pyenv-virtualenv.
 
 * `PYENV_VIRTUALENV_CACHE_PATH`, if set, specifies a directory to use for
   caching downloaded package files.
-* `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to install desired
-  version of virtualenv. If the virtualenv has not been installed,
+* `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to install the desired
+  version of virtualenv. If `virtualenv` has not been installed,
   pyenv-virtualenv will try to install the given version of virtualenv.
-* `EZ_SETUP` and `GET_PIP`, if set and pyvenv is preferred than virtualenv,
-  use `ez_setup.py` and `get_pip.py` at specified location.
-* `EZ_SETUP_URL` and `GET_PIP_URL`, if set and pyvenv is preferred
-  than virtualenv, download `ez_setup.py` and `get_pip.py` from specified URL.
-* `SETUPTOOLS_VERSION` and `PIP_VERSION`, if set and pyvenv is preferred
-  than virtualenv, install specified version of setuptools and pip.
+* `EZ_SETUP` and `GET_PIP`, if set and `pyvenv` is preferred over `virtualenv`,
+  use `ez_setup.py` and `get_pip.py` from the specified location.
+* `EZ_SETUP_URL` and `GET_PIP_URL`, if set and `pyvenv` is preferred over
+  `virtualenv`, download `ez_setup.py` and `get_pip.py` from the specified URL.
+* `SETUPTOOLS_VERSION` and `PIP_VERSION`, if set and `pyvenv` is preferred
+  over `virtualenv`, install the specified version of setuptools and pip.
 
 
 ## Version History

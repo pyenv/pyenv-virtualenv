@@ -31,8 +31,8 @@ From inside that directory you can:
 2. **Add `pyenv virtualenv-init` to your shell** to enable activation of virtualenv. This is entirely optional but pretty useful.
 
         $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
-
     **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
+    **Pyenv note**: You may also need to add 'eval "$(pyenv init -)"' to your profile if you haven't done so already.
 
 3. **Restart your shell to the enable pyenv-virtualenv**
 

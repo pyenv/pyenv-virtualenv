@@ -32,12 +32,12 @@ load test_helper
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "\$(pyenv version-name)" = "system" ]; then
+    if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
       pyenv deactivate --no-error --verbose
       unset PYENV_DEACTIVATE
       return 0
     fi
-    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null)" ]; then
+    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
       if pyenv deactivate --no-error --verbose; then
         unset PYENV_DEACTIVATE
         pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
@@ -46,7 +46,7 @@ _pyenv_virtualenv_hook() {
       fi
     fi
   else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null)" ]; then
+    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
       pyenv activate --no-error --verbose
     fi
   fi
@@ -64,12 +64,12 @@ EOS
 setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   if [ -n "\$PYENV_ACTIVATE" ]
-    if [ (pyenv version-name) = "system" ]
+    if [ (pyenv version-name 2>/dev/null || true) = "system" ]
       pyenv deactivate --no-error --verbose
       set -e PYENV_DEACTIVATE
       return 0
     end
-    if [ "\$PYENV_ACTIVATE" != (pyenv prefix 2>/dev/null) ]
+    if [ "\$PYENV_ACTIVATE" != (pyenv prefix 2>/dev/null || true) ]
       if pyenv deactivate --no-error --verbose
         set -e PYENV_DEACTIVATE
         pyenv activate --no-error --verbose; or set -e PYENV_DEACTIVATE
@@ -78,7 +78,7 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
       end
     end
   else
-    if [ -z "\$VIRTUAL_ENV" ]; and [ "\$PYENV_DEACTIVATE" != (pyenv prefix 2>/dev/null) ]
+    if [ -z "\$VIRTUAL_ENV" ]; and [ "\$PYENV_DEACTIVATE" != (pyenv prefix 2>/dev/null || true) ]
       pyenv activate --no-error --verbose
     end
   end
@@ -93,12 +93,12 @@ EOS
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "\$(pyenv version-name)" = "system" ]; then
+    if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
       pyenv deactivate --no-error --verbose
       unset PYENV_DEACTIVATE
       return 0
     fi
-    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null)" ]; then
+    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
       if pyenv deactivate --no-error --verbose; then
         unset PYENV_DEACTIVATE
         pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
@@ -107,7 +107,7 @@ _pyenv_virtualenv_hook() {
       fi
     fi
   else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null)" ]; then
+    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
       pyenv activate --no-error --verbose
     fi
   fi

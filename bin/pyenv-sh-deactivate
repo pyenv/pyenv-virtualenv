@@ -43,10 +43,18 @@ if [ -n "$VERBOSE" ]; then
   echo "  echo \"pyenv-virtualenv: deactivate ${prefix##*/}\" 1>&2;"
 fi
 
-if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
-  # Backward compatibility issue
-  # https://github.com/yyuu/pyenv-virtualenv/issues/26
+if [ -n "${PYENV_ACTIVATE_SHELL}" ]; then
+  # shell version set in pyenv-sh-activate should be unset
+  # https://github.com/yyuu/pyenv-virtualenv/issues/61
   echo "  pyenv shell --unset;"
+  case "$shell" in
+  fish )
+    echo "  set -e PYENV_ACTIVATE_SHELL;"
+    ;;
+  * )
+    echo "  unset PYENV_ACTIVATE_SHELL;"
+    ;;
+  esac
 fi
 
 case "$shell" in

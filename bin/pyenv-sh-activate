@@ -41,8 +41,9 @@ while [ $# -gt 0 ]; do
   shift 1
 done
 
+no_shell=
 versions=("$@")
-if [ -z "$versions" ]; then
+if [ -z "${versions}" ]; then
   no_shell=1
   OLDIFS="$IFS"
   IFS=: versions=($(pyenv-version-name))
@@ -97,6 +98,16 @@ fi
 
 if [ -z "$no_shell" ]; then
   echo "pyenv shell \"${versions}\";"
+  # shell version set in pyenv-sh-activate should be unset
+  # https://github.com/yyuu/pyenv-virtualenv/issues/61
+  case "$shell" in
+  fish )
+    echo "setenv PYENV_ACTIVATE_SHELL 1;"
+    ;;
+  * )
+    echo "export PYENV_ACTIVATE_SHELL=1;"
+    ;;
+  esac
 fi
 
 prefix="$(pyenv-prefix "${versions}")"

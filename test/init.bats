@@ -64,12 +64,12 @@ EOS
 setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   if [ -n "\$PYENV_ACTIVATE" ]
-    if [ (pyenv version-name 2>/dev/null; or true) = "system" ]
+    if [ "(pyenv version-name 2>/dev/null; or true)" = "system" ]
       pyenv deactivate --no-error --verbose
       set -e PYENV_DEACTIVATE
       return 0
     end
-    if [ "\$PYENV_ACTIVATE" != (pyenv prefix 2>/dev/null; or true) ]
+    if [ "\$PYENV_ACTIVATE" != "(pyenv prefix 2>/dev/null; or true)" ]
       if pyenv deactivate --no-error --verbose
         set -e PYENV_DEACTIVATE
         pyenv activate --no-error --verbose; or set -e PYENV_DEACTIVATE
@@ -78,7 +78,7 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
       end
     end
   else
-    if [ -z "\$VIRTUAL_ENV" ]; and [ "\$PYENV_DEACTIVATE" != (pyenv prefix 2>/dev/null; or true) ]
+    if [ -z "\$VIRTUAL_ENV" ]; and [ "\$PYENV_DEACTIVATE" != "(pyenv prefix 2>/dev/null; or true)" ]
       pyenv activate --no-error --verbose
     end
   end

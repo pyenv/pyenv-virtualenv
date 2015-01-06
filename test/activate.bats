@@ -123,7 +123,7 @@ EOS
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
-  run pyenv-sh-activate "venv27"
+  PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
 
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
@@ -144,7 +144,7 @@ EOS
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
-  run pyenv-sh-activate "venv27"
+  PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
 
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
@@ -156,6 +156,48 @@ export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv27";
 . "${PYENV_ROOT}/versions/venv27/bin/activate";
+EOS
+}
+
+@test "activate virtualenv from command-line argument (fish)" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+
+  PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+
+  assert_success
+  assert_output <<EOS
+pyenv shell "venv27";
+setenv PYENV_ACTIVATE_SHELL 1;
+set -e PYENV_DEACTIVATE;
+setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
+. "${PYENV_ROOT}/versions/venv27/bin/activate.fish";
+EOS
+}
+
+@test "activate virtualenv from command-line argument (fish) (without pyenv-virtualenv-init)" {
+  export PYENV_VIRTUALENV_INIT=
+
+  stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+
+  PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+
+  assert_success
+  assert_output <<EOS
+pyenv shell "venv27";
+setenv PYENV_ACTIVATE_SHELL 1;
+set -e PYENV_DEACTIVATE;
+setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
+. "${PYENV_ROOT}/versions/venv27/bin/activate.fish";
 EOS
 }
 

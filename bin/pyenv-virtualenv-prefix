@@ -38,8 +38,14 @@ for version in "${versions[@]}"; do
   fi
   PREFIX="$(pyenv-prefix "${version}")"
   if [ -f "${PREFIX}/bin/activate" ]; then
-    VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"
-    VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "$VIRTUALENV_PREFIX_PATH")
+    # Anaconda has `activate` script nevertheless it is not a virtual environment (#65)
+    if [ -f "${PREFIX}/bin/conda" ]; then
+      echo "pyenv-virtualenv: version \`${version}' is an anaconda/miniconda" 1>&2
+      exit 1
+    else
+      VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"
+      VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "$VIRTUALENV_PREFIX_PATH")
+    fi
   else
     echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
     exit 1

@@ -157,6 +157,12 @@ You can set certain environment variables to control pyenv-virtualenv.
 
 ## Version History
 
+#### 20150119
+
+ * Ignore errors from `pyenv-version-name` since it might fail if there is configuration error (yyuu/pyenv#291)
+ * The _shell_ version set in `activate` should be unset in `deactivate` (#61)
+ * Anaconda has `activate` script nevertheless it is not a virtual environment (#65)
+
 #### 20141106
 
  * Stop creating after `ensurepip` since it has done by `ensurepip` itself

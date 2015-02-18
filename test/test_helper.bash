@@ -5,8 +5,19 @@ PATH="$BATS_TEST_DIRNAME/../bin:$PATH"
 PATH="$TMP/bin:$PATH"
 export PATH
 
+if enable -f "${BATS_TEST_DIRNAME}"/../libexec/pyenv-realpath.dylib realpath 2>/dev/null; then
+  PYENV_VIRTUALENV_TEST_DIR="$(realpath "$BATS_TMPDIR")/pyenv-virtualenv"
+else
+  if [ -n "$PYENV_NATIVE_EXT" ]; then
+    echo "pyenv: failed to load \`realpath' builtin" >&2
+    exit 1
+  fi
+  PYENV_VIRTUALENV_TEST_DIR="${BATS_TMPDIR}/pyenv-virtualenv"
+fi
+
 teardown() {
   rm -fr "$TMP"/*
+  rm -fr "$PYENV_VIRTUALENV_TEST_DIR"
 }
 
 stub() {

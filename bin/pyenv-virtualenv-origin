@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# Summary: Explain how the current Python virtual environment is set
+#
+# Usage: pyenv virtualenv-origin
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+if [ -n "$PYENV_VIRTUALENV" ]; then
+  echo "PYENV_VIRTUALENV environment variable"
+else
+  pyenv-virtualenv-file
+fi

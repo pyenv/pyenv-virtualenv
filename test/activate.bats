@@ -10,13 +10,13 @@ setup() {
 @test "activate virtualenv from current version" {
   export PYENV_VIRTUALENV_INIT=1
 
-  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
 
-  unstub pyenv-version-name
+  unstub pyenv-virtualenv-name
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
 
@@ -31,13 +31,13 @@ EOS
 @test "activate virtualenv from current version (verbose)" {
   export PYENV_VIRTUALENV_INIT=1
 
-  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate --verbose
 
-  unstub pyenv-version-name
+  unstub pyenv-virtualenv-name
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
 
@@ -53,13 +53,13 @@ EOS
 @test "activate virtualenv from current version (without pyenv-virtualenv-init)" {
   export PYENV_VIRTUALENV_INIT=
 
-  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
 
-  unstub pyenv-version-name
+  unstub pyenv-virtualenv-name
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
 
@@ -76,13 +76,13 @@ EOS
 @test "activate virtualenv from current version (fish)" {
   export PYENV_VIRTUALENV_INIT=1
 
-  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
 
-  unstub pyenv-version-name
+  unstub pyenv-virtualenv-name
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
 
@@ -97,13 +97,13 @@ EOS
 @test "activate virtualenv from current version (fish) (without pyenv-virtualenv-init)" {
   export PYENV_VIRTUALENV_INIT=
 
-  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
 
-  unstub pyenv-version-name
+  unstub pyenv-virtualenv-name
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
 
@@ -242,7 +242,7 @@ EOS
 
   assert_failure
   assert_output <<EOS
-pyenv-virtualenv: cannot activate multiple versions at once: venv venv27
+pyenv-virtualenv: cannot activate multiple virtualenvs at once: venv venv27
 false
 EOS
 }

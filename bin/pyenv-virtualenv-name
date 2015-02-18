@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Summary: Show the current Python virtual environment
+#
+# Usage: pyenv virtualenv-name
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+if [ -z "$PYENV_VIRTUALENV" ]; then
+  PYENV_VIRTUALENV_FILE="$(pyenv-virtualenv-file)"
+  PYENV_VIRTUALENV="$(pyenv-virtualenv-file-read "$PYENV_VIRTUALENV_FILE" || true)"
+fi
+
+if [ -z "$PYENV_VIRTUALENV" ]; then
+  exit 1
+fi
+
+virtualenv_exists() {
+  local virtualenv="$1"
+  PREFIX="${PYENV_ROOT}/versions/${virtualenv}"
+  [ -f "${PREFIX}/bin/activate" ] && [ ! -e "${PREFIX}/bin/conda" ]
+}
+
+virtualenvs=()
+OLDIFS="$IFS"
+{ IFS=:
+  for virtualenv in ${PYENV_VIRTUALENV}; do
+    if virtualenv_exists "$virtualenv"; then
+      virtualenvs=("${virtualenvs[@]}" "${virtualenv}")
+    else
+      echo "pyenv-virtualenv: version \`$virtualenv' is not a virtualenv" >&2
+      exit 1
+    fi
+  done
+}
+IFS="$OLDIFS"
+
+OLDIFS="$IFS"
+{ IFS=:
+  echo "${virtualenvs[*]}"
+}
+IFS="$OLDIFS"

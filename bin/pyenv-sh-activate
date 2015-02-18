@@ -42,11 +42,11 @@ while [ $# -gt 0 ]; do
 done
 
 no_shell=
-versions=("$@")
-if [ -z "${versions}" ]; then
+virtualenvs=("$@")
+if [ -z "${virtualenvs}" ]; then
   no_shell=1
   OLDIFS="$IFS"
-  IFS=: versions=($(pyenv-version-name))
+  IFS=: virtualenvs=($(pyenv-virtualenv-name))
   IFS="$OLDIFS"
 fi
 
@@ -56,14 +56,14 @@ if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
   no_shell=
 fi
 
-if [ "${#versions[@]}" -gt 1 ]; then
-  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
+if [ "${#virtualenvs[@]}" -gt 1 ]; then
+  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: cannot activate multiple virtualenvs at once: ${virtualenvs[@]}" 1>&2
   echo "false"
   exit 1
 fi
 
-if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
-  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${versions}' is not a virtualenv" 1>&2
+if ! pyenv-virtualenv-prefix "${virtualenvs}" 1>/dev/null 2>&1; then
+  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${virtualenvs}' is not a virtualenv" 1>&2
   echo "false"
   exit 1
 fi
@@ -93,11 +93,11 @@ if [ -f "$profile" ] && grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv vi
 fi
 
 if [ -n "$VERBOSE" ]; then
-  echo "pyenv-virtualenv: activate ${versions}" 1>&2
+  echo "pyenv-virtualenv: activate ${virtualenvs}" 1>&2
 fi
 
 if [ -z "$no_shell" ]; then
-  echo "pyenv shell \"${versions}\";"
+  echo "pyenv shell \"${virtualenvs}\";"
   # shell version set in pyenv-sh-activate should be unset
   # https://github.com/yyuu/pyenv-virtualenv/issues/61
   case "$shell" in
@@ -110,7 +110,7 @@ if [ -z "$no_shell" ]; then
   esac
 fi
 
-prefix="$(pyenv-prefix "${versions}")"
+prefix="$(pyenv-prefix "${virtualenvs}")"
 case "$shell" in
 fish )
   cat <<EOS

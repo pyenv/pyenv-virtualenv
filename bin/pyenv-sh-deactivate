@@ -3,8 +3,6 @@
 # Summary: Deactivate virtual environment
 #
 # Usage: pyenv deactivate
-#
-# Deactivate a Python virtual environment.
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x

@@ -3,7 +3,6 @@
 # Summary: List all Python virtualenvs found in `$PYENV_ROOT/versions/*'.
 #
 # Usage: pyenv virtualenvs [--bare]
-#
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x

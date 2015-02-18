@@ -31,23 +31,28 @@ load test_helper
   assert_output <<EOS
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
+  virtualenv="\$(pyenv virtualenv-name || true)"
+  prefix="\$(pyenv prefix "\$virtualenv" 2>/dev/null || true)"
+
   if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
+    if [ -n "\$virtualenv" ]; then
+      if [ "\$PYENV_ACTIVATE" != "\$prefix" ]; then
+        if pyenv deactivate --no-error --verbose; then
+          pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
+        else
+          pyenv activate --no-error --verbose
+        fi
+      fi
+    else
       pyenv deactivate --no-error --verbose
       unset PYENV_DEACTIVATE
       return 0
     fi
-    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if pyenv deactivate --no-error --verbose; then
-        unset PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
-      else
+  else
+    if [ -z "\$VIRTUAL_ENV" ]; then
+      if [ -n "\$virtualenv" ] && [ "\$PYENV_DEACTIVATE" != "\$prefix" ]; then
         pyenv activate --no-error --verbose
       fi
-    fi
-  else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      pyenv activate --no-error --verbose
     fi
   fi
 };
@@ -63,24 +68,28 @@ EOS
   assert_output <<EOS
 setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
-  set -l PYENV_PREFIX (pyenv prefix 2>/dev/null; or true)
+  set -l virtualenv (pyenv virtualenv-name; or true)
+  set -l prefix (pyenv prefix "\$virtualenv" 2>/dev/null; or true)
+
   if [ -n "\$PYENV_ACTIVATE" ]
-    if [ "(pyenv version-name 2>/dev/null; or true)" = "system" ]
+    if [ -n "\$virtualenv" ]
+      if [ "\$PYENV_ACTIVATE" != "\$prefix" ]
+        if pyenv deactivate --no-error --verbose
+          pyenv activate --no-error --verbose; or set -e PYENV_DEACTIVATE
+        else
+          pyenv activate --no-error --verbose
+        end
+      end
+    else
       pyenv deactivate --no-error --verbose
       set -e PYENV_DEACTIVATE
       return 0
     end
-    if [ "\$PYENV_ACTIVATE" != "\$PYENV_PREFIX" ]
-      if pyenv deactivate --no-error --verbose
-        set -e PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose; or set -e PYENV_DEACTIVATE
-      else
+  else
+    if [ -z "\$VIRTUAL_ENV" ]
+      if [ -n "\$virtualenv" ]; and [ "\$PYENV_DEACTIVATE" != "\$prefix" ]
         pyenv activate --no-error --verbose
       end
-    end
-  else
-    if [ -z "\$VIRTUAL_ENV" ]; and [ "\$PYENV_DEACTIVATE" != "\$PYENV_PREFIX" ]
-      pyenv activate --no-error --verbose
     end
   end
 end
@@ -93,23 +102,28 @@ EOS
   assert_output <<EOS
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
+  virtualenv="\$(pyenv virtualenv-name || true)"
+  prefix="\$(pyenv prefix "\$virtualenv" 2>/dev/null || true)"
+
   if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
+    if [ -n "\$virtualenv" ]; then
+      if [ "\$PYENV_ACTIVATE" != "\$prefix" ]; then
+        if pyenv deactivate --no-error --verbose; then
+          pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
+        else
+          pyenv activate --no-error --verbose
+        fi
+      fi
+    else
       pyenv deactivate --no-error --verbose
       unset PYENV_DEACTIVATE
       return 0
     fi
-    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if pyenv deactivate --no-error --verbose; then
-        unset PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
-      else
+  else
+    if [ -z "\$VIRTUAL_ENV" ]; then
+      if [ -n "\$virtualenv" ] && [ "\$PYENV_DEACTIVATE" != "\$prefix" ]; then
         pyenv activate --no-error --verbose
       fi
-    fi
-  else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      pyenv activate --no-error --verbose
     fi
   fi
 };

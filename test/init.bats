@@ -51,7 +51,7 @@ _pyenv_virtualenv_hook() {
   else
     if [ -z "\$VIRTUAL_ENV" ]; then
       if [ -n "\$virtualenv" ] && [ "\$PYENV_DEACTIVATE" != "\$prefix" ]; then
-        pyenv activate --no-error --verbose
+        pyenv activate --no-error --verbose || true
       fi
     fi
   fi
@@ -88,7 +88,7 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
   else
     if [ -z "\$VIRTUAL_ENV" ]
       if [ -n "\$virtualenv" ]; and [ "\$PYENV_DEACTIVATE" != "\$prefix" ]
-        pyenv activate --no-error --verbose
+        pyenv activate --no-error --verbose; or true
       end
     end
   end
@@ -122,7 +122,7 @@ _pyenv_virtualenv_hook() {
   else
     if [ -z "\$VIRTUAL_ENV" ]; then
       if [ -n "\$virtualenv" ] && [ "\$PYENV_DEACTIVATE" != "\$prefix" ]; then
-        pyenv activate --no-error --verbose
+        pyenv activate --no-error --verbose || true
       fi
     fi
   fi

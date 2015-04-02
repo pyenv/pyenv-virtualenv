@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Usage: pyenv virtualenv-file-write <file> <venv-name>
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+PYENV_VIRTUALENV_FILE="$1"
+shift || true
+virtualenvs=("$@")
+
+if [ -z "$virtualenvs" ] || [ -z "$PYENV_VIRTUALENV_FILE" ]; then
+  pyenv-help --usage virtualenv-file-write >&2
+  exit 1
+fi
+
+# Make sure the specified virtual environment is created
+pyenv-virtualenv-prefix "${virtualenvs[@]}" >/dev/null
+
+# Write the virtual environment name out to disk.
+# Create an empty file. Using "rm" might cause a permission error.
+> "$PYENV_VIRTUALENV_FILE"
+for virtualenv in "${virtualenvs[@]}"; do
+  echo "$virtualenv" >> "$PYENV_VIRTUALENV_FILE"
+done

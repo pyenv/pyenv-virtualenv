@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Summary: Detect the file that sets the current Python virtual environment
+#
+# Usage: pyenv virtualenv-file
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+find_local_virtualenv_file() {
+  local root="$1"
+  while [ -n "$root" ]; do
+    if [ -e "${root}/.python-venv" ]; then
+      echo "${root}/.python-venv"
+      exit
+    elif [ -e "${root}/.pyenv-venv" ]; then
+      echo "${root}/.pyenv-venv"
+      exit
+    fi
+    [ "${root}" = "${root%/*}" ] && break
+    root="${root%/*}"
+  done
+}
+
+find_local_virtualenv_file "$PYENV_DIR"
+[ "$PYENV_DIR" = "$PWD" ] || find_local_virtualenv_file "$PWD"
+
+exit 1

@@ -7,7 +7,6 @@
 #        pyenv virtualenv --help
 #
 #   -f/--force       Install even if the version appears to be installed already
-#
 
 PYENV_VIRTUALENV_VERSION="20150119"
 

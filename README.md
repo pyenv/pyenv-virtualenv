@@ -129,7 +129,7 @@ Removing the directory in `~/.pyenv/versions` will delete the virtualenv, or you
 
 ### virtualenv and pyvenv
 
-There is a [venv](http://docs.python.jp/3/library/venv.html) module available
+There is a [venv](http://docs.python.org/3/library/venv.html) module available
 for CPython 3.3 and newer.
 It provides a command-line tool `pyvenv` which is the successor of `virtualenv`
 and distributed by default.

@@ -283,7 +283,7 @@ fi
 # Set VERSION_NAME as default version in this script
 export PYENV_VERSION="${VERSION_NAME}"
 
-# Source version must exists before creating virtualenv
+# Source version must exist before creating virtualenv.
 pyenv-prefix 1>/dev/null 2>&1 || usage 1
 
 if [ -z "$TMPDIR" ]; then
@@ -328,12 +328,12 @@ else
   fi
 fi
 
-# Unset environment variables which starts with `VIRTUALENV_`.
+# Unset environment variables which start with `VIRTUALENV_`.
 # These variables are reserved for virtualenv.
 unset VIRTUALENV_VERSION
 
 
-# Download specified version of ez_setup.py/get-pip.py
+# Download specified version of ez_setup.py/get-pip.py.
 if [ -n "${SETUPTOOLS_VERSION}" ]; then
   EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION}/ez_setup.py"
 fi
@@ -396,19 +396,19 @@ trap cleanup SIGINT
 
 # Invoke virtualenv and record exit status in $STATUS.
 STATUS=0
-# virtualenv may download distribute/setuptools in current directory.
-# change to cache directory to reuse them between invocation.
+# virtualenv may download distribute/setuptools into the current directory.
+# Change to cache directory to reuse them between invocations.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
-## Install setuptools and pip
+## Install setuptools and pip.
 PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
 
-## Migrate previously installed packages from requirements.txt
+## Migrate previously installed packages from requirements.txt.
 PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
 
-# Execute `after_virtualenv` hooks
+# Execute `after_virtualenv` hooks.
 for hook in "${after_hooks[@]}"; do eval "$hook"; done
 
 # Run `pyenv-rehash` after a successful installation.

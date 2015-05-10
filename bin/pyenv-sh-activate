@@ -69,26 +69,10 @@ if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
 fi
 
 shell="${PYENV_SHELL:-${SHELL##*/}}"
-case "$shell" in
-bash )
-  profile="$HOME/.bash_profile"
-  ;;
-zsh )
-  profile="$HOME/.zshrc"
-  ;;
-ksh )
-  profile="$HOME/.profile"
-  ;;
-fish )
-  profile="$HOME/.config/fish/config.fish"
-  ;;
-* )
-  profile="$HOME/.profile"
-  ;;
-esac
 
-# Display setup instruction if 'pyenv virtualenv-init -' is not found in "$profile"
-if [ -f "$profile" ] && grep -q 'pyenv init -' "$profile" && ! grep -q 'pyenv virtualenv-init -' "$profile"; then
+# Display setup instruction, if pyenv-virtualenv has not been initialized.
+# if 'pyenv virtualenv-init -' is not found in "$profile"
+if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
   pyenv-virtualenv-init >&2 || true
 fi
 

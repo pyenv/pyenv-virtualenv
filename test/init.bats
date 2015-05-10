@@ -3,6 +3,7 @@
 load test_helper
 
 @test "detect parent shell" {
+  unset PYENV_SHELL
   root="$(cd $BATS_TEST_DIRNAME/.. && pwd)"
   SHELL=/bin/false run pyenv-virtualenv-init -
   assert_success

@@ -65,6 +65,11 @@ EOS
 
   assert_success
   assert_output <<EOS
+# Load pyenv-virtualenv automatically by adding
+# the following to ~/.bash_profile:
+
+eval "\$(pyenv virtualenv-init -)"
+
 pyenv shell "venv";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
@@ -109,6 +114,11 @@ EOS
 
   assert_success
   assert_output <<EOS
+# Load pyenv-virtualenv automatically by adding
+# the following to ~/.config/fish/config.fish:
+
+status --is-interactive; and . (pyenv virtualenv-init -|psub)
+
 pyenv shell "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
@@ -151,6 +161,11 @@ EOS
 
   assert_success
   assert_output <<EOS
+# Load pyenv-virtualenv automatically by adding
+# the following to ~/.bash_profile:
+
+eval "\$(pyenv virtualenv-init -)"
+
 pyenv shell "venv27";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
@@ -193,6 +208,11 @@ EOS
 
   assert_success
   assert_output <<EOS
+# Load pyenv-virtualenv automatically by adding
+# the following to ~/.config/fish/config.fish:
+
+status --is-interactive; and . (pyenv virtualenv-init -|psub)
+
 pyenv shell "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;

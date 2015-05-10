@@ -20,10 +20,11 @@ done
 
 shell="${1:-$PYENV_SHELL}"
 if [ -z "$shell" ]; then
-  shell="$(ps c -p "$PPID" -o 'ucomm=' 2>/dev/null || true)"
+  shell="$(ps -p "$PPID" -o 'args=' 2>/dev/null || true)"
   shell="${shell##-}"
   shell="${shell%% *}"
-  shell="$(basename "${shell:-$SHELL}")"
+  shell="${shell:-$SHELL}"
+  shell="${shell##*/}"
 fi
 
 if [ -z "$print" ]; then

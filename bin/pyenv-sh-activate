@@ -68,7 +68,7 @@ if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
   exit 1
 fi
 
-shell="$(basename "${PYENV_SHELL:-$SHELL}")"
+shell="${PYENV_SHELL:-${SHELL##*/}}"
 case "$shell" in
 bash )
   profile="$HOME/.bash_profile"

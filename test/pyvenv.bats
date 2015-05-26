@@ -74,9 +74,7 @@ OUT
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : false"
-  stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub curl true
   stub curl true
 
   remove_executable "3.2.1" "virtualenv"
@@ -88,7 +86,6 @@ OUT
   assert_output <<OUT
 PYENV_VERSION=3.2.1 pip install virtualenv
 PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
-Installing setuptools from https://bootstrap.pypa.io/ez_setup.py...
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -156,9 +153,7 @@ OUT
   stub pyenv-exec "pip install virtualenv : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : false"
-  stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub curl true
   stub curl true
 
   remove_executable "3.2.1" "virtualenv"
@@ -170,7 +165,6 @@ OUT
   assert_output <<OUT
 PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 pip install virtualenv
 PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
-Installing setuptools from https://bootstrap.pypa.io/ez_setup.py...
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT

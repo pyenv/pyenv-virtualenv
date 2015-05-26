@@ -146,12 +146,12 @@ You can set certain environment variables to control pyenv-virtualenv.
 * `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to install the desired
   version of virtualenv. If `virtualenv` has not been installed,
   pyenv-virtualenv will try to install the given version of virtualenv.
-* `EZ_SETUP` and `GET_PIP`, if set and `pyvenv` is preferred over `virtualenv`,
-  use `ez_setup.py` and `get_pip.py` from the specified location.
-* `EZ_SETUP_URL` and `GET_PIP_URL`, if set and `pyvenv` is preferred over
-  `virtualenv`, download `ez_setup.py` and `get_pip.py` from the specified URL.
-* `SETUPTOOLS_VERSION` and `PIP_VERSION`, if set and `pyvenv` is preferred
-  over `virtualenv`, install the specified version of setuptools and pip.
+* `GET_PIP`, if set and `pyvenv` is preferred over `virtualenv`,
+  use `get_pip.py` from the specified location.
+* `GET_PIP_URL`, if set and `pyvenv` is preferred over
+  `virtualenv`, download `get_pip.py` from the specified URL.
+* `PIP_VERSION`, if set and `pyvenv` is preferred
+  over `virtualenv`, install the specified version of pip.
 
 
 ## Version History

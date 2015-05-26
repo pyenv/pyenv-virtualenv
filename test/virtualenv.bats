@@ -28,9 +28,7 @@ unstub_pyenv() {
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : false"
-  stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub curl true
   stub curl true
 
   run pyenv-virtualenv "3.2.1" "venv"
@@ -38,7 +36,6 @@ unstub_pyenv() {
   assert_success
   assert_output <<OUT
 PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
-Installing setuptools from https://bootstrap.pypa.io/ez_setup.py...
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -54,9 +51,7 @@ OUT
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : false"
-  stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub curl true
   stub curl true
 
   run pyenv-virtualenv venv
@@ -64,7 +59,6 @@ OUT
   assert_success
   assert_output <<OUT
 PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
-Installing setuptools from https://bootstrap.pypa.io/ez_setup.py...
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -81,9 +75,7 @@ OUT
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub pyenv-exec "virtualenv --verbose --python=python ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : false"
-  stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub curl true
   stub curl true
 
   run pyenv-virtualenv -v -p python venv
@@ -91,7 +83,6 @@ OUT
   assert_success
   assert_output <<OUT
 PYENV_VERSION=3.2.1 virtualenv --verbose --python=python ${PYENV_ROOT}/versions/venv
-Installing setuptools from https://bootstrap.pypa.io/ez_setup.py...
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -108,9 +99,7 @@ OUT
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub pyenv-exec "virtualenv --verbose --python=python ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -m ensurepip : false"
-  stub pyenv-exec "python */ez_setup.py : true"
   stub pyenv-exec "python */get-pip.py : true"
-  stub curl true
   stub curl true
 
   run pyenv-virtualenv --verbose --python=python venv
@@ -118,7 +107,6 @@ OUT
   assert_success
   assert_output <<OUT
 PYENV_VERSION=3.2.1 virtualenv --verbose --python=python ${PYENV_ROOT}/versions/venv
-Installing setuptools from https://bootstrap.pypa.io/ez_setup.py...
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT

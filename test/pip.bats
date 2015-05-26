@@ -52,9 +52,7 @@ OUT
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pyvenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/venv/bin"
   stub pyenv-exec "python -m ensurepip : false"
-  stub pyenv-exec "python */ez_setup.py : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/venv/bin/easy_install"
   stub pyenv-exec "python */get-pip.py : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/venv/bin/pip"
-  stub curl true
   stub curl true
 
   remove_executable "3.3.5" "virtualenv"
@@ -65,8 +63,6 @@ OUT
   assert_success
   assert_output <<OUT
 PYENV_VERSION=3.3.5 pyvenv ${PYENV_ROOT}/versions/venv
-Installing setuptools from https://bootstrap.pypa.io/ez_setup.py...
-PYENV_VERSION=venv python ${TMP}/pyenv/cache/ez_setup.py
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 PYENV_VERSION=venv python ${TMP}/pyenv/cache/get-pip.py
 rehashed

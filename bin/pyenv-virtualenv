@@ -182,9 +182,7 @@ build_package_get_pip() {
 }
 
 build_package_ensurepip() {
-  pyenv-exec python -m ensurepip 2>/dev/null|| {
-    build_package_ez_setup "$@" && build_package_get_pip "$@"
-  } || return 1
+  pyenv-exec python -m ensurepip 2>/dev/null || build_package_get_pip "$@" || return 1
 }
 
 prepare_requirements() {

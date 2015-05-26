@@ -125,7 +125,6 @@ You can also activate and deactivate a pyenv virtualenv manually:
 Removing the directory in `~/.pyenv/versions` will delete the virtualenv, or you can run:
 
     pyenv uninstall my-virtual-env
-    
 
 ### virtualenv and pyvenv
 
@@ -156,6 +155,12 @@ You can set certain environment variables to control pyenv-virtualenv.
 
 
 ## Version History
+
+#### 20150526
+
+* Use `typeset -g` with `precmd_functions` (#75)
+* activate: display setup instructions only with `PYENV_VIRTUALENV_INIT=0` (#78)
+* Ignore failure of pyenv activate (#68)
 
 #### 20150119
 

@@ -290,7 +290,9 @@ else
   TMP="${TMPDIR%/}"
 fi
 
-VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+if [ -z "$VIRTUALENV_PATH" ]; then
+  VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+fi
 
 unset HAS_VIRTUALENV
 unset HAS_PYVENV

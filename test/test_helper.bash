@@ -97,6 +97,16 @@ assert_output_contains() {
   }
 }
 
+assert_output_contains_not() {
+  local expected="$1"
+  echo "$output" | grep -F "$expected" >/dev/null && {
+    { echo "expected output to not contain $expected"
+      echo "actual: $output"
+    } | flunk; return
+  }
+  return 0
+}
+
 create_executable() {
   mkdir -p "${PYENV_ROOT}/versions/$1/bin"
   touch "${PYENV_ROOT}/versions/$1/bin/$2"

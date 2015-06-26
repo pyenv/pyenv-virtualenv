@@ -4,8 +4,25 @@ load test_helper
 
 @test "detect parent shell" {
   unset PYENV_SHELL
-  root="$(cd $BATS_TEST_DIRNAME/.. && pwd)"
   SHELL=/bin/false run pyenv-virtualenv-init -
+  assert_success
+  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+}
+
+@test "detect parent shell from script (sh)" {
+  unset PYENV_SHELL
+  printf '#!/bin/sh\necho "$(pyenv-virtualenv-init -)"' > ${BATS_TEST_DIRNAME}/script.sh
+  chmod +x ${BATS_TEST_DIRNAME}/script.sh
+  run ${BATS_TEST_DIRNAME}/script.sh
+  assert_success
+  assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+}
+
+@test "detect parent shell from script (bash)" {
+  unset PYENV_SHELL
+  printf '#!/bin/bash\necho "$(pyenv-virtualenv-init -)"' > ${BATS_TEST_DIRNAME}/script.sh
+  chmod +x ${BATS_TEST_DIRNAME}/script.sh
+  run ${BATS_TEST_DIRNAME}/script.sh
   assert_success
   assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
 }

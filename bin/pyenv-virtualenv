@@ -282,7 +282,10 @@ fi
 export PYENV_VERSION="${VERSION_NAME}"
 
 # Source version must exist before creating virtualenv.
-pyenv-prefix 1>/dev/null 2>&1 || usage 1
+if ! pyenv-prefix 1>/dev/null 2>&1; then
+  echo "pyenv-virtualenv: \`${PYENV_VERSION}' is not installed in pyenv." 1>&2
+  exit 1
+fi
 
 if [ -z "$TMPDIR" ]; then
   TMP="/tmp"

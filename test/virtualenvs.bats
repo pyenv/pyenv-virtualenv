@@ -17,12 +17,15 @@ setup() {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/2.7.6\""
   stub pyenv-virtualenv-prefix "venv33 : echo \"${PYENV_ROOT}/versions/3.3.3\""
+  stub pyenv-prefix "2.7.6 : echo \"${PYENV_ROOT}/versions/2.7.6\""
+  stub pyenv-prefix "3.3.3 : echo \"${PYENV_ROOT}/versions/3.3.3\""
 
   run pyenv-virtualenvs
 
   unstub pyenv-version-name
   unstub pyenv-versions
   unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
 
   assert_success
   assert_output <<OUT

@@ -62,10 +62,19 @@ if [ "${#versions[@]}" -gt 1 ]; then
   exit 1
 fi
 
-if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
-  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${versions}' is not a virtualenv" 1>&2
-  echo "false"
-  exit 1
+if pyenv-prefix "${versions}" 1>/dev/null 2>&1; then
+  if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
+    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${versions}' is not a virtualenv" 1>&2
+    echo "false"
+    exit 1
+  fi
+else
+  versions="$(pyenv-version-name)/envs/${versions}"
+  if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
+    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${versions}' is not an environment of anaconda/miniconda" 1>&2
+    echo "false"
+    exit 1
+  fi
 fi
 
 shell="${PYENV_SHELL:-${SHELL##*/}}"

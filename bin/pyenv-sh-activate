@@ -69,6 +69,29 @@ if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
 fi
 
 shell="${PYENV_SHELL:-${SHELL##*/}}"
+prefix="$(pyenv-prefix "${versions}")"
+
+unset conda_env
+
+if [ -f "${prefix}/bin/conda" ]; then
+  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
+    case "$shell" in
+    bash )
+      conda_env="${prefix##*/envs/}"
+      ;;
+    zsh )
+      conda_env="${prefix##*/envs/}"
+      ;;
+    * )
+      echo "false"
+      exit 1
+      ;;
+    esac
+  else
+    echo "false"
+    exit 1
+  fi
+fi
 
 # Display setup instruction, if pyenv-virtualenv has not been initialized.
 # if 'pyenv virtualenv-init -' is not found in "$profile"
@@ -94,20 +117,29 @@ if [ -z "$no_shell" ]; then
   esac
 fi
 
-prefix="$(pyenv-prefix "${versions}")"
-case "$shell" in
-fish )
+if [ -n "${conda_env}" ]; then
+  # anaconda/miniconda
   cat <<EOS
+unset PYENV_DEACTIVATE;
+export PYENV_ACTIVATE="${prefix}";
+. "${prefix%/envs/*}/bin/activate" "${versions##*/}"
+EOS
+else
+  # virtualenv/pyvenv
+  case "$shell" in
+  fish )
+    cat <<EOS
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${prefix}";
 . "${prefix}/bin/activate.fish";
 EOS
- ;;
-*    )
-  cat <<EOS
+   ;;
+  *    )
+    cat <<EOS
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${prefix}";
 . "${prefix}/bin/activate";
 EOS
-  ;;
-esac
+    ;;
+  esac
+fi

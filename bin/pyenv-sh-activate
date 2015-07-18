@@ -122,7 +122,7 @@ if [ -n "${conda_env}" ]; then
   cat <<EOS
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${prefix}";
-. "${prefix%/envs/*}/bin/activate" "${versions##*/}"
+. "${prefix%/envs/*}/bin/activate" "${versions##*/}";
 EOS
 else
   # virtualenv/pyvenv

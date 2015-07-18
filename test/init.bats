@@ -51,21 +51,21 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
-      pyenv deactivate --no-error --verbose
+      eval "\$(pyenv sh-deactivate --no-error --verbose)"
       unset PYENV_DEACTIVATE
       return 0
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if pyenv deactivate --no-error --verbose; then
+      if eval "\$(pyenv sh-deactivate --no-error --verbose)"; then
         unset PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
+        eval "\$(pyenv sh-activate --no-error --verbose)" || unset PYENV_DEACTIVATE
       else
-        pyenv activate --no-error --verbose
+        eval "\$(pyenv sh-activate --no-error --verbose)"
       fi
     fi
   else
     if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      pyenv activate --no-error --verbose || true
+      eval "\$(pyenv sh-activate --no-error --verbose)" || true
     fi
   fi
 };
@@ -113,21 +113,21 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
-      pyenv deactivate --no-error --verbose
+      eval "\$(pyenv sh-deactivate --no-error --verbose)"
       unset PYENV_DEACTIVATE
       return 0
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if pyenv deactivate --no-error --verbose; then
+      if eval "\$(pyenv sh-deactivate --no-error --verbose)"; then
         unset PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
+        eval "\$(pyenv sh-activate --no-error --verbose)" || unset PYENV_DEACTIVATE
       else
-        pyenv activate --no-error --verbose
+        eval "\$(pyenv sh-activate --no-error --verbose)"
       fi
     fi
   else
     if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      pyenv activate --no-error --verbose || true
+      eval "\$(pyenv sh-activate --no-error --verbose)" || true
     fi
   fi
 };

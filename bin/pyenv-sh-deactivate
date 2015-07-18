@@ -87,7 +87,7 @@ if [ -n "${conda_env}" ]; then
   cat <<EOS
   export PYENV_DEACTIVATE="$prefix";
   unset PYENV_ACTIVATE;
-  . "${prefix%/envs/*}/bin/deactivate" "${prefix##*/envs/}";
+  . "${prefix%/envs/*}/bin/deactivate";
 else
 EOS
 else

@@ -51,10 +51,9 @@ for version in $(pyenv-versions --bare); do
     virtualenv_prefix="$(pyenv-virtualenv-prefix "${version}" 2>/dev/null || true)"
     if [ -d "${virtualenv_prefix}" ]; then
       print_version "${version}" " (created from ${virtualenv_prefix})"
-    else
-      # envs of anaconda/miniconda
       prefix="$(pyenv-prefix "${version}")"
-      if [ -f "${prefix}/bin/activate" ] && [ -f "${prefix}/bin/conda" ]; then
+      if [ -f "${prefix}/bin/conda" ]; then
+        # envs of anaconda/miniconda
         shopt -s nullglob
         for conda_env in "${prefix}/envs/"*; do
           print_version "${version##*/}${conda_env#${prefix}}" " (created from ${prefix})"

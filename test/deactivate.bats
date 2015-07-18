@@ -106,6 +106,7 @@ EOS
 
 @test "deactivate virtualenv which has been activated manually" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
+  export PYENV_ACTIVATE=
   export PYENV_ACTIVATE_SHELL=
 
   PYENV_SHELL="bash" run pyenv-sh-deactivate
@@ -203,6 +204,7 @@ EOS
 
 @test "deactivate virtualenv which has been activated manually (fish)" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
+  export PYENV_ACTIVATE=
   export PYENV_ACTIVATE_SHELL=
 
   PYENV_SHELL="fish" run pyenv-sh-deactivate

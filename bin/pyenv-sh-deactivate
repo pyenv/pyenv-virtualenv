@@ -33,22 +33,15 @@ prefix="${PYENV_ACTIVATE:-${VIRTUAL_ENV}}"
 unset conda_env
 
 if [ -f "${prefix}/bin/conda" ]; then
-  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
-    case "$shell" in
-    bash )
-      conda_env="${prefix##*/envs/}"
-      ;;
-    zsh )
-      conda_env="${prefix##*/envs/}"
-      ;;
-    * )
-      echo "false"
-      exit 1
-      ;;
-    esac
-  else
+  if [[ "$shell" != "bash" ]] && [[ "$shell" != "zsh" ]]; then
+    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: Only bash and zsh are supported by Anaconda/Miniconda" 1>&2
     echo "false"
     exit 1
+  fi
+  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
+    conda_env="${prefix##*/envs/}"
+  else
+    conda_env="root"
   fi
 fi
 

@@ -50,8 +50,7 @@ for version_string in "${versions[@]}"; do
           exit 1
         fi
       else
-        echo "pyenv-virtualenv: version \`${version_string}' is not a virtualenv" 1>&2
-        exit 1
+        VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${PREFIX}")
       fi
     else
       VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"

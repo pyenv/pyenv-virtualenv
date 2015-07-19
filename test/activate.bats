@@ -13,6 +13,7 @@ setup() {
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
 
@@ -33,6 +34,7 @@ EOS
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate --verbose
@@ -55,6 +57,7 @@ EOS
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
@@ -84,6 +87,7 @@ EOS
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
 
@@ -104,6 +108,7 @@ EOS
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
@@ -132,6 +137,7 @@ EOS
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
 
@@ -152,6 +158,7 @@ EOS
   export PYENV_VIRTUALENV_INIT=
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
@@ -179,6 +186,7 @@ EOS
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
 
@@ -199,6 +207,7 @@ EOS
   export PYENV_VIRTUALENV_INIT=
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
@@ -232,10 +241,12 @@ EOS
 
 @test "should fail if the version is not a virtualenv" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
+  stub pyenv-prefix "3.3.3 : echo \"${PYENV_ROOT}/versions/3.3.3\""
 
   run pyenv-sh-activate "3.3.3"
 
   unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
 
   assert_failure
   assert_output <<EOS
@@ -246,10 +257,12 @@ EOS
 
 @test "should fail if the version is not a virtualenv (no-error)" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
+  stub pyenv-prefix "3.3.3 : echo \"${PYENV_ROOT}/versions/3.3.3\""
 
   run pyenv-sh-activate --no-error "3.3.3"
 
   unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
 
   assert_failure
   assert_output <<EOS

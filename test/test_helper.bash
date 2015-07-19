@@ -116,3 +116,19 @@ create_executable() {
 remove_executable() {
   rm -f "${PYENV_ROOT}/versions/$1/bin/$2"
 }
+
+create_conda() {
+  local version="$1"
+  shift 1
+  mkdir -p "${PYENV_ROOT}/versions/$version/bin"
+  touch "${PYENV_ROOT}/versions/$version/bin/activate"
+  touch "${PYENV_ROOT}/versions/$version/bin/conda"
+  chmod +x "${PYENV_ROOT}/versions/$version/bin/conda"
+  local conda_env
+  for conda_env; do
+    mkdir -p "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin"
+    touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/activate"
+    touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/conda"
+    chmod +x "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/conda"
+  done
+}

@@ -11,20 +11,22 @@ load test_helper
 
 @test "detect parent shell from script (sh)" {
   unset PYENV_SHELL
-  printf '#!/bin/sh\necho "$(pyenv-virtualenv-init -)"' > ${BATS_TEST_DIRNAME}/script.sh
-  chmod +x ${BATS_TEST_DIRNAME}/script.sh
-  run ${BATS_TEST_DIRNAME}/script.sh
+  printf '#!/bin/sh\necho "$(pyenv-virtualenv-init -)"' > "${TMP}/script.sh"
+  chmod +x ${TMP}/script.sh
+  run ${TMP}/script.sh
   assert_success
   assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+  rm -f "${TMP}/script.sh"
 }
 
 @test "detect parent shell from script (bash)" {
   unset PYENV_SHELL
-  printf '#!/bin/bash\necho "$(pyenv-virtualenv-init -)"' > ${BATS_TEST_DIRNAME}/script.sh
-  chmod +x ${BATS_TEST_DIRNAME}/script.sh
-  run ${BATS_TEST_DIRNAME}/script.sh
+  printf '#!/bin/bash\necho "$(pyenv-virtualenv-init -)"' > "${TMP}/script.sh"
+  chmod +x ${TMP}/script.sh
+  run ${TMP}/script.sh
   assert_success
   assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+  rm -f "${TMP}/script.sh"
 }
 
 @test "sh-compatible instructions" {
@@ -51,21 +53,21 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
-      pyenv deactivate --no-error --verbose
+      eval "\$(pyenv sh-deactivate --no-error --verbose)"
       unset PYENV_DEACTIVATE
       return 0
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if pyenv deactivate --no-error --verbose; then
+      if eval "\$(pyenv sh-deactivate --no-error --verbose)"; then
         unset PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
+        eval "\$(pyenv sh-activate --no-error --verbose)" || unset PYENV_DEACTIVATE
       else
-        pyenv activate --no-error --verbose
+        eval "\$(pyenv sh-activate --no-error --verbose)"
       fi
     fi
   else
     if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      pyenv activate --no-error --verbose || true
+      eval "\$(pyenv sh-activate --no-error --verbose)" || true
     fi
   fi
 };
@@ -113,21 +115,21 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
-      pyenv deactivate --no-error --verbose
+      eval "\$(pyenv sh-deactivate --no-error --verbose)"
       unset PYENV_DEACTIVATE
       return 0
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if pyenv deactivate --no-error --verbose; then
+      if eval "\$(pyenv sh-deactivate --no-error --verbose)"; then
         unset PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose || unset PYENV_DEACTIVATE
+        eval "\$(pyenv sh-activate --no-error --verbose)" || unset PYENV_DEACTIVATE
       else
-        pyenv activate --no-error --verbose
+        eval "\$(pyenv sh-activate --no-error --verbose)"
       fi
     fi
   else
     if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      pyenv activate --no-error --verbose || true
+      eval "\$(pyenv sh-activate --no-error --verbose)" || true
     fi
   fi
 };

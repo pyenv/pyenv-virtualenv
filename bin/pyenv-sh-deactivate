@@ -28,16 +28,35 @@ while [ $# -gt 0 ]; do
 done
 
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
-case "$shell" in
-fish )
-  echo "if functions -q deactivate;"
-  ;;
-*    )
-  echo "if declare -f deactivate 1>/dev/null 2>&1; then"
-  ;;
-esac
-
 prefix="${PYENV_ACTIVATE:-${VIRTUAL_ENV}}"
+
+unset conda_env
+
+if [ -f "${prefix}/bin/conda" ]; then
+  if [[ "$shell" != "bash" ]] && [[ "$shell" != "zsh" ]]; then
+    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: Only bash and zsh are supported by Anaconda/Miniconda" 1>&2
+    echo "false"
+    exit 1
+  fi
+  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
+    conda_env="${prefix##*/envs/}"
+  else
+    conda_env="root"
+  fi
+fi
+
+if [ -n "${conda_env}" ]; then
+  echo "if [ -f \"${prefix%/envs/*}/bin/deactivate\" ]; then"
+else
+  case "$shell" in
+  fish )
+    echo "if functions -q deactivate;"
+    ;;
+  *    )
+    echo "if declare -f deactivate 1>/dev/null 2>&1; then"
+    ;;
+  esac
+fi
 
 if [ -n "$VERBOSE" ]; then
   echo "  echo \"pyenv-virtualenv: deactivate ${prefix##*/}\" 1>&2;"
@@ -57,24 +76,33 @@ if [ -n "${PYENV_ACTIVATE_SHELL}" ]; then
   esac
 fi
 
-case "$shell" in
-fish )
+if [ -n "${conda_env}" ]; then
   cat <<EOS
+  export PYENV_DEACTIVATE="$prefix";
+  unset PYENV_ACTIVATE;
+  . "${prefix%/envs/*}/bin/deactivate";
+else
+EOS
+else
+  case "$shell" in
+  fish )
+    cat <<EOS
   setenv PYENV_DEACTIVATE "$prefix";
   set -e PYENV_ACTIVATE;
   deactivate;
 else;
 EOS
-  ;;
-*    )
-  cat <<EOS
+    ;;
+  *    )
+    cat <<EOS
   export PYENV_DEACTIVATE="$prefix";
   unset PYENV_ACTIVATE;
   deactivate;
 else
 EOS
-  ;;
-esac
+    ;;
+  esac
+fi
 
 if [ -z "$NOERROR" ]; then
   echo "  echo \"pyenv-virtualenv: no virtualenv has been activated.\" 1>&2;"

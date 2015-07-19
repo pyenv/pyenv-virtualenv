@@ -62,13 +62,43 @@ if [ "${#versions[@]}" -gt 1 ]; then
   exit 1
 fi
 
-if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
-  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${versions}' is not a virtualenv" 1>&2
-  echo "false"
-  exit 1
+if pyenv-prefix "${versions}" 1>/dev/null 2>&1; then
+  if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
+    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${versions}' is not a virtualenv" 1>&2
+    echo "false"
+    exit 1
+  fi
+else
+  version="$(pyenv-version-name)"
+  if [[ "${versions}" == "root" ]]; then
+    versions="${version%/envs/*}"
+  else
+    versions="${version%/envs/*}/envs/${versions}"
+  fi
+  if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
+    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: version \`${versions}' is not an environment of anaconda/miniconda" 1>&2
+    echo "false"
+    exit 1
+  fi
 fi
 
 shell="${PYENV_SHELL:-${SHELL##*/}}"
+prefix="$(pyenv-prefix "${versions}")"
+
+unset conda_env
+
+if [ -f "${prefix}/bin/conda" ]; then
+  if [[ "$shell" != "bash" ]] && [[ "$shell" != "zsh" ]]; then
+    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: Only bash and zsh are supported by Anaconda/Miniconda" 1>&2
+    echo "false"
+    exit 1
+  fi
+  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
+    conda_env="${prefix##*/envs/}"
+  else
+    conda_env="root"
+  fi
+fi
 
 # Display setup instruction, if pyenv-virtualenv has not been initialized.
 # if 'pyenv virtualenv-init -' is not found in "$profile"
@@ -94,20 +124,29 @@ if [ -z "$no_shell" ]; then
   esac
 fi
 
-prefix="$(pyenv-prefix "${versions}")"
-case "$shell" in
-fish )
+if [ -n "${conda_env}" ]; then
+  # anaconda/miniconda
   cat <<EOS
+unset PYENV_DEACTIVATE;
+export PYENV_ACTIVATE="${prefix}";
+. "${prefix%/envs/*}/bin/activate" "${conda_env}";
+EOS
+else
+  # virtualenv/pyvenv
+  case "$shell" in
+  fish )
+    cat <<EOS
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${prefix}";
 . "${prefix}/bin/activate.fish";
 EOS
- ;;
-*    )
-  cat <<EOS
+   ;;
+  *    )
+    cat <<EOS
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${prefix}";
 . "${prefix}/bin/activate";
 EOS
-  ;;
-esac
+    ;;
+  esac
+fi

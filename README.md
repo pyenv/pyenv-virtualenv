@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.png)](https://travis-ci.org/yyuu/pyenv-virtualenv)
 
 pyenv-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
-that provides a `pyenv virtualenv` command to create virtualenvs for Python
-on UNIX-like systems.
+that provides features to manage virtualenvs and conda environments
+for Python on UNIX-like systems.
 
 (NOTICE: If you are an existing user of [virtualenvwrapper](http://pypi.python.org/pypi/virtualenvwrapper)
 and you love it, [pyenv-virtualenvwrapper](https://github.com/yyuu/pyenv-virtualenvwrapper) may help you
@@ -28,17 +28,24 @@ From inside that directory you can:
 
 1. **Check out pyenv-virtualenv into plugin directory**
 
-        $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+```
+$ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+```
 
-2. **Add `pyenv virtualenv-init` to your shell** to enable activation of virtualenv. This is entirely optional but pretty useful.
+2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenv. This is entirely optional but pretty useful.
 
-        $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
+```
+$ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
+```
+
     **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
     **Pyenv note**: You may also need to add 'eval "$(pyenv init -)"' to your profile if you haven't done so already.
 
 3. **Restart your shell to enable pyenv-virtualenv**
 
-        $ exec "$SHELL"
+```
+$ exec "$SHELL"
+```
 
 
 ### Installing with Homebrew (for OS X users)
@@ -61,9 +68,8 @@ Or, if you would like to install the latest development release:
 $ brew install --HEAD pyenv-virtualenv
 ```
 
-After installation, you'll still need to add `eval "$(pyenv virtualenv-init
--)"` to your profile (as stated in the caveats). You'll only ever have to do
-this once.
+After installation, you'll still need to add `eval "$(pyenv virtualenv-init -)"` to your profile (as stated in the caveats).
+You'll only ever have to do this once.
 
 
 ## Usage
@@ -75,11 +81,11 @@ To create a virtualenv for the Python version used with pyenv, run
 of the virtualenv directory. For example,
 
 ```
-$ pyenv virtualenv 2.7.7 my-virtual-env-2.7.7
+$ pyenv virtualenv 2.7.10 my-virtual-env-2.7.10
 ```
 
-will create a virtualenv based on Python 2.7.7 under `~/.pyenv/versions` in a
-folder called `my-virtual-env-2.7.7`.
+will create a virtualenv based on Python 2.7.10 under `~/.pyenv/versions` in a
+folder called `my-virtual-env-2.7.10`.
 
 
 ### Create virtualenv from current version
@@ -89,42 +95,49 @@ be created with the given name based on the current pyenv Python version.
 
 ```
 $ pyenv version
-3.4.2 (set by /home/yyuu/.pyenv/version)
+3.4.3 (set by /home/yyuu/.pyenv/version)
 $ pyenv virtualenv venv34
 ```
 
 
 ### List existing virtualenvs
 
-`pyenv virtualenvs` shows you the list of existing virtualenvs:
+`pyenv virtualenvs` shows you the list of existing virtualenvs and `conda` environments.
 
 ```
 $ pyenv shell venv27
 $ pyenv virtualenvs
-* venv27 (created from /home/yyuu/.pyenv/versions/2.7.7)
-  venv34 (created from /home/yyuu/.pyenv/versions/3.4.1)
+  miniconda3-3.9.1 (created from /home/yyuu/.pyenv/versions/miniconda3-3.9.1)
+  miniconda3-3.9.1/envs/myenv (created from /home/yyuu/.pyenv/versions/miniconda3-3.9.1)
+* venv27 (created from /home/yyuu/.pyenv/versions/2.7.10)
+  venv34 (created from /home/yyuu/.pyenv/versions/3.4.3)
 ```
 
 
 ### Activate virtualenv
 
 Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might
-require you to `activate` the virtualenv.
+require you to `activate` the virtualenv and `conda` environments.
 
 `pyenv-virtualenv` will automatically activate/deactivate the virtualenv if
 the `eval "$(pyenv virtualenv-init -)"` is properly configured in your shell.
 
 You can also activate and deactivate a pyenv virtualenv manually:
 
-    pyenv activate <name>
-    pyenv deactivate
+```sh
+pyenv activate <name>
+pyenv deactivate
+```
 
 
 ### Delete existing virtualenv
 
 Removing the directory in `~/.pyenv/versions` will delete the virtualenv, or you can run:
 
-    pyenv uninstall my-virtual-env
+```sh
+pyenv uninstall my-virtual-env
+```
+
 
 ### virtualenv and pyvenv
 
@@ -135,6 +148,42 @@ and distributed by default.
 
 `pyenv-virtualenv` uses `pyvenv` if it is available and the `virtualenv`
 command is not available.
+
+
+### Anaconda and Miniconda
+
+Because Anaconda and Miniconda may install standard commands (e.g. `curl`, `openssl`, `sqlite3`, etc.) into their prefix,
+we'd recommend you to install [pyenv-which-ext](https://github.com/yyuu/pyenv-which-ext).
+
+You can manage `conda` environments by `conda env` as same manner as standard Anaconda/Miniconda installations.
+To use those environments, you can use `pyenv activate` and `pyenv deactivate`.
+
+```
+(root)$ pyenv version
+miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
+(root)$ conda env list
+# conda environments:
+#
+myenv                    /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv
+root                  *  /home/yyuu/.pyenv/versions/miniconda3-3.9.1
+(root)$ pyenv activate myenv
+discarding /home/yyuu/.pyenv/versions/miniconda3-3.9.1/bin from PATH
+prepending /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin to PATH
+(myenv)$ python --version
+Python 3.4.3 :: Continuum Analytics, Inc.
+(myenv)$ pyenv deactivate
+discarding /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin from PATH
+```
+
+You can use version like `miniconda3-3.9.1/envs/myenv` to specify `conda` environment as a version in pyenv.
+
+```
+(root)$ pyenv version
+miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
+(root)$ pyenv shell miniconda3-3.9.1/envs/myenv
+(myenv)$ which python
+/home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin/python
+```
 
 
 ### Special environment variables

@@ -205,6 +205,12 @@ You can set certain environment variables to control pyenv-virtualenv.
 
 ## Version History
 
+#### 20150719
+
+* Add support for `conda` environments created by Anaconda/Miniconda (#91)
+* Look up commands for original version as well if the environment is created with `--system-site-packages` (#62)
+* Add error message if the source version is not installed (#83)
+
 #### 20150526
 
 * Use `typeset -g` with `precmd_functions` (#75)

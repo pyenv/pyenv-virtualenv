@@ -28,24 +28,18 @@ From inside that directory you can:
 
 1. **Check out pyenv-virtualenv into plugin directory**
 
-```
-$ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
-```
+    $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
 
 2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenv. This is entirely optional but pretty useful.
 
-```
-$ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
-```
+    $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
 
     **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
     **Pyenv note**: You may also need to add 'eval "$(pyenv init -)"' to your profile if you haven't done so already.
 
 3. **Restart your shell to enable pyenv-virtualenv**
 
-```
-$ exec "$SHELL"
-```
+    $ exec "$SHELL"
 
 
 ### Installing with Homebrew (for OS X users)

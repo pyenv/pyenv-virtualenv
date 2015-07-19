@@ -44,7 +44,7 @@ for version_string in "${versions[@]}"; do
       if [[ "${version_string}" != "${version_string%/envs/*}" ]]; then
         conda_env="${version_string##*/envs/}"
         if [ -f "${PREFIX}/envs/${conda_env}/bin/conda" ]; then
-          VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${PREFIX}/envs/${conda_env}")
+          VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${PREFIX}")
         else
           echo "pyenv-virtualenv: version \`${version_string}' is not an environment of anaconda/miniconda" 1>&2
           exit 1

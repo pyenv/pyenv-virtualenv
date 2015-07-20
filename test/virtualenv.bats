@@ -99,7 +99,7 @@ OUT
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub pyenv-exec "virtualenv --verbose --python=python ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
-  stub pyenv-exec "python -s t */get-pip.py : true"
+  stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
 
   run pyenv-virtualenv --verbose --python=python venv

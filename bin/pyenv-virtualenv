@@ -157,7 +157,7 @@ build_package_ez_setup() {
       http get "${EZ_SETUP_URL}"
     fi
   } 1> "${ez_setup}"
-  pyenv-exec python "${ez_setup}" ${EZ_SETUP_OPTS} 1>&2 || {
+  pyenv-exec python -s "${ez_setup}" ${EZ_SETUP_OPTS} 1>&2 || {
     echo "error: failed to install setuptools via ez_setup.py" >&2
     return 1
   }
@@ -175,14 +175,14 @@ build_package_get_pip() {
       http get "${GET_PIP_URL}"
     fi
   } 1> "${get_pip}"
-  pyenv-exec python "${get_pip}" ${GET_PIP_OPTS} 1>&2 || {
+  pyenv-exec python -s "${get_pip}" ${GET_PIP_OPTS} 1>&2 || {
     echo "error: failed to install pip via get-pip.py" >&2
     return 1
   }
 }
 
 build_package_ensurepip() {
-  pyenv-exec python -m ensurepip 2>/dev/null || build_package_get_pip "$@" || return 1
+  pyenv-exec python -s -m ensurepip 2>/dev/null || build_package_get_pip "$@" || return 1
 }
 
 prepare_requirements() {

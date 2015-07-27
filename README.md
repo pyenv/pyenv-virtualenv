@@ -68,8 +68,12 @@ Or, if you would like to install the latest development release:
 $ brew install --HEAD pyenv-virtualenv
 ```
 
-After installation, you'll still need to add `eval "$(pyenv virtualenv-init -)"` to your profile (as stated in the caveats).
-You'll only ever have to do this once.
+After installation, you'll still need to add 
+```
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+```
+to your profile (as stated in the caveats). You'll only ever have to do this once.
 
 
 ## Usage

@@ -3,7 +3,7 @@
 # version of the virtualenv.
 # https://github.com/yyuu/pyenv/issues/397
 
-if [ ! -x "${PYENV_COMMAND_PATH}" ] && [[ "python"*"-config" == "${PYENV_COMMAND_PATH##*/}" ]]; then
+if [ ! -x "${PYENV_COMMAND_PATH}" ] && [[ "${PYENV_COMMAND_PATH##*/}" == "python"*"-config" ]]; then
   virtualenv_prefix="$(pyenv-virtualenv-prefix 2>/dev/null || true)"
   if [ -d "${virtualenv_prefix}" ]; then
     virtualenv_command_path="${virtualenv_prefix}/bin/${PYENV_COMMAND_PATH##*/}"

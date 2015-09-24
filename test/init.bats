@@ -85,7 +85,7 @@ setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l PYENV_PREFIX (pyenv prefix 2>/dev/null; or true)
   if [ -n "\$PYENV_ACTIVATE" ]
-    if [ "(pyenv version-name 2>/dev/null; or true)" = "system" ]
+    if [ (pyenv version-name 2>/dev/null; or true) = "system" ]
       pyenv deactivate --no-error --verbose
       set -e PYENV_DEACTIVATE
       return 0

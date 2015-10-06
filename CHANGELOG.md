@@ -1,5 +1,12 @@
 ## Version History
 
+#### 20151006
+
+* Ignore user's site-packages on ensurepip/get-pip (#89)
+* Find `python-config` from source version if current version is a virtualenv
+* Fix pyenv-virtualenv-init script for fish where command was in string and not being evaluated (#98)
+* Add foolproof for `-p` argument. (yyuu/pyenv#98)
+
 #### 20150719
 
 * Add support for `conda` environments created by Anaconda/Miniconda (#91)

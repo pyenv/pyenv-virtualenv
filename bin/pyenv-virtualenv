@@ -318,9 +318,28 @@ if [ -n "${USE_PYVENV}" ]; then
   # Unset some arguments not supported by pyvenv
   unset QUIET
   unset VERBOSE
+  if [ -n "${VIRTUALENV_PYTHON}" ]; then
+    echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by pyvenv." 1>&2
+    exit 1
+  fi
 else
   if [ -n "${VIRTUALENV_PYTHON}" ]; then
-    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"
+    if [[ "${VIRTUALENV_PYTHON}" == "${VIRTUALENV_PYTHON##*/}" ]] || [[ "${VIRTUALENV_PYTHON}" == "${PYENV_ROOT}/shims/"* ]]; then
+      python="$(pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+      if [ -x "${python}" ]; then
+        VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
+      else
+        python="$(PYENV_VERSION="$(pyenv-whence "${VIRTUALENV_PYTHON##*/}" 2>/dev/null | tail -n 1 || true)" pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+        if [ -x "${python}" ]; then
+          VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
+        else
+          echo "pyenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in pyenv." 1>&2
+          exit 1
+        fi
+      fi
+    else
+      VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"
+    fi
   fi
   if [ -z "${HAS_VIRTUALENV}" ]; then
     VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"

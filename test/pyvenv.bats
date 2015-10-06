@@ -101,20 +101,20 @@ OUT
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "virtualenv --python=python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
 
-  run pyenv-virtualenv -p python3 venv
+  run pyenv-virtualenv -p ${TMP}/python3 venv
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=3.4.1 pip install virtualenv
-PYENV_VERSION=3.4.1 virtualenv --python=python3 ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=3.4.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv
 rehashed
 OUT
+  assert_success
 
   unstub_pyenv
   unstub pyenv-exec
@@ -126,20 +126,20 @@ OUT
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "virtualenv --python=python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
 
-  run pyenv-virtualenv --python=python3 venv
+  run pyenv-virtualenv --python=${TMP}/python3 venv
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=3.4.1 pip install virtualenv
-PYENV_VERSION=3.4.1 virtualenv --python=python3 ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=3.4.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv
 rehashed
 OUT
+  assert_success
 
   unstub_pyenv
   unstub pyenv-exec

@@ -141,7 +141,7 @@ _pyenv_virtualenv_hook() {
 };
 typeset -g -a precmd_functions
 if [[ -z \$precmd_functions[(r)_pyenv_virtualenv_hook] ]]; then
-  precmd_functions+=_pyenv_virtualenv_hook;
+  precmd_functions=(_pyenv_virtualenv_hook \$precmd_functions);
 fi
 EOS
 }

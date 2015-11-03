@@ -1,5 +1,11 @@
 ## Version History
 
+#### 20151103
+
+* Passing return value from executed command. (#100)
+* Add workaround for commands installed in a virtual environment created by `pyvenv` (#62)
+* init: zsh: prepend hook to `precmd_functions` (#101)
+
 #### 20151006
 
 * Ignore user's site-packages on ensurepip/get-pip (#89)

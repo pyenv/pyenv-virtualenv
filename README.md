@@ -1,6 +1,6 @@
 # pyenv-virtualenv
 
-[![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.svg)](https://travis-ci.org/yyuu/pyenv-virtualenv)
+[![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.svg?branch=master)](https://travis-ci.org/yyuu/pyenv-virtualenv)
 
 pyenv-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
 that provides features to manage virtualenvs and conda environments

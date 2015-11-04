@@ -30,91 +30,83 @@ done
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 prefix="${PYENV_ACTIVATE:-${VIRTUAL_ENV}}"
 
-unset conda_env
-
-if [ -f "${prefix}/bin/conda" ]; then
-  if [[ "$shell" != "bash" ]] && [[ "$shell" != "zsh" ]]; then
-    [ -n "$NOERROR" ] || echo "pyenv-virtualenv: Only bash and zsh are supported by Anaconda/Miniconda" 1>&2
-    echo "false"
-    exit 1
-  fi
-  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
-    conda_env="${prefix##*/envs/}"
-  else
-    conda_env="root"
-  fi
-fi
-
-if [ -n "${conda_env}" ]; then
-  echo "if [ -f \"${prefix%/envs/*}/bin/deactivate\" ]; then"
-else
-  case "$shell" in
-  fish )
-    echo "if functions -q deactivate;"
-    ;;
-  *    )
-    echo "if declare -f deactivate 1>/dev/null 2>&1; then"
-    ;;
-  esac
+if [ -z "${VIRTUAL_ENV}" ]; then
+  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
+  echo "false"
+  exit 1
 fi
 
 if [ -n "$VERBOSE" ]; then
-  echo "  echo \"pyenv-virtualenv: deactivate ${prefix##*/}\" 1>&2;"
+  echo "pyenv-virtualenv: deactivate ${prefix##*/}" 1>&2
 fi
 
 if [ -n "${PYENV_ACTIVATE_SHELL}" ]; then
   # shell version set in pyenv-sh-activate should be unset
   # https://github.com/yyuu/pyenv-virtualenv/issues/61
-  echo "  pyenv shell --unset;"
+  echo "pyenv shell --unset;"
   case "$shell" in
   fish )
-    echo "  set -e PYENV_ACTIVATE_SHELL;"
+    echo "set -e PYENV_ACTIVATE_SHELL;"
     ;;
   * )
-    echo "  unset PYENV_ACTIVATE_SHELL;"
+    echo "unset PYENV_ACTIVATE_SHELL;"
     ;;
   esac
 fi
 
-if [ -n "${conda_env}" ]; then
-  cat <<EOS
-  export PYENV_DEACTIVATE="$prefix";
-  unset PYENV_ACTIVATE;
-  . "${prefix%/envs/*}/bin/deactivate";
-else
-EOS
-else
-  case "$shell" in
-  fish )
-    cat <<EOS
-  setenv PYENV_DEACTIVATE "$prefix";
-  set -e PYENV_ACTIVATE;
-  deactivate;
-else;
-EOS
-    ;;
-  *    )
-    cat <<EOS
-  export PYENV_DEACTIVATE="$prefix";
-  unset PYENV_ACTIVATE;
-  deactivate;
-else
-EOS
-    ;;
-  esac
-fi
-
-if [ -z "$NOERROR" ]; then
-  echo "  echo \"pyenv-virtualenv: no virtualenv has been activated.\" 1>&2;"
-fi
-
-echo "  false;"
-
-case "$shell" in
+case "${shell}" in
 fish )
-  echo "end;"
+  cat <<EOS
+setenv PYENV_DEACTIVATE "$prefix";
+set -e PYENV_ACTIVATE;
+EOS
   ;;
-*    )
-  echo "fi;"
+* )
+  cat <<EOS
+export PYENV_DEACTIVATE="$prefix";
+unset PYENV_ACTIVATE;
+EOS
   ;;
 esac
+
+# virtualenv/pyvenv
+case "${shell}" in
+fish )
+  echo "set -e VIRTUAL_ENV;"
+  ;;
+* )
+  echo "unset VIRTUAL_ENV;"
+  ;;
+esac
+
+
+# anaconda/miniconda
+case "${shell}" in
+fish )
+  echo "set -e CONDA_DEFAULT_ENV;"
+  ;;
+* )
+  echo "unset CONDA_DEFAULT_ENV;"
+  ;;
+esac
+
+if [ -n "${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  case "${shell}" in
+  fish )
+    cat <<EOS
+setenv PYTHONHOME "${_OLD_VIRTUAL_PYTHONHOME}";
+set -e _OLD_VIRTUAL_PYTHONHOME;
+EOS
+    ;;
+  * )
+    cat <<EOS
+export PYTHONHOME="${_OLD_VIRTUAL_PYTHONHOME}";
+unset _OLD_VIRTUAL_PYTHONHOME;
+EOS
+    ;;
+  esac
+fi
+
+if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT}" ]; then
+  : # TODO: change prompt?
+fi

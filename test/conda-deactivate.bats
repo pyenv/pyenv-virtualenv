@@ -7,6 +7,7 @@ setup() {
 }
 
 @test "deactivate conda root" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE_SHELL=
 
@@ -16,18 +17,15 @@ setup() {
 
   assert_success
   assert_output <<EOS
-if [ -f "${PYENV_ROOT}/versions/anaconda-2.3.0/bin/deactivate" ]; then
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-  unset PYENV_ACTIVATE;
-  . "${PYENV_ROOT}/versions/anaconda-2.3.0/bin/deactivate";
-else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-fi;
+export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
+unset CONDA_DEFAULT_ENV;
 EOS
 }
 
 @test "deactivate conda root (fish)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE_SHELL=
 
@@ -35,14 +33,17 @@ EOS
 
   PYENV_SHELL="fish" run pyenv-sh-deactivate
 
-  assert_failure
+  assert_success
   assert_output <<EOS
-pyenv-virtualenv: Only bash and zsh are supported by Anaconda/Miniconda
-false
+setenv PYENV_DEACTIVATE "${TMP}/pyenv/versions/anaconda-2.3.0";
+set -e PYENV_ACTIVATE;
+set -e VIRTUAL_ENV;
+set -e CONDA_DEFAULT_ENV;
 EOS
 }
 
 @test "deactivate conda env" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo"
   export PYENV_ACTIVATE_SHELL=
 
@@ -52,13 +53,9 @@ EOS
 
   assert_success
   assert_output <<EOS
-if [ -f "${PYENV_ROOT}/versions/anaconda-2.3.0/bin/deactivate" ]; then
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-  unset PYENV_ACTIVATE;
-  . "${PYENV_ROOT}/versions/anaconda-2.3.0/bin/deactivate";
-else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-fi;
+export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
+unset CONDA_DEFAULT_ENV;
 EOS
 }

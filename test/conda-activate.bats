@@ -26,7 +26,8 @@ setup() {
   assert_output <<EOS
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0";
-. "${PYENV_ROOT}/versions/anaconda-2.3.0/bin/activate" "root";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
+export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -45,10 +46,12 @@ EOS
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
 
-  assert_failure
+  assert_success
   assert_output <<EOS
-pyenv-virtualenv: Only bash and zsh are supported by Anaconda/Miniconda
-false
+set -e PYENV_DEACTIVATE;
+setenv PYENV_ACTIVATE "${TMP}/pyenv/versions/anaconda-2.3.0";
+setenv VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
+setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 
@@ -72,7 +75,8 @@ pyenv shell "miniconda-3.9.1";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/miniconda-3.9.1";
-. "${PYENV_ROOT}/versions/miniconda-3.9.1/bin/activate" "root";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1";
+export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -95,7 +99,8 @@ EOS
   assert_output <<EOS
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
-. "${PYENV_ROOT}/versions/anaconda-2.3.0/bin/activate" "foo";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
+export CONDA_DEFAULT_ENV="foo";
 EOS
 }
 
@@ -119,7 +124,8 @@ pyenv shell "miniconda-3.9.1/envs/bar";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
-. "${PYENV_ROOT}/versions/miniconda-3.9.1/bin/activate" "bar";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
+export CONDA_DEFAULT_ENV="bar";
 EOS
 }
 
@@ -144,6 +150,7 @@ pyenv shell "miniconda-3.9.1/envs/bar";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
-. "${PYENV_ROOT}/versions/miniconda-3.9.1/bin/activate" "bar";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
+export CONDA_DEFAULT_ENV="bar";
 EOS
 }

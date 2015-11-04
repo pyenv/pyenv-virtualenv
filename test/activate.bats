@@ -25,7 +25,8 @@ setup() {
   assert_output <<EOS
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
-. "${PYENV_ROOT}/versions/venv/bin/activate";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
+export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -48,7 +49,8 @@ EOS
 pyenv-virtualenv: activate venv
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
-. "${PYENV_ROOT}/versions/venv/bin/activate";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
+export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -77,7 +79,8 @@ pyenv shell "venv";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
-. "${PYENV_ROOT}/versions/venv/bin/activate";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
+export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -99,7 +102,8 @@ EOS
   assert_output <<EOS
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv";
-. "${PYENV_ROOT}/versions/venv/bin/activate.fish";
+setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 
@@ -128,7 +132,8 @@ pyenv shell "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv";
-. "${PYENV_ROOT}/versions/venv/bin/activate.fish";
+setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 
@@ -150,7 +155,8 @@ pyenv shell "venv27";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv27";
-. "${PYENV_ROOT}/versions/venv27/bin/activate";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
+export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -177,7 +183,8 @@ pyenv shell "venv27";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv27";
-. "${PYENV_ROOT}/versions/venv27/bin/activate";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
+export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -199,7 +206,8 @@ pyenv shell "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
-. "${PYENV_ROOT}/versions/venv27/bin/activate.fish";
+setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
+setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 
@@ -226,7 +234,8 @@ pyenv shell "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
-. "${PYENV_ROOT}/versions/venv27/bin/activate.fish";
+setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
+setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 

@@ -16,7 +16,7 @@ if [ "$1" = "--bare" ]; then
   hit_prefix=""
   miss_prefix=""
   current_versions=()
-  print_origin=""
+  unset print_origin
 else
   hit_prefix="* "
   miss_prefix="  "
@@ -24,42 +24,39 @@ else
   print_origin="1"
 fi
 
-array_exists() {
-  local x car="$1"
+exists() {
+  local car="$1"
+  local cdar
   shift
-  for x in "$@"; do
-    [ "${x}" = "${car}" ] && return 0
+  for cdar in "$@"; do
+    if [ "${car}" == "${cdar}" ]; then
+      return 0
+    fi
   done
   return 1
 }
 
 print_version() {
-  if [ -n "${print_origin}" ]; then
-    local version_origin="$2"
+  if exists "$1" "${current_versions[@]}"; then
+    echo "${hit_prefix}${1}${print_origin+$2}"
   else
-    local version_origin=""
-  fi
-  if array_exists "$1" "${current_versions[@]}"; then
-    echo "${hit_prefix}${1}${version_origin}"
-  else
-    echo "${miss_prefix}${1}${version_origin}"
+    echo "${miss_prefix}${1}${print_origin+$2}"
   fi
 }
 
-for version in $(pyenv-versions --bare); do
-  if [[ "${version}" != "system" ]]; then
-    virtualenv_prefix="$(pyenv-virtualenv-prefix "${version}" 2>/dev/null || true)"
-    if [ -d "${virtualenv_prefix}" ]; then
-      print_version "${version}" " (created from ${virtualenv_prefix})"
-      prefix="$(pyenv-prefix "${version}")"
-      if [ -f "${prefix}/bin/conda" ]; then
-        # envs of anaconda/miniconda
-        shopt -s nullglob
-        for conda_env in "${prefix}/envs/"*; do
-          print_version "${version##*/}${conda_env#${prefix}}" " (created from ${prefix})"
-        done
-        shopt -u nullglob
-      fi
-    fi
+shopt -s nullglob
+for path in "${PYENV_ROOT}/versions/"*; do
+  version="${path##*/}"
+  virtualenv_prefix="$(pyenv-virtualenv-prefix "${version}" 2>/dev/null || true)"
+  if [ -d "${virtualenv_prefix}" ]; then
+    print_version "${version}" " (created from ${virtualenv_prefix})"
   fi
+  for venv_path in "${path}/envs/"*; do
+    venv_version="${version}/envs/${venv_path##*/}"
+    virtualenv_prefix="$(pyenv-virtualenv-prefix "${venv_version}" 2>/dev/null || true)"
+    if [ -d "${virtualenv_prefix}" ]; then
+      print_version "${venv_version}" " (created from ${virtualenv_prefix})"
+    fi
+  done
 done
+shopt -u nullglob

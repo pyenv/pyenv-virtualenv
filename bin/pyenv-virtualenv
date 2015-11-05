@@ -300,7 +300,7 @@ fi
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VERSION_NAME}/envs/${VIRTUALENV_NAME}"
 
-COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}" # TODO: create symlink?
+COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 if [ -e "${COMPAT_VIRTUALENV_PATH}" ] || [ -L "${COMPAT_VIRTUALENV_PATH}" ]; then
   echo "pyenv-virtualenv: \`${COMPAT_VIRTUALENV_PATH}' already exists." 1>&2
   exit 1

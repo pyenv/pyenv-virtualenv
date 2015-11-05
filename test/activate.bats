@@ -26,7 +26,6 @@ setup() {
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
-export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -50,7 +49,6 @@ pyenv-virtualenv: activate venv
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
-export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -80,7 +78,6 @@ export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
-export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -103,7 +100,6 @@ EOS
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
-setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 
@@ -133,7 +129,6 @@ setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
-setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 
@@ -156,7 +151,6 @@ export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv27";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
-export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -184,7 +178,6 @@ export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv27";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
-export CONDA_DEFAULT_ENV="root";
 EOS
 }
 
@@ -207,7 +200,6 @@ setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
-setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 
@@ -235,7 +227,6 @@ setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
-setenv CONDA_DEFAULT_ENV "root";
 EOS
 }
 

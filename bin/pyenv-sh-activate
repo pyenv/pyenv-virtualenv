@@ -131,19 +131,21 @@ fish )
 esac
 
 # anaconda/miniconda
-if [[ "${versions}" != "${versions%/envs/*}" ]]; then
-  CONDA_DEFAULT_ENV="${versions##*/envs/}"
-else
-  CONDA_DEFAULT_ENV="root"
+if [ -x "${prefix}/bin/conda" ]; then
+  if [[ "${versions}" != "${versions%/envs/*}" ]]; then
+    CONDA_DEFAULT_ENV="${versions##*/envs/}"
+  else
+    CONDA_DEFAULT_ENV="root"
+  fi
+  case "${shell}" in
+  fish )
+    echo "setenv CONDA_DEFAULT_ENV \"${CONDA_DEFAULT_ENV}\";"
+    ;;
+  * )
+    echo "export CONDA_DEFAULT_ENV=\"${CONDA_DEFAULT_ENV}\";"
+    ;;
+  esac
 fi
-case "${shell}" in
-fish )
-  echo "setenv CONDA_DEFAULT_ENV \"${CONDA_DEFAULT_ENV}\";"
-  ;;
-* )
-  echo "export CONDA_DEFAULT_ENV=\"${CONDA_DEFAULT_ENV}\";"
-  ;;
-esac
 
 if [ -n "${PYTHONHOME}" ]; then
   case "${shell}" in

@@ -10,6 +10,7 @@ setup() {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE_SHELL=
+  export CONDA_DEFAULT_ENV="root"
 
   create_conda "anaconda-2.3.0"
 
@@ -28,6 +29,8 @@ EOS
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE_SHELL=
+  export CONDA_DEFAULT_ENV="root"
+
 
   create_conda "anaconda-2.3.0"
 
@@ -46,6 +49,8 @@ EOS
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo"
   export PYENV_ACTIVATE_SHELL=
+  export CONDA_DEFAULT_ENV="foo"
+
 
   create_conda "anaconda-2.3.0" "foo"
 

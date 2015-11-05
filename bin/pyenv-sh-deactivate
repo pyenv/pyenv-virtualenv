@@ -81,14 +81,16 @@ esac
 
 
 # anaconda/miniconda
-case "${shell}" in
-fish )
-  echo "set -e CONDA_DEFAULT_ENV;"
-  ;;
-* )
-  echo "unset CONDA_DEFAULT_ENV;"
-  ;;
-esac
+if [ -n "${CONDA_DEFAULT_ENV}" ]; then
+  case "${shell}" in
+  fish )
+    echo "set -e CONDA_DEFAULT_ENV;"
+    ;;
+  * )
+    echo "unset CONDA_DEFAULT_ENV;"
+    ;;
+  esac
+fi
 
 if [ -n "${_OLD_VIRTUAL_PYTHONHOME}" ]; then
   case "${shell}" in

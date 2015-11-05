@@ -30,14 +30,14 @@ teardown() {
   create_executable "2.7.8" "python2.7"
   remove_executable "2.7.9" "python2.7"
 
-  stub pyenv-exec "virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.8/bin/python2.7 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv --verbose * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
   stub pyenv-which "python2.7 : echo ${PYENV_ROOT}/versions/2.7.8/bin/python2.7"
 
   run pyenv-virtualenv --verbose --python=python2.7 venv
 
   assert_output <<OUT
-PYENV_VERSION=2.7.8 virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.8/bin/python2.7 ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=2.7.8 virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.8/bin/python2.7 ${PYENV_ROOT}/versions/2.7.8/envs/venv
 OUT
   assert_success
 
@@ -54,7 +54,7 @@ OUT
   remove_executable "2.7.8" "python2.7"
   create_executable "2.7.9" "python2.7"
 
-  stub pyenv-exec "virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.9/bin/python2.7 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv --verbose * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
   stub pyenv-which "python2.7 : false"
   stub pyenv-whence "python2.7 : echo 2.7.7; echo 2.7.8; echo 2.7.9"
@@ -63,7 +63,7 @@ OUT
   run pyenv-virtualenv --verbose --python=python2.7 venv
 
   assert_output <<OUT
-PYENV_VERSION=2.7.8 virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.9/bin/python2.7 ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=2.7.8 virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.9/bin/python2.7 ${PYENV_ROOT}/versions/2.7.8/envs/venv
 OUT
   assert_success
 

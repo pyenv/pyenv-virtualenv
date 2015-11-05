@@ -287,13 +287,24 @@ if ! pyenv-prefix 1>/dev/null 2>&1; then
   exit 1
 fi
 
+if pyenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
+  echo "pyenv-virtualenv: nested virtualenv is not supported." 1>&2
+  exit 1
+fi
+
 if [ -z "$TMPDIR" ]; then
   TMP="/tmp"
 else
   TMP="${TMPDIR%/}"
 fi
 
-VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VERSION_NAME}/envs/${VIRTUALENV_NAME}"
+
+COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+if [ -e "${COMPAT_VIRTUALENV_PATH}" ] || [ -L "${COMPAT_VIRTUALENV_PATH}" ]; then
+  echo "pyenv-virtualenv: \`${COMPAT_VIRTUALENV_PATH}' already exists." 1>&2
+  exit 1
+fi
 
 unset HAS_VIRTUALENV
 unset HAS_PYVENV
@@ -400,7 +411,7 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    PYENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
+    PYENV_VERSION="${VERSION_NAME}/envs/${VIRTUALENV_NAME}" prepare_requirements
   fi
 fi
 
@@ -422,11 +433,16 @@ mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
+## Create symlink in the `versions` directory for backward compatibility
+if [ -d "${VIRTUALENV_PATH}" ]; then
+  ln -fs "${VIRTUALENV_PATH}" "${COMPAT_VIRTUALENV_PATH}"
+fi
+
 ## Install setuptools and pip.
-PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
+PYENV_VERSION="${VERSION_NAME}/envs/${VIRTUALENV_NAME}" build_package_ensurepip
 
 ## Migrate previously installed packages from requirements.txt.
-PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
+PYENV_VERSION="${VERSION_NAME}/envs/${VIRTUALENV_NAME}" install_requirements || true
 
 # Execute `after_virtualenv` hooks.
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

@@ -25,7 +25,8 @@ unstub_pyenv() {
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "pyvenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-exec "pyvenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   remove_executable "3.4.1" "virtualenv"
@@ -35,7 +36,7 @@ unstub_pyenv() {
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.4.1 pyvenv ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=3.4.1 pyvenv ${PYENV_ROOT}/versions/3.4.1/envs/venv
 rehashed
 OUT
 
@@ -48,7 +49,8 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   create_executable "3.4.1" "virtualenv"
@@ -58,7 +60,7 @@ OUT
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.4.1 virtualenv ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=3.4.1 virtualenv ${PYENV_ROOT}/versions/3.4.1/envs/venv
 rehashed
 OUT
 
@@ -71,8 +73,9 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
@@ -85,7 +88,7 @@ OUT
   assert_success
   assert_output <<OUT
 PYENV_VERSION=3.2.1 pip install virtualenv
-PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -100,8 +103,9 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   remove_executable "3.4.1" "virtualenv"
@@ -111,7 +115,7 @@ OUT
 
   assert_output <<OUT
 PYENV_VERSION=3.4.1 pip install virtualenv
-PYENV_VERSION=3.4.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=3.4.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/3.4.1/envs/venv
 rehashed
 OUT
   assert_success
@@ -125,8 +129,9 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   remove_executable "3.4.1" "virtualenv"
@@ -136,7 +141,7 @@ OUT
 
   assert_output <<OUT
 PYENV_VERSION=3.4.1 pip install virtualenv
-PYENV_VERSION=3.4.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/venv
+PYENV_VERSION=3.4.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/3.4.1/envs/venv
 rehashed
 OUT
   assert_success
@@ -150,8 +155,9 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "virtualenv ${PYENV_ROOT}/versions/venv : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv * : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
@@ -164,7 +170,7 @@ OUT
   assert_success
   assert_output <<OUT
 PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 pip install virtualenv
-PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
+PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT

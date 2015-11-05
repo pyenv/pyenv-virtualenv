@@ -27,8 +27,8 @@ OUT
 
   assert_success
   assert_output <<-OUT
-before: ${PYENV_ROOT}/versions/venv
-PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/venv
+before: ${PYENV_ROOT}/versions/3.2.1/envs/venv
+PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/venv
 after: 0
 rehashed
 OUT

@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+#
+# Summary: Uninstall a specific Python virtualenv
+#
+# Usage: pyenv virtualenv-delete [-f|--force] <virtualenv>
+#
+#    -f  Attempt to remove the specified virtualenv without prompting
+#        for confirmation. If the virtualenv does not exist, do not
+#        display an error message.
+#
+# See `pyenv virtualenvs` for a complete list of installed versions.
+#
+set -e
+
+# Provide pyenv completions
+if [ "$1" = "--complete" ]; then
+  exec pyenv virtualenvs --bare
+fi
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+usage() {
+  pyenv-help virtualenv-delete 2>/dev/null
+  [ -z "$1" ] || exit "$1"
+}
+
+if [ -z "$PYENV_ROOT" ]; then
+  PYENV_ROOT="${HOME}/.pyenv"
+fi
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage 0
+fi
+
+unset FORCE
+if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+  FORCE=true
+  shift
+fi
+
+[ "$#" -eq 1 ] || usage 1 >&2
+
+DEFINITION="$1"
+case "$DEFINITION" in
+"" | -* )
+  usage 1 >&2
+  ;;
+esac
+
+VERSION_NAME="${DEFINITION##*/}"
+COMPAT_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+
+if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
+  PREFIX="${PYENV_ROOT}/versions/${DEFINITION}"
+else
+  if [ -L "${COMPAT_PREFIX}" ]; then
+    PREFIX="$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)"
+    if [[ "${PREFIX}" == "${PREFIX%/envs/*}" ]]; then
+      echo "pyenv-virtualenv: \`${PREFIX}' is a symlink for unknown location." 1>&2
+      exit 1
+    fi
+  else
+    if pyenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
+      PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+      unset COMPAT_PREFIX
+    else
+      echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
+      exit 1
+    fi
+  fi
+fi
+
+if [ -z "$FORCE" ]; then
+  if [ ! -d "$PREFIX" ]; then
+    echo "pyenv-virtualenv: virtualenv \`$VERSION_NAME' not installed" >&2
+    exit 1
+  fi
+
+  read -p "pyenv-virtualenv: remove $PREFIX? "
+  case "$REPLY" in
+  y* | Y* ) ;;
+  * ) exit 1 ;;
+  esac
+fi
+
+if [ -d "$PREFIX" ]; then
+  rm -rf "$PREFIX"
+  if [ -L "$COMPAT_PREFIX" ]; then
+    rm -rf "$COMPAT_PREFIX"
+  fi
+  pyenv-rehash
+fi

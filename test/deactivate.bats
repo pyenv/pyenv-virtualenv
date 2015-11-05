@@ -7,6 +7,7 @@ setup() {
 }
 
 @test "deactivate virtualenv" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -14,18 +15,14 @@ setup() {
 
   assert_success
   assert_output <<EOS
-if declare -f deactivate 1>/dev/null 2>&1; then
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-  unset PYENV_ACTIVATE;
-  deactivate;
-else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-fi;
+export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (verbose)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -33,19 +30,15 @@ EOS
 
   assert_success
   assert_output <<EOS
-if declare -f deactivate 1>/dev/null 2>&1; then
-  echo "pyenv-virtualenv: deactivate venv" 1>&2;
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-  unset PYENV_ACTIVATE;
-  deactivate;
-else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-fi;
+pyenv-virtualenv: deactivate venv
+export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (no-error)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -53,17 +46,14 @@ EOS
 
   assert_success
   assert_output <<EOS
-if declare -f deactivate 1>/dev/null 2>&1; then
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-  unset PYENV_ACTIVATE;
-  deactivate;
-else
-  false;
-fi;
+export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (with shell activation)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -71,20 +61,16 @@ EOS
 
   assert_success
   assert_output <<EOS
-if declare -f deactivate 1>/dev/null 2>&1; then
-  pyenv shell --unset;
-  unset PYENV_ACTIVATE_SHELL;
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-  unset PYENV_ACTIVATE;
-  deactivate;
-else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-fi;
+pyenv shell --unset;
+unset PYENV_ACTIVATE_SHELL;
+export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (with shell activation) (no-error)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -92,15 +78,11 @@ EOS
 
   assert_success
   assert_output <<EOS
-if declare -f deactivate 1>/dev/null 2>&1; then
-  pyenv shell --unset;
-  unset PYENV_ACTIVATE_SHELL;
-  export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-  unset PYENV_ACTIVATE;
-  deactivate;
-else
-  false;
-fi;
+pyenv shell --unset;
+unset PYENV_ACTIVATE_SHELL;
+export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
 EOS
 }
 
@@ -113,18 +95,14 @@ EOS
 
   assert_success
   assert_output <<EOS
-if declare -f deactivate 1>/dev/null 2>&1; then
-  export PYENV_DEACTIVATE="$VIRTUAL_ENV";
-  unset PYENV_ACTIVATE;
-  deactivate;
-else
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-fi;
+export PYENV_DEACTIVATE="$VIRTUAL_ENV";
+unset PYENV_ACTIVATE;
+unset VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (fish)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -132,18 +110,14 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate;
-  setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
-  set -e PYENV_ACTIVATE;
-  deactivate;
-else;
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-end;
+setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
+set -e PYENV_ACTIVATE;
+set -e VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (fish) (no-error)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -151,17 +125,14 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate;
-  setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
-  set -e PYENV_ACTIVATE;
-  deactivate;
-else;
-  false;
-end;
+setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
+set -e PYENV_ACTIVATE;
+set -e VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (fish) (with shell activation)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -169,20 +140,16 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate;
-  pyenv shell --unset;
-  set -e PYENV_ACTIVATE_SHELL;
-  setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
-  set -e PYENV_ACTIVATE;
-  deactivate;
-else;
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-end;
+pyenv shell --unset;
+set -e PYENV_ACTIVATE_SHELL;
+setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
+set -e PYENV_ACTIVATE;
+set -e VIRTUAL_ENV;
 EOS
 }
 
 @test "deactivate virtualenv (fish) (with shell activation) (no-error)" {
+  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -190,15 +157,11 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate;
-  pyenv shell --unset;
-  set -e PYENV_ACTIVATE_SHELL;
-  setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
-  set -e PYENV_ACTIVATE;
-  deactivate;
-else;
-  false;
-end;
+pyenv shell --unset;
+set -e PYENV_ACTIVATE_SHELL;
+setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
+set -e PYENV_ACTIVATE;
+set -e VIRTUAL_ENV;
 EOS
 }
 
@@ -211,14 +174,9 @@ EOS
 
   assert_success
   assert_output <<EOS
-if functions -q deactivate;
-  setenv PYENV_DEACTIVATE "$VIRTUAL_ENV";
-  set -e PYENV_ACTIVATE;
-  deactivate;
-else;
-  echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2;
-  false;
-end;
+setenv PYENV_DEACTIVATE "$VIRTUAL_ENV";
+set -e PYENV_ACTIVATE;
+set -e VIRTUAL_ENV;
 EOS
 }
 

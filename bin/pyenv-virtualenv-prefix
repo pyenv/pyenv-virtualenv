@@ -31,31 +31,15 @@ base_prefix() { # pyvenv
 }
 
 VIRTUALENV_PREFIX_PATHS=()
-for version_string in "${versions[@]}"; do
-  version="${version_string%%/*}"
+for version in "${versions[@]}"; do
   if [ "$version" = "system" ]; then
     echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
     exit 1
   fi
-  PREFIX="$(pyenv-prefix "${version}")"
-  if [ -f "${PREFIX}/bin/activate" ]; then
-    # Anaconda has `activate` script nevertheless it is not a virtual environment (#65)
-    if [ -f "${PREFIX}/bin/conda" ]; then
-      if [[ "${version_string}" != "${version_string%/envs/*}" ]]; then
-        conda_env="${version_string##*/envs/}"
-        if [ -f "${PREFIX}/envs/${conda_env}/bin/conda" ]; then
-          VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${PREFIX}")
-        else
-          echo "pyenv-virtualenv: version \`${version_string}' is not an environment of anaconda/miniconda" 1>&2
-          exit 1
-        fi
-      else
-        VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${PREFIX}")
-      fi
-    else
-      VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"
-      VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "$VIRTUALENV_PREFIX_PATH")
-    fi
+  PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"
+  if [ -f "${PYENV_PREFIX_PATH}/bin/activate" ]; then
+    VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"
+    VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${VIRTUALENV_PREFIX_PATH:-${PYENV_PREFIX_PATH}}")
   else
     echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
     exit 1

@@ -161,7 +161,3 @@ EOS
     ;;
   esac
 fi
-
-if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT}" ]; then
-  : # TODO: change prompt?
-fi

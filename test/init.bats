@@ -46,9 +46,11 @@ load test_helper
 }
 
 @test "outputs bash-specific syntax" {
+  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
   run pyenv-virtualenv-init - bash
   assert_success
   assert_output <<EOS
+export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
@@ -80,9 +82,11 @@ EOS
 }
 
 @test "outputs fish-specific syntax" {
+  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
   run pyenv-virtualenv-init - fish
   assert_success
   assert_output <<EOS
+setenv PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
 setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l PYENV_PREFIX (pyenv prefix 2>/dev/null; or true)
@@ -112,9 +116,11 @@ EOS
 }
 
 @test "outputs zsh-specific syntax" {
+  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
   run pyenv-virtualenv-init - zsh
   assert_success
   assert_output <<EOS
+export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?

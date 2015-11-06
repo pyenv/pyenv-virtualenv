@@ -9,13 +9,13 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
-unset NOERROR
+unset QUIET
 unset VERBOSE
 
 while [ $# -gt 0 ]; do
   case "$1" in
-  "--no-error" )
-    NOERROR=1
+  "--no-error" | "--quiet")
+    QUIET=1
     ;;
   "--verbose" )
     VERBOSE=1
@@ -28,17 +28,20 @@ while [ $# -gt 0 ]; do
 done
 
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
-prefix="${PYENV_ACTIVATE:-${VIRTUAL_ENV}}"
+prefix="${VIRTUAL_ENV:-${PYENV_ACTIVATE}}"
 
-if [ -z "${VIRTUAL_ENV}" ]; then
-  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
+if [ -z "${prefix}" ]; then
+  [ -n "$QUIET" ] || echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
   echo "false"
   exit 1
 fi
 
-if [ -n "$VERBOSE" ]; then
-  echo "pyenv-virtualenv: deactivate ${prefix##*/}" 1>&2
+if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
+  version="$(basename "${prefix%/envs/*}")/envs/${prefix##*/}"
+else
+  version="${prefix##*/}"
 fi
+echo "pyenv-virtualenv: deactivate ${version}" 1>&2
 
 if [ -n "${PYENV_ACTIVATE_SHELL}" ]; then
   # shell version set in pyenv-sh-activate should be unset
@@ -107,8 +110,4 @@ unset _OLD_VIRTUAL_PYTHONHOME;
 EOS
     ;;
   esac
-fi
-
-if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT}" ]; then
-  : # TODO: change prompt?
 fi

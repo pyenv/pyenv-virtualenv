@@ -15,6 +15,7 @@ setup() {
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
 unset PYENV_ACTIVATE;
 unset VIRTUAL_ENV;
@@ -37,15 +38,16 @@ unset VIRTUAL_ENV;
 EOS
 }
 
-@test "deactivate virtualenv (no-error)" {
+@test "deactivate virtualenv (quiet)" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --no-error
+  PYENV_SHELL="bash" run pyenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
 unset PYENV_ACTIVATE;
 unset VIRTUAL_ENV;
@@ -61,6 +63,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 pyenv shell --unset;
 unset PYENV_ACTIVATE_SHELL;
 export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
@@ -69,15 +72,16 @@ unset VIRTUAL_ENV;
 EOS
 }
 
-@test "deactivate virtualenv (with shell activation) (no-error)" {
+@test "deactivate virtualenv (with shell activation) (quiet)" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --no-error
+  PYENV_SHELL="bash" run pyenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 pyenv shell --unset;
 unset PYENV_ACTIVATE_SHELL;
 export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
@@ -95,6 +99,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 export PYENV_DEACTIVATE="$VIRTUAL_ENV";
 unset PYENV_ACTIVATE;
 unset VIRTUAL_ENV;
@@ -110,21 +115,23 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
 set -e PYENV_ACTIVATE;
 set -e VIRTUAL_ENV;
 EOS
 }
 
-@test "deactivate virtualenv (fish) (no-error)" {
+@test "deactivate virtualenv (fish) (quiet)" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate --no-error
+  PYENV_SHELL="fish" run pyenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
 set -e PYENV_ACTIVATE;
 set -e VIRTUAL_ENV;
@@ -140,6 +147,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 pyenv shell --unset;
 set -e PYENV_ACTIVATE_SHELL;
 setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
@@ -148,15 +156,16 @@ set -e VIRTUAL_ENV;
 EOS
 }
 
-@test "deactivate virtualenv (fish) (with shell activation) (no-error)" {
+@test "deactivate virtualenv (fish) (with shell activation) (quiet)" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate --no-error
+  PYENV_SHELL="fish" run pyenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 pyenv shell --unset;
 set -e PYENV_ACTIVATE_SHELL;
 setenv PYENV_DEACTIVATE "$PYENV_ACTIVATE";
@@ -174,6 +183,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: deactivate venv
 setenv PYENV_DEACTIVATE "$VIRTUAL_ENV";
 set -e PYENV_ACTIVATE;
 set -e VIRTUAL_ENV;

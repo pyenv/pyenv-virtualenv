@@ -87,9 +87,7 @@ if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
   pyenv-virtualenv-init >&2 || true
 fi
 
-if [ -n "$VERBOSE" ]; then
-  echo "pyenv-virtualenv: activate ${versions}" 1>&2
-fi
+echo "pyenv-virtualenv: activate ${versions}" 1>&2
 
 if [ -z "$no_shell" ]; then
   echo "pyenv shell \"${versions}\";"

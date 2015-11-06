@@ -106,21 +106,21 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l ret \$status
   if [ -n "\$PYENV_ACTIVATE" ]
     if [ (pyenv version-name 2>/dev/null; or true) = "system" ]
-      pyenv deactivate --no-error --verbose
+      pyenv deactivate --no-error
       set -e PYENV_DEACTIVATE
       return \$ret
     end
     if [ "\$PYENV_ACTIVATE" != "\$PYENV_PREFIX" ]
-      if pyenv deactivate --no-error --verbose
+      if pyenv deactivate --no-error
         set -e PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose; or set -e PYENV_DEACTIVATE
+        pyenv activate --no-error; or set -e PYENV_DEACTIVATE
       else
-        pyenv activate --no-error --verbose
+        pyenv activate --no-error
       end
     end
   else
     if [ -z "\$VIRTUAL_ENV" ]; and [ "\$PYENV_DEACTIVATE" != "\$PYENV_PREFIX" ]
-      pyenv activate --no-error --verbose; or true
+      pyenv activate --no-error; or true
     end
   end
   return \$ret
@@ -144,21 +144,21 @@ if [[ "$shell" != "fish" ]]; then
   local ret=\$?
   if [ -n "\$PYENV_ACTIVATE" ]; then
     if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
-      eval "\$(pyenv sh-deactivate --no-error --verbose)"
+      eval "\$(pyenv sh-deactivate --no-error)"
       unset PYENV_DEACTIVATE
       return \$ret
     fi
     if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if eval "\$(pyenv sh-deactivate --no-error --verbose)"; then
+      if eval "\$(pyenv sh-deactivate --no-error)"; then
         unset PYENV_DEACTIVATE
-        eval "\$(pyenv sh-activate --no-error --verbose)" || unset PYENV_DEACTIVATE
+        eval "\$(pyenv sh-activate --no-error)" || unset PYENV_DEACTIVATE
       else
-        eval "\$(pyenv sh-activate --no-error --verbose)"
+        eval "\$(pyenv sh-activate --no-error)"
       fi
     fi
   else
     if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      eval "\$(pyenv sh-activate --no-error --verbose)" || true
+      eval "\$(pyenv sh-activate --no-error)" || true
     fi
   fi
   return \$ret

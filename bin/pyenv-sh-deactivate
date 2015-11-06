@@ -36,9 +36,7 @@ if [ -z "${VIRTUAL_ENV}" ]; then
   exit 1
 fi
 
-if [ -n "$VERBOSE" ]; then
-  echo "pyenv-virtualenv: deactivate ${prefix##*/}" 1>&2
-fi
+echo "pyenv-virtualenv: deactivate ${prefix##*/}" 1>&2
 
 if [ -n "${PYENV_ACTIVATE_SHELL}" ]; then
   # shell version set in pyenv-sh-activate should be unset

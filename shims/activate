@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+if [[ "$0" != "${BASH_SOURCE}" ]]; then
+  eval "$(pyenv sh-activate --verbose "$@" || true)"
+else
+  echo "pyenv-virtualenv: activate must be sourced. Run 'source activate envname' instead of 'activate envname'" 1>&2
+  false
+fi

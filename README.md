@@ -163,29 +163,29 @@ You can manage `conda` environments by `conda env` as same manner as standard An
 To use those environments, you can use `pyenv activate` and `pyenv deactivate`.
 
 ```
-(root)$ pyenv version
+$ pyenv version
 miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
-(root)$ conda env list
+$ conda env list
 # conda environments:
 #
 myenv                    /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv
 root                  *  /home/yyuu/.pyenv/versions/miniconda3-3.9.1
-(root)$ pyenv activate myenv
+$ pyenv activate myenv
 discarding /home/yyuu/.pyenv/versions/miniconda3-3.9.1/bin from PATH
 prepending /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin to PATH
-(myenv)$ python --version
+$ python --version
 Python 3.4.3 :: Continuum Analytics, Inc.
-(myenv)$ pyenv deactivate
+$ pyenv deactivate
 discarding /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin from PATH
 ```
 
 You can use version like `miniconda3-3.9.1/envs/myenv` to specify `conda` environment as a version in pyenv.
 
 ```
-(root)$ pyenv version
+$ pyenv version
 miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
-(root)$ pyenv shell miniconda3-3.9.1/envs/myenv
-(myenv)$ which python
+$ pyenv shell miniconda3-3.9.1/envs/myenv
+$ which python
 /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin/python
 ```
 
@@ -216,7 +216,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 (The MIT License)
 
-* Copyright (c) 2013 Yamashita, Yuu
+* Copyright (c) 2015 Yamashita, Yuu
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

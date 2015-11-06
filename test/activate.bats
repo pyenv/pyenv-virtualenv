@@ -23,6 +23,7 @@ setup() {
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: activate venv
 unset PYENV_DEACTIVATE;
 export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
@@ -73,6 +74,7 @@ EOS
 
 eval "\$(pyenv virtualenv-init -)"
 
+pyenv-virtualenv: activate venv
 pyenv shell "venv";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
@@ -97,6 +99,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: activate venv
 set -e PYENV_DEACTIVATE;
 setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
@@ -124,6 +127,7 @@ EOS
 
 status --is-interactive; and . (pyenv virtualenv-init -|psub)
 
+pyenv-virtualenv: activate venv
 pyenv shell "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
@@ -146,6 +150,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: activate venv27
 pyenv shell "venv27";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
@@ -173,6 +178,7 @@ EOS
 
 eval "\$(pyenv virtualenv-init -)"
 
+pyenv-virtualenv: activate venv27
 pyenv shell "venv27";
 export PYENV_ACTIVATE_SHELL=1;
 unset PYENV_DEACTIVATE;
@@ -195,6 +201,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+pyenv-virtualenv: activate venv27
 pyenv shell "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
@@ -222,6 +229,7 @@ EOS
 
 status --is-interactive; and . (pyenv virtualenv-init -|psub)
 
+pyenv-virtualenv: activate venv27
 pyenv shell "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 set -e PYENV_DEACTIVATE;
@@ -255,11 +263,11 @@ false
 EOS
 }
 
-@test "should fail if the version is not a virtualenv (no-error)" {
+@test "should fail if the version is not a virtualenv (quiet)" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
   stub pyenv-prefix "3.3.3 : echo \"${PYENV_ROOT}/versions/3.3.3\""
 
-  run pyenv-sh-activate --no-error "3.3.3"
+  run pyenv-sh-activate --quiet "3.3.3"
 
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
@@ -280,8 +288,8 @@ false
 EOS
 }
 
-@test "should fail if there are multiple versions (no-error)" {
-  run pyenv-sh-activate --no-error "venv" "venv27"
+@test "should fail if there are multiple versions (quiet)" {
+  run pyenv-sh-activate --quiet "venv" "venv27"
 
   assert_failure
   assert_output <<EOS

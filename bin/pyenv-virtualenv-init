@@ -134,12 +134,12 @@ if [[ "$shell" != "fish" ]]; then
   local ret=\$?
   if [ -n "\$VIRTUAL_ENV" ]; then
     if [ "\$VIRTUAL_ENV" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      eval "\$(pyenv sh-deactivate --quiet)" || true
-      eval "\$(pyenv sh-activate --quiet)" || true
+      eval "\$(pyenv sh-deactivate --quiet || true)" || true
+      eval "\$(pyenv sh-activate --quiet || true)" || true
     fi
   else
     if [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      eval "\$(pyenv sh-activate --quiet)" || true
+      eval "\$(pyenv sh-activate --quiet || true)" || true
     fi
   fi
   return \$ret

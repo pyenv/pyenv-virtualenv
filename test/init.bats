@@ -54,23 +54,14 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
-      eval "\$(pyenv sh-deactivate --no-error --verbose)"
-      unset PYENV_DEACTIVATE
-      return \$ret
-    fi
-    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if eval "\$(pyenv sh-deactivate --no-error --verbose)"; then
-        unset PYENV_DEACTIVATE
-        eval "\$(pyenv sh-activate --no-error --verbose)" || unset PYENV_DEACTIVATE
-      else
-        eval "\$(pyenv sh-activate --no-error --verbose)"
-      fi
+  if [ -n "\$VIRTUAL_ENV" ]; then
+    if [ "\$VIRTUAL_ENV" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
+      eval "\$(pyenv sh-deactivate --quiet || true)" || true
+      eval "\$(pyenv sh-activate --quiet || true)" || true
     fi
   else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      eval "\$(pyenv sh-activate --no-error --verbose)" || true
+    if [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
+      eval "\$(pyenv sh-activate --quiet || true)" || true
     fi
   fi
   return \$ret
@@ -89,25 +80,15 @@ EOS
 setenv PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
 setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
-  set -l PYENV_PREFIX (pyenv prefix 2>/dev/null; or true)
   set -l ret \$status
-  if [ -n "\$PYENV_ACTIVATE" ]
-    if [ (pyenv version-name 2>/dev/null; or true) = "system" ]
-      pyenv deactivate --no-error --verbose
-      set -e PYENV_DEACTIVATE
-      return \$ret
-    end
-    if [ "\$PYENV_ACTIVATE" != "\$PYENV_PREFIX" ]
-      if pyenv deactivate --no-error --verbose
-        set -e PYENV_DEACTIVATE
-        pyenv activate --no-error --verbose; or set -e PYENV_DEACTIVATE
-      else
-        pyenv activate --no-error --verbose
-      end
+  if [ -n "\$VIRTUAL_ENV" ]
+    if [ "\$VIRTUAL_ENV" != (pyenv prefix 2>/dev/null; or true) ]
+      pyenv deactivate --quiet; or true
+      pyenv activate --quiet; or true
     end
   else
-    if [ -z "\$VIRTUAL_ENV" ]; and [ "\$PYENV_DEACTIVATE" != "\$PYENV_PREFIX" ]
-      pyenv activate --no-error --verbose; or true
+    if [ "\$PYENV_DEACTIVATE" != (pyenv prefix 2>/dev/null; or true) ]
+      pyenv activate --quiet; or true
     end
   end
   return \$ret
@@ -124,23 +105,14 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  if [ -n "\$PYENV_ACTIVATE" ]; then
-    if [ "\$(pyenv version-name 2>/dev/null || true)" = "system" ]; then
-      eval "\$(pyenv sh-deactivate --no-error --verbose)"
-      unset PYENV_DEACTIVATE
-      return \$ret
-    fi
-    if [ "\$PYENV_ACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      if eval "\$(pyenv sh-deactivate --no-error --verbose)"; then
-        unset PYENV_DEACTIVATE
-        eval "\$(pyenv sh-activate --no-error --verbose)" || unset PYENV_DEACTIVATE
-      else
-        eval "\$(pyenv sh-activate --no-error --verbose)"
-      fi
+  if [ -n "\$VIRTUAL_ENV" ]; then
+    if [ "\$VIRTUAL_ENV" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
+      eval "\$(pyenv sh-deactivate --quiet || true)" || true
+      eval "\$(pyenv sh-activate --quiet || true)" || true
     fi
   else
-    if [ -z "\$VIRTUAL_ENV" ] && [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
-      eval "\$(pyenv sh-activate --no-error --verbose)" || true
+    if [ "\$PYENV_DEACTIVATE" != "\$(pyenv prefix 2>/dev/null || true)" ]; then
+      eval "\$(pyenv sh-activate --quiet || true)" || true
     fi
   fi
   return \$ret

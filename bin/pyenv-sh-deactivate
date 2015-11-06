@@ -28,9 +28,9 @@ while [ $# -gt 0 ]; do
 done
 
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
-prefix="${PYENV_ACTIVATE:-${VIRTUAL_ENV}}"
+prefix="${VIRTUAL_ENV:-${PYENV_ACTIVATE}}"
 
-if [ -z "${VIRTUAL_ENV}" ]; then
+if [ -z "${prefix}" ]; then
   [ -n "$QUIET" ] || echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
   echo "false"
   exit 1

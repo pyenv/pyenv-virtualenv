@@ -9,6 +9,26 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+PYENV_VIRTUALENV_INSTALL_PREFIX="$(dirname "$(abs_dirname "$0")")"
+
 print=""
 for args in "$@"
 do
@@ -65,10 +85,16 @@ fi
 
 case "$shell" in
 fish )
-  echo "setenv PYENV_VIRTUALENV_INIT 1;"
+  cat <<EOS
+setenv PATH '${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims' \$PATH;
+setenv PYENV_VIRTUALENV_INIT 1;
+EOS
   ;;
 * )
-  echo "export PYENV_VIRTUALENV_INIT=1;"
+  cat <<EOS
+export PATH="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims:${PATH}";
+export PYENV_VIRTUALENV_INIT=1;
+EOS
   ;;
 esac
 

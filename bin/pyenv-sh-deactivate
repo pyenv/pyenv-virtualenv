@@ -9,13 +9,13 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
-unset NOERROR
+unset QUIET
 unset VERBOSE
 
 while [ $# -gt 0 ]; do
   case "$1" in
-  "--no-error" )
-    NOERROR=1
+  "--no-error" | "--quiet")
+    QUIET=1
     ;;
   "--verbose" )
     VERBOSE=1
@@ -31,7 +31,7 @@ shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 prefix="${PYENV_ACTIVATE:-${VIRTUAL_ENV}}"
 
 if [ -z "${VIRTUAL_ENV}" ]; then
-  [ -n "$NOERROR" ] || echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
+  [ -n "$QUIET" ] || echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
   echo "false"
   exit 1
 fi

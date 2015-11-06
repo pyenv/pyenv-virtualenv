@@ -15,6 +15,7 @@ BIN_PATH="${PREFIX}/bin"
 SHIMS_PATH="${PREFIX}/shims"
 
 mkdir -p "$BIN_PATH"
+mkdir -p "$SHIMS_PATH"
 
 install -p bin/* "$BIN_PATH"
 install -p shims/* "$SHIMS_PATH"

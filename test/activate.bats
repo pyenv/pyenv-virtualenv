@@ -13,7 +13,6 @@ setup() {
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
-  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
 
@@ -24,8 +23,6 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv
-unset PYENV_DEACTIVATE;
-export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -35,7 +32,6 @@ EOS
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
-  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate --verbose
@@ -47,8 +43,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv
-unset PYENV_DEACTIVATE;
-export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -58,7 +52,6 @@ EOS
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
-  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
@@ -75,10 +68,8 @@ EOS
 eval "\$(pyenv virtualenv-init -)"
 
 pyenv-virtualenv: activate venv
-pyenv shell "venv";
+export PYENV_VERSION="venv";
 export PYENV_ACTIVATE_SHELL=1;
-unset PYENV_DEACTIVATE;
-export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -88,7 +79,6 @@ EOS
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
-  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
@@ -100,8 +90,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv
-set -e PYENV_DEACTIVATE;
-setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -111,7 +99,6 @@ EOS
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
-  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
@@ -128,10 +115,8 @@ EOS
 status --is-interactive; and . (pyenv virtualenv-init -|psub)
 
 pyenv-virtualenv: activate venv
-pyenv shell "venv";
+setenv PYENV_VERSION "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
-set -e PYENV_DEACTIVATE;
-setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -140,7 +125,6 @@ EOS
   export PYENV_VIRTUALENV_INIT=1
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
-  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
@@ -151,10 +135,8 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv27
-pyenv shell "venv27";
+export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
-unset PYENV_DEACTIVATE;
-export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv27";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -163,7 +145,6 @@ EOS
   export PYENV_VIRTUALENV_INIT=
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
-  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
@@ -179,10 +160,8 @@ EOS
 eval "\$(pyenv virtualenv-init -)"
 
 pyenv-virtualenv: activate venv27
-pyenv shell "venv27";
+export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
-unset PYENV_DEACTIVATE;
-export PYENV_ACTIVATE="${PYENV_ROOT}/versions/venv27";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -191,7 +170,6 @@ EOS
   export PYENV_VIRTUALENV_INIT=1
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
-  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
@@ -202,10 +180,8 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv27
-pyenv shell "venv27";
+setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
-set -e PYENV_DEACTIVATE;
-setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -214,7 +190,6 @@ EOS
   export PYENV_VIRTUALENV_INIT=
 
   stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
-  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
@@ -230,10 +205,8 @@ EOS
 status --is-interactive; and . (pyenv virtualenv-init -|psub)
 
 pyenv-virtualenv: activate venv27
-pyenv shell "venv27";
+setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
-set -e PYENV_DEACTIVATE;
-setenv PYENV_ACTIVATE "${PYENV_ROOT}/versions/venv27";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -249,12 +222,10 @@ EOS
 
 @test "should fail if the version is not a virtualenv" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
-  stub pyenv-prefix "3.3.3 : echo \"${PYENV_ROOT}/versions/3.3.3\""
 
   run pyenv-sh-activate "3.3.3"
 
   unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
 
   assert_failure
   assert_output <<EOS
@@ -265,12 +236,10 @@ EOS
 
 @test "should fail if the version is not a virtualenv (quiet)" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
-  stub pyenv-prefix "3.3.3 : echo \"${PYENV_ROOT}/versions/3.3.3\""
 
   run pyenv-sh-activate --quiet "3.3.3"
 
   unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
 
   assert_failure
   assert_output <<EOS
@@ -279,7 +248,12 @@ EOS
 }
 
 @test "should fail if there are multiple versions" {
+  stub pyenv-virtualenv-prefix "venv : true"
+  stub pyenv-virtualenv-prefix "venv27 : true"
+
   run pyenv-sh-activate "venv" "venv27"
+
+  unstub pyenv-virtualenv-prefix
 
   assert_failure
   assert_output <<EOS
@@ -288,12 +262,54 @@ false
 EOS
 }
 
-@test "should fail if there are multiple versions (quiet)" {
+@test "should fail if there are multiple virtualenvs (quiet)" {
+  stub pyenv-virtualenv-prefix "venv : true"
+  stub pyenv-virtualenv-prefix "venv27 : true"
+
   run pyenv-sh-activate --quiet "venv" "venv27"
+
+  unstub pyenv-virtualenv-prefix
 
   assert_failure
   assert_output <<EOS
 false
+EOS
+}
+
+@test "should fail if the first version is not a virtualenv" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-virtualenv-prefix "2.7.10 : false"
+
+  run pyenv-sh-activate "2.7.10" "venv27"
+
+  unstub pyenv-virtualenv-prefix
+
+  assert_failure
+  assert_output <<EOS
+pyenv-virtualenv: version \`2.7.10' is not a virtualenv
+false
+EOS
+}
+
+@test "activate if the first virtualenv is a virtualenv" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+  stub pyenv-virtualenv-prefix "2.7.10 : false"
+  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
+
+  run pyenv-sh-activate "venv27" "2.7.10"
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+
+  assert_success
+  assert_output <<EOS
+pyenv-virtualenv: activate venv27
+export PYENV_VERSION="venv27:2.7.10";
+export PYENV_ACTIVATE_SHELL=1;
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 EOS
 }
 

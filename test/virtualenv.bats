@@ -135,3 +135,12 @@ OUT
 pyenv-virtualenv: no whitespace allowed in virtualenv name.
 OUT
 }
+
+@test "system not allowed as virtualenv name" {
+  run pyenv-virtualenv "3.2.1" "system"
+
+  assert_failure
+  assert_output <<OUT
+pyenv-virtualenv: \`system' is not allowed as virtualenv name.
+OUT
+}

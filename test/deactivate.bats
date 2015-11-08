@@ -15,6 +15,7 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 EOS
 }
@@ -28,6 +29,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 EOS
 }
@@ -41,6 +43,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 EOS
 }
@@ -56,6 +59,7 @@ EOS
 pyenv-virtualenv: deactivate venv
 unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 EOS
 }
@@ -71,6 +75,7 @@ EOS
 pyenv-virtualenv: deactivate venv
 unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 EOS
 }
@@ -84,6 +89,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 EOS
 }
@@ -97,6 +103,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
+setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 EOS
 }
@@ -110,6 +117,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
+setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 EOS
 }
@@ -125,6 +133,7 @@ EOS
 pyenv-virtualenv: deactivate venv
 set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
+setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 EOS
 }
@@ -140,6 +149,7 @@ EOS
 pyenv-virtualenv: deactivate venv
 set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
+setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 EOS
 }
@@ -153,6 +163,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
+setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 EOS
 }

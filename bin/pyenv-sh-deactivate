@@ -9,11 +9,15 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+unset FORCE
 unset QUIET
 unset VERBOSE
 
 while [ $# -gt 0 ]; do
   case "$1" in
+  "--force" )
+    FORCE=1
+    ;;
   "--no-error" | "--quiet")
     QUIET=1
     ;;
@@ -68,10 +72,16 @@ fi
 # virtualenv/pyvenv
 case "${shell}" in
 fish )
-  echo "set -e VIRTUAL_ENV;"
+  cat <<EOS
+setenv PYENV_DEACTIVATE "${VIRTUAL_ENV}";
+set -e VIRTUAL_ENV;
+EOS
   ;;
 * )
-  echo "unset VIRTUAL_ENV;"
+  cat <<EOS
+export PYENV_DEACTIVATE="${VIRTUAL_ENV}";
+unset VIRTUAL_ENV;
+EOS
   ;;
 esac
 

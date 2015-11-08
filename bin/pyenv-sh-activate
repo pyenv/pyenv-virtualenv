@@ -15,6 +15,7 @@ set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
 unset DEACTIVATE
+unset FORCE
 unset QUIET
 unset VERBOSE
 
@@ -27,6 +28,9 @@ while [ $# -gt 0 ]; do
     ;;
   "--deactivate" )
     DEACTIVATE=1
+    ;;
+  "--force" )
+    FORCE=1
     ;;
   "--no-error" | "--quiet" )
     QUIET=1
@@ -95,6 +99,16 @@ if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
   exit 0
 fi
 
+if [[ "${PYENV_DEACTIVATE}" == "${prefix}" ]]; then
+  if [ -z "${FORCE}" ]; then
+    if [ -z "${QUIET}" ]; then
+      echo "pyenv-virtualenv: \`${venv}' is marked deactivated. use \`pyenv activate --force ${venv}' to activate forcibly." 1>&2
+    fi
+    echo "false"
+    exit 1
+  fi
+fi
+
 # Display setup instruction, if pyenv-virtualenv has not been initialized.
 # if 'pyenv virtualenv-init -' is not found in "$profile"
 if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
@@ -132,10 +146,16 @@ fi
 # virtualenv/pyvenv
 case "${shell}" in
 fish )
-  echo "setenv VIRTUAL_ENV \"${prefix}\";"
+  cat <<EOS
+set -e PYENV_DEACTIVATE;
+setenv VIRTUAL_ENV "${prefix}";
+EOS
   ;;
 * )
-  echo "export VIRTUAL_ENV=\"${prefix}\";"
+  cat <<EOS
+unset PYENV_DEACTIVATE;
+export VIRTUAL_ENV="${prefix}";
+EOS
   ;;
 esac
 

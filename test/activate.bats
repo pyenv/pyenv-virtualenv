@@ -23,6 +23,7 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -43,6 +44,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -70,6 +72,7 @@ eval "\$(pyenv virtualenv-init -)"
 pyenv-virtualenv: activate venv
 export PYENV_VERSION="venv";
 export PYENV_ACTIVATE_SHELL=1;
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -90,6 +93,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate venv
+set -e PYENV_DEACTIVATE;
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -117,6 +121,7 @@ status --is-interactive; and . (pyenv virtualenv-init -|psub)
 pyenv-virtualenv: activate venv
 setenv PYENV_VERSION "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
+set -e PYENV_DEACTIVATE;
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 EOS
 }
@@ -137,6 +142,7 @@ EOS
 pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -162,6 +168,7 @@ eval "\$(pyenv virtualenv-init -)"
 pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -182,6 +189,7 @@ EOS
 pyenv-virtualenv: activate venv27
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
+set -e PYENV_DEACTIVATE;
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -207,6 +215,7 @@ status --is-interactive; and . (pyenv virtualenv-init -|psub)
 pyenv-virtualenv: activate venv27
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
+set -e PYENV_DEACTIVATE;
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 EOS
 }
@@ -309,6 +318,7 @@ EOS
 pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27:2.7.10";
 export PYENV_ACTIVATE_SHELL=1;
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 EOS
 }

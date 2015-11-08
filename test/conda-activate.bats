@@ -24,6 +24,7 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate anaconda-2.3.0
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
 export CONDA_DEFAULT_ENV="root";
 EOS
@@ -46,6 +47,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate anaconda-2.3.0
+set -e PYENV_DEACTIVATE;
 setenv VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv CONDA_DEFAULT_ENV "root";
 EOS
@@ -69,6 +71,7 @@ EOS
 pyenv-virtualenv: activate miniconda-3.9.1
 export PYENV_VERSION="miniconda-3.9.1";
 export PYENV_ACTIVATE_SHELL=1;
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1";
 export CONDA_DEFAULT_ENV="root";
 EOS
@@ -91,6 +94,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: activate anaconda-2.3.0/envs/foo
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 export CONDA_DEFAULT_ENV="foo";
 EOS
@@ -114,6 +118,7 @@ EOS
 pyenv-virtualenv: activate miniconda-3.9.1/envs/bar
 export PYENV_VERSION="miniconda-3.9.1/envs/bar";
 export PYENV_ACTIVATE_SHELL=1;
+unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
 export CONDA_DEFAULT_ENV="bar";
 EOS

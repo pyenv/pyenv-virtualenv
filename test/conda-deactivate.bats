@@ -18,6 +18,7 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0";
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
 EOS
@@ -36,6 +37,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0
+setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/anaconda-2.3.0";
 set -e VIRTUAL_ENV;
 set -e CONDA_DEFAULT_ENV;
 EOS
@@ -54,6 +56,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0/envs/foo
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
 EOS

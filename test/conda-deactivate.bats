@@ -8,7 +8,6 @@ setup() {
 
 @test "deactivate conda root" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0"
-  export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE_SHELL=
   export CONDA_DEFAULT_ENV="root"
 
@@ -19,8 +18,7 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0
-export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-unset PYENV_ACTIVATE;
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0";
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
 EOS
@@ -28,7 +26,6 @@ EOS
 
 @test "deactivate conda root (fish)" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0"
-  export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0"
   export PYENV_ACTIVATE_SHELL=
   export CONDA_DEFAULT_ENV="root"
 
@@ -40,8 +37,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0
-setenv PYENV_DEACTIVATE "${TMP}/pyenv/versions/anaconda-2.3.0";
-set -e PYENV_ACTIVATE;
+setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/anaconda-2.3.0";
 set -e VIRTUAL_ENV;
 set -e CONDA_DEFAULT_ENV;
 EOS
@@ -49,7 +45,6 @@ EOS
 
 @test "deactivate conda env" {
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo"
-  export PYENV_ACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo"
   export PYENV_ACTIVATE_SHELL=
   export CONDA_DEFAULT_ENV="foo"
 
@@ -61,8 +56,7 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0/envs/foo
-export PYENV_DEACTIVATE="$PYENV_ACTIVATE";
-unset PYENV_ACTIVATE;
+export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
 EOS

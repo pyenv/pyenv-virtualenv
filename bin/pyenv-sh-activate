@@ -14,6 +14,8 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+unset DEACTIVATE
+unset FORCE
 unset QUIET
 unset VERBOSE
 
@@ -24,14 +26,20 @@ while [ $# -gt 0 ]; do
     echo --unset
     exec pyenv-virtualenvs --bare
     ;;
-  "--no-error" | "--quiet" )
+  "-d" | "--deactivate" )
+    DEACTIVATE=1
+    ;;
+  "-f" | "--force" )
+    FORCE=1
+    ;;
+  "-q" | "--quiet" )
     QUIET=1
     ;;
   "--unset" )
     echo "pyenv deactivate"
     exit
     ;;
-  "--verbose" )
+  "-v" | "--verbose" )
     VERBOSE=1
     ;;
   * )
@@ -56,30 +64,50 @@ if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
   no_shell=
 fi
 
-if [ "${#versions[@]}" -gt 1 ]; then
-  [ -n "$QUIET" ] || echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
+venv="${versions}"
+
+if ! pyenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
+  if [ -z "$QUIET" ]; then
+    echo "pyenv-virtualenv: version \`${venv}' is not a virtualenv" 1>&2
+  fi
   echo "false"
   exit 1
 fi
 
-if pyenv-prefix "${versions}" 1>/dev/null 2>&1; then
-  if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
-    [ -n "$QUIET" ] || echo "pyenv-virtualenv: version \`${versions}' is not a virtualenv" 1>&2
-    echo "false"
-    exit 1
+# exit as error if there are multiple virtualenvs
+# https://github.com/yyuu/pyenv-virtualenv/issues/105
+for version in "${versions[@]}"; do
+  if [[ "${version}" != "${venv}" ]]; then
+    if pyenv-virtualenv-prefix "${version}" 1>/dev/null 2>&1; then
+      if [ -z "$QUIET" ]; then
+        echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
+      fi
+      echo "false"
+      exit 1
+    fi
   fi
-else
-  version="$(pyenv-version-name)"
-  versions="${version%/envs/*}/envs/${versions}"
-  if ! pyenv-virtualenv-prefix "${versions}" 1>/dev/null 2>&1; then
-    [ -n "$QUIET" ] || echo "pyenv-virtualenv: version \`${versions}' is not an environment of anaconda/miniconda" 1>&2
+done
+
+shell="${PYENV_SHELL:-${SHELL##*/}}"
+prefix="$(pyenv-prefix "${venv}")"
+
+if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
+  if [ -z "${QUIET}" ]; then
+    echo "pyenv-virtualenv: version \`${venv}' is already activated" 1>&2
+  fi
+  echo "true"
+  exit 0
+fi
+
+if [[ "${PYENV_DEACTIVATE}" == "${prefix}" ]]; then
+  if [ -z "${FORCE}" ]; then
+    if [ -z "${QUIET}" ]; then
+      echo "pyenv-virtualenv: \`${venv}' is marked deactivated. use \`pyenv activate --force ${venv}' to activate forcibly." 1>&2
+    fi
     echo "false"
     exit 1
   fi
 fi
-
-shell="${PYENV_SHELL:-${SHELL##*/}}"
-prefix="$(pyenv-prefix "${versions}")"
 
 # Display setup instruction, if pyenv-virtualenv has not been initialized.
 # if 'pyenv virtualenv-init -' is not found in "$profile"
@@ -87,51 +115,54 @@ if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
   pyenv-virtualenv-init >&2 || true
 fi
 
-echo "pyenv-virtualenv: activate ${versions}" 1>&2
-
-if [ -z "$no_shell" ]; then
-  echo "pyenv shell \"${versions}\";"
-  # shell version set in pyenv-sh-activate should be unset
-  # https://github.com/yyuu/pyenv-virtualenv/issues/61
-  case "$shell" in
-  fish )
-    echo "setenv PYENV_ACTIVATE_SHELL 1;"
-    ;;
-  * )
-    echo "export PYENV_ACTIVATE_SHELL=1;"
-    ;;
-  esac
+if [ -n "${DEACTIVATE}" ]; then
+  pyenv-sh-deactivate ${QUIET+--quiet} ${VERBOSE+--verbose}
 fi
 
+echo "pyenv-virtualenv: activate ${venv}" 1>&2
+
+if [ -z "$no_shell" ]; then
+  # shell version set in pyenv-sh-activate should be unset
+  # https://github.com/yyuu/pyenv-virtualenv/issues/61
+  OLDIFS="$IFS"
+  IFS=:
+  case "$shell" in
+  fish )
+    cat <<EOS
+setenv PYENV_VERSION "${versions[*]}";
+setenv PYENV_ACTIVATE_SHELL 1;
+EOS
+    ;;
+  * )
+    cat <<EOS
+export PYENV_VERSION="${versions[*]}";
+export PYENV_ACTIVATE_SHELL=1;
+EOS
+    ;;
+  esac
+  IFS="$OLDIFS"
+fi
+
+# virtualenv/pyvenv
 case "${shell}" in
 fish )
   cat <<EOS
 set -e PYENV_DEACTIVATE;
-setenv PYENV_ACTIVATE "${prefix}";
+setenv VIRTUAL_ENV "${prefix}";
 EOS
   ;;
 * )
   cat <<EOS
 unset PYENV_DEACTIVATE;
-export PYENV_ACTIVATE="${prefix}";
+export VIRTUAL_ENV="${prefix}";
 EOS
-  ;;
-esac
-
-# virtualenv/pyvenv
-case "${shell}" in
-fish )
-  echo "setenv VIRTUAL_ENV \"${prefix}\";"
-  ;;
-* )
-  echo "export VIRTUAL_ENV=\"${prefix}\";"
   ;;
 esac
 
 # anaconda/miniconda
 if [ -x "${prefix}/bin/conda" ]; then
-  if [[ "${versions}" != "${versions%/envs/*}" ]]; then
-    CONDA_DEFAULT_ENV="${versions##*/envs/}"
+  if [[ "${venv}" != "${venv%/envs/*}" ]]; then
+    CONDA_DEFAULT_ENV="${venv##*/envs/}"
   else
     CONDA_DEFAULT_ENV="root"
   fi

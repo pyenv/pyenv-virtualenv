@@ -26,20 +26,20 @@ while [ $# -gt 0 ]; do
     echo --unset
     exec pyenv-virtualenvs --bare
     ;;
-  "--deactivate" )
+  "-d" | "--deactivate" )
     DEACTIVATE=1
     ;;
-  "--force" )
+  "-f" | "--force" )
     FORCE=1
     ;;
-  "--no-error" | "--quiet" )
+  "-q" | "--quiet" )
     QUIET=1
     ;;
   "--unset" )
     echo "pyenv deactivate"
     exit
     ;;
-  "--verbose" )
+  "-v" | "--verbose" )
     VERBOSE=1
     ;;
   * )

@@ -15,13 +15,13 @@ unset VERBOSE
 
 while [ $# -gt 0 ]; do
   case "$1" in
-  "--force" )
+  "-f" | "--force" )
     FORCE=1
     ;;
-  "--no-error" | "--quiet")
+  "-q" | "--quiet")
     QUIET=1
     ;;
-  "--verbose" )
+  "-v" | "--verbose" )
     VERBOSE=1
     ;;
   * )

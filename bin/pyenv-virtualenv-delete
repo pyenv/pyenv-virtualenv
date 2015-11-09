@@ -11,6 +11,7 @@
 # See `pyenv virtualenvs` for a complete list of installed versions.
 #
 set -e
+[ -n "$PYENV_DEBUG" ] && set -x
 
 # Provide pyenv completions
 if [ "$1" = "--complete" ]; then
@@ -54,11 +55,16 @@ COMPAT_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
 
 if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
   PREFIX="${PYENV_ROOT}/versions/${DEFINITION}"
+  if [ -L "${COMPAT_PREFIX}" ]; then
+    if [[ "${PREFIX}" != "$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)" ]]; then
+      unset COMPAT_PREFIX
+    fi
+  fi
 else
   if [ -L "${COMPAT_PREFIX}" ]; then
     PREFIX="$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)"
     if [[ "${PREFIX}" == "${PREFIX%/envs/*}" ]]; then
-      echo "pyenv-virtualenv: \`${PREFIX}' is a symlink for unknown location." 1>&2
+      echo "pyenv-virtualenv: \`${COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
       exit 1
     fi
   else

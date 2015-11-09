@@ -14,7 +14,6 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
-unset DEACTIVATE
 unset FORCE
 unset QUIET
 unset VERBOSE
@@ -26,9 +25,6 @@ while [ $# -gt 0 ]; do
     echo --unset
     exec pyenv-virtualenvs --bare
     ;;
-  "-d" | "--deactivate" )
-    DEACTIVATE=1
-    ;;
   "-f" | "--force" )
     FORCE=1
     ;;
@@ -36,8 +32,7 @@ while [ $# -gt 0 ]; do
     QUIET=1
     ;;
   "--unset" )
-    echo "pyenv deactivate"
-    exit
+    exec pyenv-sh-deactivate
     ;;
   "-v" | "--verbose" )
     VERBOSE=1
@@ -115,9 +110,7 @@ if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
   pyenv-virtualenv-init >&2 || true
 fi
 
-if [ -n "${DEACTIVATE}" ]; then
-  pyenv-sh-deactivate ${QUIET+--quiet} ${VERBOSE+--verbose}
-fi
+pyenv-sh-deactivate --quiet ${VERBOSE+--verbose} || true
 
 echo "pyenv-virtualenv: activate ${venv}" 1>&2
 
@@ -188,6 +181,24 @@ EOS
     cat <<EOS
 export _OLD_VIRTUAL_PYTHONHOME="${PYTHONHOME}";
 unset PYTHONHOME;
+EOS
+    ;;
+  esac
+fi
+
+PYENV_VIRTUALENV_DISABLE_PROMPT="${PYENV_VIRTUALENV_DISABLE_PROMPT:-${PYENV_VIRTUAL_ENV_DISABLE_PROMPT}}"
+PYENV_VIRTUALENV_DISABLE_PROMPT="${PYENV_VIRTUALENV_DISABLE_PROMPT:-${VIRTUAL_ENV_DISABLE_PROMPT}}"
+
+if [ -z "${PYENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
+  case "${shell}" in
+  fish )
+    echo "pyenv-virtualenv: prompt changing not work for fish." 1>&2
+    ;;
+  * )
+    echo "pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior." 1>&2
+    cat <<EOS
+export _OLD_VIRTUAL_PS1="\${PS1}";
+export PS1="(${venv}) \${PS1}";
 EOS
     ;;
   esac

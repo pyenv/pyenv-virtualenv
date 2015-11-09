@@ -55,7 +55,7 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
   if [ -n "\$VIRTUAL_ENV" ]; then
-    eval "\$(pyenv sh-activate --deactivate --quiet || pyenv sh-deactivate --quiet || true)" || true
+    eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true
   fi
@@ -77,7 +77,7 @@ setenv PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l ret \$status
   if [ -n "\$VIRTUAL_ENV" ]
-    pyenv activate --deactivate --quiet; or pyenv deactivate --quiet; or true
+    pyenv activate --quiet; or pyenv deactivate --quiet; or true
   else
     pyenv activate --quiet; or true
   end
@@ -96,7 +96,7 @@ export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
   if [ -n "\$VIRTUAL_ENV" ]; then
-    eval "\$(pyenv sh-activate --deactivate --quiet || pyenv sh-deactivate --quiet || true)" || true
+    eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true
   fi

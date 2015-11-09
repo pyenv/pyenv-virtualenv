@@ -114,3 +114,17 @@ EOS
     ;;
   esac
 fi
+
+case "${shell}" in
+fish )
+  :
+  ;;
+* )
+  if [ -n "${_OLD_VIRTUAL_PS1}" ]; then
+    cat <<EOS
+export PS1='${_OLD_VIRTUAL_PS1}';
+unset _OLD_VIRTUAL_PS1;
+EOS
+  fi
+  ;;
+esac

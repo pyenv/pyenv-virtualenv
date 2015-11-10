@@ -273,7 +273,7 @@ if [ -z "${VERSION_NAME}" ] || [ -z "${VIRTUALENV_NAME}" ]; then
   usage 1
 fi
 
-if [[ "$VIRTUALENV_NAME" == "system" ]]; then
+if [[ "${VIRTUALENV_NAME##*/}" == "system" ]]; then
   echo "pyenv-virtualenv: \`system' is not allowed as virtualenv name." 1>&2
   exit 1
 fi
@@ -303,12 +303,23 @@ else
   TMP="${TMPDIR%/}"
 fi
 
-VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VERSION_NAME}/envs/${VIRTUALENV_NAME}"
+# Not create `system/envs` directory even if source version is `system`
+if [[ "${VERSION_NAME%/envs/*}" == "system" ]]; then
+  VERSION_NAME="${VIRTUALENV_NAME}"
+else
+  VERSION_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME}"
+fi
 
-COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
-if [ -e "${COMPAT_VIRTUALENV_PATH}" ] || [ -L "${COMPAT_VIRTUALENV_PATH}" ]; then
-  echo "pyenv-virtualenv: \`${COMPAT_VIRTUALENV_PATH}' already exists." 1>&2
-  exit 1
+VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VERSION_NAME}"
+if [[ "${VIRTUALENV_PATH}" != "${VIRTUALENV_PATH%/envs/*}" ]]; then
+  COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+fi
+
+if [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
+  if [ -e "${COMPAT_VIRTUALENV_PATH}" ] || [ -L "${COMPAT_VIRTUALENV_PATH}" ]; then
+    echo "pyenv-virtualenv: \`${COMPAT_VIRTUALENV_PATH}' already exists." 1>&2
+    exit 1
+  fi
 fi
 
 unset HAS_VIRTUALENV
@@ -416,7 +427,7 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    PYENV_VERSION="${VERSION_NAME}/envs/${VIRTUALENV_NAME}" prepare_requirements
+    PYENV_VERSION="${VERSION_NAME}" prepare_requirements
   fi
 fi
 
@@ -439,15 +450,15 @@ cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
 
 ## Create symlink in the `versions` directory for backward compatibility
-if [ -d "${VIRTUALENV_PATH}" ]; then
+if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
   ln -fs "${VIRTUALENV_PATH}" "${COMPAT_VIRTUALENV_PATH}"
 fi
 
 ## Install setuptools and pip.
-PYENV_VERSION="${VERSION_NAME}/envs/${VIRTUALENV_NAME}" build_package_ensurepip
+PYENV_VERSION="${VERSION_NAME}" build_package_ensurepip
 
 ## Migrate previously installed packages from requirements.txt.
-PYENV_VERSION="${VERSION_NAME}/envs/${VIRTUALENV_NAME}" install_requirements || true
+PYENV_VERSION="${VERSION_NAME}" install_requirements || true
 
 # Execute `after_virtualenv` hooks.
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

@@ -5,7 +5,16 @@ load test_helper
 setup() {
   export HOME="${TMP}"
   export PYENV_ROOT="${TMP}/pyenv"
+  unset PYENV_VERSION
+  unset PYENV_ACTIVATE_SHELL
+  unset PYENV_DEACTIVATE
+  unset VIRTUAL_ENV
+  unset CONDA_DEFAULT_ENV
+  unset PYTHONHOME
   unset _OLD_VIRTUAL_PYTHONHOME
+  unset PYENV_VIRTUALENV_DISABLE_PROMPT
+  unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
+  unset VIRTUAL_ENV_DISABLE_PROMPT
   unset _OLD_VIRTUAL_PS1
 }
 

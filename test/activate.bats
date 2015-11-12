@@ -263,13 +263,15 @@ EOS
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
+  stub pyenv-sh-deactivate "echo deactivated"
+
   run pyenv-sh-activate --unset
+
+  unstub pyenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
-unset VIRTUAL_ENV;
+deactivated
 EOS
 }
 

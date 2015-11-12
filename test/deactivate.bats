@@ -28,6 +28,21 @@ setup() {
 pyenv-virtualenv: deactivate venv
 export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
+if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+  export PATH="\${_OLD_VIRTUAL_PATH}";
+  unset _OLD_VIRTUAL_PATH;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
+  unset _OLD_VIRTUAL_PYTHONHOME;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+  export PS1="\${_OLD_VIRTUAL_PS1}";
+  unset _OLD_VIRTUAL_PS1;
+fi;
+if declare -f deactivate 1>/dev/null 2>&1; then
+  unset -f deactivate;
+fi;
 EOS
 }
 
@@ -42,6 +57,21 @@ EOS
 pyenv-virtualenv: deactivate venv
 export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
+if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+  export PATH="\${_OLD_VIRTUAL_PATH}";
+  unset _OLD_VIRTUAL_PATH;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
+  unset _OLD_VIRTUAL_PYTHONHOME;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+  export PS1="\${_OLD_VIRTUAL_PS1}";
+  unset _OLD_VIRTUAL_PS1;
+fi;
+if declare -f deactivate 1>/dev/null 2>&1; then
+  unset -f deactivate;
+fi;
 EOS
 }
 
@@ -56,6 +86,21 @@ EOS
 pyenv-virtualenv: deactivate venv
 export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
+if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+  export PATH="\${_OLD_VIRTUAL_PATH}";
+  unset _OLD_VIRTUAL_PATH;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
+  unset _OLD_VIRTUAL_PYTHONHOME;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+  export PS1="\${_OLD_VIRTUAL_PS1}";
+  unset _OLD_VIRTUAL_PS1;
+fi;
+if declare -f deactivate 1>/dev/null 2>&1; then
+  unset -f deactivate;
+fi;
 EOS
 }
 
@@ -72,6 +117,21 @@ unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
 export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
+if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+  export PATH="\${_OLD_VIRTUAL_PATH}";
+  unset _OLD_VIRTUAL_PATH;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
+  unset _OLD_VIRTUAL_PYTHONHOME;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+  export PS1="\${_OLD_VIRTUAL_PS1}";
+  unset _OLD_VIRTUAL_PS1;
+fi;
+if declare -f deactivate 1>/dev/null 2>&1; then
+  unset -f deactivate;
+fi;
 EOS
 }
 
@@ -88,6 +148,21 @@ unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
 export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
+if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+  export PATH="\${_OLD_VIRTUAL_PATH}";
+  unset _OLD_VIRTUAL_PATH;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
+  unset _OLD_VIRTUAL_PYTHONHOME;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+  export PS1="\${_OLD_VIRTUAL_PS1}";
+  unset _OLD_VIRTUAL_PS1;
+fi;
+if declare -f deactivate 1>/dev/null 2>&1; then
+  unset -f deactivate;
+fi;
 EOS
 }
 
@@ -102,6 +177,21 @@ EOS
 pyenv-virtualenv: deactivate venv
 export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
+if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+  export PATH="\${_OLD_VIRTUAL_PATH}";
+  unset _OLD_VIRTUAL_PATH;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
+  unset _OLD_VIRTUAL_PYTHONHOME;
+fi;
+if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+  export PS1="\${_OLD_VIRTUAL_PS1}";
+  unset _OLD_VIRTUAL_PS1;
+fi;
+if declare -f deactivate 1>/dev/null 2>&1; then
+  unset -f deactivate;
+fi;
 EOS
 }
 
@@ -116,6 +206,17 @@ EOS
 pyenv-virtualenv: deactivate venv
 setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
+if [ -n "\$_OLD_VIRTUAL_PATH" ];
+  setenv PATH "\$_OLD_VIRTUAL_PATH";
+  set -e _OLD_VIRTUAL_PATH;
+end;
+if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
+  setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
+  set -e _OLD_VIRTUAL_PYTHONHOME;
+end;
+if functions -g deactivate;
+  functions -e deactivate;
+end;
 EOS
 }
 
@@ -130,6 +231,17 @@ EOS
 pyenv-virtualenv: deactivate venv
 setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
+if [ -n "\$_OLD_VIRTUAL_PATH" ];
+  setenv PATH "\$_OLD_VIRTUAL_PATH";
+  set -e _OLD_VIRTUAL_PATH;
+end;
+if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
+  setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
+  set -e _OLD_VIRTUAL_PYTHONHOME;
+end;
+if functions -g deactivate;
+  functions -e deactivate;
+end;
 EOS
 }
 
@@ -146,6 +258,17 @@ set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
 setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
+if [ -n "\$_OLD_VIRTUAL_PATH" ];
+  setenv PATH "\$_OLD_VIRTUAL_PATH";
+  set -e _OLD_VIRTUAL_PATH;
+end;
+if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
+  setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
+  set -e _OLD_VIRTUAL_PYTHONHOME;
+end;
+if functions -g deactivate;
+  functions -e deactivate;
+end;
 EOS
 }
 
@@ -162,6 +285,17 @@ set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
 setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
+if [ -n "\$_OLD_VIRTUAL_PATH" ];
+  setenv PATH "\$_OLD_VIRTUAL_PATH";
+  set -e _OLD_VIRTUAL_PATH;
+end;
+if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
+  setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
+  set -e _OLD_VIRTUAL_PYTHONHOME;
+end;
+if functions -g deactivate;
+  functions -e deactivate;
+end;
 EOS
 }
 
@@ -176,6 +310,17 @@ EOS
 pyenv-virtualenv: deactivate venv
 setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
+if [ -n "\$_OLD_VIRTUAL_PATH" ];
+  setenv PATH "\$_OLD_VIRTUAL_PATH";
+  set -e _OLD_VIRTUAL_PATH;
+end;
+if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
+  setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
+  set -e _OLD_VIRTUAL_PYTHONHOME;
+end;
+if functions -g deactivate;
+  functions -e deactivate;
+end;
 EOS
 }
 

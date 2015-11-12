@@ -65,6 +65,19 @@ fi
 
 venv="${versions}"
 
+# exit as success if some virtualenv outside from pyenv is already activated
+if [ -n "${VIRTUAL_ENV}" ]; then
+  if [[ "${VIRTUAL_ENV}" != "$(pyenv-root)/"* ]]; then
+    if [ -z "${FORCE}" ]; then
+      if [ -z "${QUIET}" ]; then
+        echo "pyenv-virtualenv: virtualenv \`${VIRTUAL_ENV}' is already activated" 1>&2
+      fi
+      echo "true"
+      exit 0
+    fi
+  fi
+fi
+
 if ! pyenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
   if [ -z "$QUIET" ]; then
     echo "pyenv-virtualenv: version \`${venv}' is not a virtualenv" 1>&2
@@ -94,12 +107,15 @@ if [ -L "${prefix}" ]; then
   prefix="$(resolve_link "${prefix}" 2>/dev/null)"
 fi
 
+# exit as success if the virtualenv is already activated
 if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
-  if [ -z "${QUIET}" ]; then
-    echo "pyenv-virtualenv: version \`${venv}' is already activated" 1>&2
+  if [ -z "${FORCE}" ]; then
+    if [ -z "${QUIET}" ]; then
+      echo "pyenv-virtualenv: version \`${venv}' is already activated" 1>&2
+    fi
+    echo "true"
+    exit 0
   fi
-  echo "true"
-  exit 0
 fi
 
 if [[ "${PYENV_DEACTIVATE}" == "${prefix}" ]]; then

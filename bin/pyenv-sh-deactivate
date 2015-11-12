@@ -98,33 +98,71 @@ if [ -n "${CONDA_DEFAULT_ENV}" ]; then
   esac
 fi
 
-if [ -n "${_OLD_VIRTUAL_PYTHONHOME}" ]; then
-  case "${shell}" in
-  fish )
-    cat <<EOS
-setenv PYTHONHOME "${_OLD_VIRTUAL_PYTHONHOME}";
-set -e _OLD_VIRTUAL_PYTHONHOME;
+case "${shell}" in
+fish )
+  cat <<EOS
+if [ -n "\$_OLD_VIRTUAL_PATH" ];
+  setenv PATH "\$_OLD_VIRTUAL_PATH";
+  set -e _OLD_VIRTUAL_PATH;
+end;
 EOS
-    ;;
-  * )
-    cat <<EOS
-export PYTHONHOME="${_OLD_VIRTUAL_PYTHONHOME}";
-unset _OLD_VIRTUAL_PYTHONHOME;
+  ;;
+* )
+  cat <<EOS
+if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+  export PATH="\${_OLD_VIRTUAL_PATH}";
+  unset _OLD_VIRTUAL_PATH;
+fi;
 EOS
-    ;;
-  esac
-fi
+  ;;
+esac
+
+case "${shell}" in
+fish )
+  cat <<EOS
+if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
+  setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
+  set -e _OLD_VIRTUAL_PYTHONHOME;
+end;
+EOS
+  ;;
+* )
+  cat <<EOS
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+  export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
+  unset _OLD_VIRTUAL_PYTHONHOME;
+fi;
+EOS
+  ;;
+esac
 
 case "${shell}" in
 fish )
   :
   ;;
 * )
-  if [ -n "${_OLD_VIRTUAL_PS1}" ]; then
-    cat <<EOS
-export PS1='${_OLD_VIRTUAL_PS1}';
-unset _OLD_VIRTUAL_PS1;
+  cat <<EOS
+if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+  export PS1="\${_OLD_VIRTUAL_PS1}";
+  unset _OLD_VIRTUAL_PS1;
+fi;
 EOS
-  fi
+  ;;
+esac
+
+case "${shell}" in
+fish )
+  cat <<EOS
+if functions -g deactivate;
+  functions -e deactivate;
+end;
+EOS
+  ;;
+* )
+  cat <<EOS
+if declare -f deactivate 1>/dev/null 2>&1; then
+  unset -f deactivate;
+fi;
+EOS
   ;;
 esac

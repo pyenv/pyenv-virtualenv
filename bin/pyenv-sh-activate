@@ -14,6 +14,10 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
 unset FORCE
 unset QUIET
 unset VERBOSE
@@ -85,6 +89,10 @@ done
 
 shell="${PYENV_SHELL:-${SHELL##*/}}"
 prefix="$(pyenv-prefix "${venv}")"
+
+if [ -L "${prefix}" ]; then
+  prefix="$(resolve_link "${prefix}" 2>/dev/null)"
+fi
 
 if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
   if [ -z "${QUIET}" ]; then

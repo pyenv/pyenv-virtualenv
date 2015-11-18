@@ -144,3 +144,34 @@ OUT
 pyenv-virtualenv: \`system' is not allowed as virtualenv name.
 OUT
 }
+
+@test "no slash allowed in virtualenv name" {
+  run pyenv-virtualenv "3.2.1" "foo/bar"
+
+  assert_failure
+  assert_output <<OUT
+pyenv-virtualenv: no slash allowed in virtualenv name.
+OUT
+}
+
+@test "slash allowed if it is the long name of the virtualenv" {
+  export PYENV_VERSION="3.2.1"
+  stub_pyenv "${PYENV_VERSION}"
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "python -s -m ensurepip : false"
+  stub pyenv-exec "python -s */get-pip.py : true"
+  stub curl true
+
+  run pyenv-virtualenv "3.2.1" "3.2.1/envs/foo"
+
+  assert_success
+  assert_output <<OUT
+PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/foo
+Installing pip from https://bootstrap.pypa.io/get-pip.py...
+rehashed
+OUT
+
+  unstub_pyenv
+  unstub pyenv-exec
+  unstub curl
+}

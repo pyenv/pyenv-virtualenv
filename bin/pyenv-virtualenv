@@ -261,12 +261,16 @@ if [[ "${#ARGUMENTS[@]}" == 0 ]]; then
   exit 1
 elif [[ "${#ARGUMENTS[@]}" == 1 ]]; then
   # If only one argument given, use current version as source version
-  VERSION_NAME="$(pyenv-version-name)"
+  OLDIFS="${IFS}"
+  IFS=:
+  VERSION_NAMES=($(pyenv-version-name))
+  IFS="${OLDIFS}"
+  VERSION_NAME="${VERSION_NAMES}"
   VIRTUALENV_NAME="${ARGUMENTS[0]}"
 else
   # Otherwise, use former as source version, and latter as virtualenv version
   VERSION_NAME="${ARGUMENTS[0]}"
-  VIRTUALENV_NAME="${ARGUMENTS[1]##*/}"
+  VIRTUALENV_NAME="${ARGUMENTS[1]}"
 fi
 
 if [ -z "${VERSION_NAME}" ] || [ -z "${VIRTUALENV_NAME}" ]; then
@@ -280,6 +284,11 @@ fi
 
 if [ "$VIRTUALENV_NAME" != "${VIRTUALENV_NAME%[[:space:]]*}" ]; then
   echo "pyenv-virtualenv: no whitespace allowed in virtualenv name." 1>&2
+  exit 1
+fi
+
+if [ "${VIRTUALENV_NAME}" != "${VIRTUALENV_NAME%/*}" ] && [[ "${VIRTUALENV_NAME}" != "${VERSION_NAME%%/*}/envs/${VIRTUALENV_NAME##*/}" ]] ; then
+  echo "pyenv-virtualenv: no slash allowed in virtualenv name." 1>&2
   exit 1
 fi
 
@@ -305,14 +314,14 @@ fi
 
 # Not create `system/envs` directory even if source version is `system`
 if [[ "${VERSION_NAME%/envs/*}" == "system" ]]; then
-  VERSION_NAME="${VIRTUALENV_NAME}"
+  VIRTUALENV_NAME="${VIRTUALENV_NAME##*/}"
 else
-  VERSION_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME}"
+  VIRTUALENV_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME##*/}"
 fi
 
-VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VERSION_NAME}"
+VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 if [[ "${VIRTUALENV_PATH}" != "${VIRTUALENV_PATH%/envs/*}" ]]; then
-  COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+  COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME##*/}"
 fi
 
 if [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
@@ -427,7 +436,7 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    PYENV_VERSION="${VERSION_NAME}" prepare_requirements
+    PYENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
   fi
 fi
 
@@ -455,10 +464,10 @@ if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
 fi
 
 ## Install setuptools and pip.
-PYENV_VERSION="${VERSION_NAME}" build_package_ensurepip
+PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
 
 ## Migrate previously installed packages from requirements.txt.
-PYENV_VERSION="${VERSION_NAME}" install_requirements || true
+PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
 
 # Execute `after_virtualenv` hooks.
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

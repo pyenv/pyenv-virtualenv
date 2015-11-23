@@ -14,6 +14,10 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+if [ -z "${PYENV_ROOT}" ]; then
+  PYENV_ROOT="$(pyenv-root)"
+fi
+
 resolve_link() {
   $(type -p greadlink readlink | head -1) "$1"
 }
@@ -66,7 +70,7 @@ fi
 venv="${versions}"
 
 # exit as success if some virtualenv outside from pyenv is already activated
-if [ -n "${VIRTUAL_ENV}" ]; then
+if [ -n "${VIRTUAL_ENV}" ] && [[ "${VIRTUAL_ENV}" == "${VIRTUAL_ENV#${PYENV_ROOT}/versions/}" ]]; then
   if [ -z "${FORCE}" ]; then
     if [ -z "${QUIET}" ]; then
       echo "pyenv-virtualenv: virtualenv \`${VIRTUAL_ENV}' is already activated" 1>&2
@@ -77,7 +81,7 @@ if [ -n "${VIRTUAL_ENV}" ]; then
 fi
 
 if ! pyenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
-  if [ -z "$QUIET" ]; then
+  if [ -z "${QUIET}" ]; then
     echo "pyenv-virtualenv: version \`${venv}' is not a virtualenv" 1>&2
   fi
   echo "false"
@@ -89,7 +93,7 @@ fi
 for version in "${versions[@]}"; do
   if [[ "${version}" != "${venv}" ]]; then
     if pyenv-virtualenv-prefix "${version}" 1>/dev/null 2>&1; then
-      if [ -z "$QUIET" ]; then
+      if [ -z "${QUIET}" ]; then
         echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
       fi
       echo "false"
@@ -113,16 +117,6 @@ if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
     fi
     echo "true"
     exit 0
-  fi
-fi
-
-if [[ "${PYENV_DEACTIVATE}" == "${prefix}" ]]; then
-  if [ -z "${FORCE}" ]; then
-    if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: \`${venv}' is marked deactivated. use \`pyenv activate --force ${venv}' to activate forcibly." 1>&2
-    fi
-    echo "false"
-    exit 1
   fi
 fi
 
@@ -161,16 +155,10 @@ fi
 # virtualenv/pyvenv
 case "${shell}" in
 fish )
-  cat <<EOS
-set -e PYENV_DEACTIVATE;
-setenv VIRTUAL_ENV "${prefix}";
-EOS
+  echo "setenv VIRTUAL_ENV \"${prefix}\";"
   ;;
 * )
-  cat <<EOS
-unset PYENV_DEACTIVATE;
-export VIRTUAL_ENV="${prefix}";
-EOS
+  echo "export VIRTUAL_ENV=\"${prefix}\";"
   ;;
 esac
 

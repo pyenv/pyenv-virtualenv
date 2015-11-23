@@ -6,7 +6,6 @@ setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   unset PYENV_VERSION
   unset PYENV_ACTIVATE_SHELL
-  unset PYENV_DEACTIVATE
   unset VIRTUAL_ENV
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
@@ -18,6 +17,7 @@ setup() {
 }
 
 @test "deactivate virtualenv" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -26,7 +26,6 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -47,6 +46,7 @@ EOS
 }
 
 @test "deactivate virtualenv (verbose)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -55,7 +55,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -76,6 +75,7 @@ EOS
 }
 
 @test "deactivate virtualenv (quiet)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -84,7 +84,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -105,6 +104,7 @@ EOS
 }
 
 @test "deactivate virtualenv (with shell activation)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -115,7 +115,6 @@ EOS
 pyenv-virtualenv: deactivate venv
 unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -136,6 +135,7 @@ EOS
 }
 
 @test "deactivate virtualenv (with shell activation) (quiet)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -146,7 +146,6 @@ EOS
 pyenv-virtualenv: deactivate venv
 unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -167,6 +166,7 @@ EOS
 }
 
 @test "deactivate virtualenv which has been activated manually" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -175,7 +175,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/venv";
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -196,6 +195,7 @@ EOS
 }
 
 @test "deactivate virtualenv (fish)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -204,7 +204,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
-setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   setenv PATH "\$_OLD_VIRTUAL_PATH";
@@ -221,6 +220,7 @@ EOS
 }
 
 @test "deactivate virtualenv (fish) (quiet)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -229,7 +229,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
-setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   setenv PATH "\$_OLD_VIRTUAL_PATH";
@@ -246,6 +245,7 @@ EOS
 }
 
 @test "deactivate virtualenv (fish) (with shell activation)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -256,7 +256,6 @@ EOS
 pyenv-virtualenv: deactivate venv
 set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
-setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   setenv PATH "\$_OLD_VIRTUAL_PATH";
@@ -273,6 +272,7 @@ EOS
 }
 
 @test "deactivate virtualenv (fish) (with shell activation) (quiet)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=1
 
@@ -283,7 +283,6 @@ EOS
 pyenv-virtualenv: deactivate venv
 set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
-setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   setenv PATH "\$_OLD_VIRTUAL_PATH";
@@ -300,6 +299,7 @@ EOS
 }
 
 @test "deactivate virtualenv which has been activated manually (fish)" {
+  export PYENV_VIRTUALENV_INIT=1
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
 
@@ -308,7 +308,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate venv
-setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/venv";
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   setenv PATH "\$_OLD_VIRTUAL_PATH";

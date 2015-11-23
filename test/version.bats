@@ -28,7 +28,6 @@ setup() {
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
   stub pyenv-which "pyvenv : echo \"${PYENV_ROOT}/versions/3.4.1/bin/pyvenv\""
-  stub pyenv-root "echo \"${PYENV_ROOT}\""
 
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
@@ -39,5 +38,4 @@ setup() {
   assert_output "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv 3.4.1)"
 
   unstub pyenv-prefix
-  unstub pyenv-root
 }

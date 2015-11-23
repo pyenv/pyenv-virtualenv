@@ -6,7 +6,6 @@ setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   unset PYENV_VERSION
   unset PYENV_ACTIVATE_SHELL
-  unset PYENV_DEACTIVATE
   unset VIRTUAL_ENV
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
@@ -29,7 +28,6 @@ setup() {
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0";
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
@@ -63,7 +61,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0
-setenv PYENV_DEACTIVATE "${PYENV_ROOT}/versions/anaconda-2.3.0";
 set -e VIRTUAL_ENV;
 set -e CONDA_DEFAULT_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
@@ -93,7 +90,6 @@ EOS
   assert_success
   assert_output <<EOS
 pyenv-virtualenv: deactivate anaconda-2.3.0/envs/foo
-export PYENV_DEACTIVATE="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then

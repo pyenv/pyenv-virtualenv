@@ -32,11 +32,13 @@ while [ $# -gt 0 ]; do
 done
 
 if [ -z "${VIRTUAL_ENV}" ]; then
-  if [ -z "$QUIET" ]; then
-    echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
+  if [ -z "${FORCE}" ]; then
+    if [ -z "${QUIET}" ]; then
+      echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
+    fi
+    echo "false"
+    exit 1
   fi
-  echo "false"
-  exit 1
 fi
 
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
@@ -72,19 +74,12 @@ fi
 # virtualenv/pyvenv
 case "${shell}" in
 fish )
-  cat <<EOS
-setenv PYENV_DEACTIVATE "${VIRTUAL_ENV}";
-set -e VIRTUAL_ENV;
-EOS
+  echo "set -e VIRTUAL_ENV;"
   ;;
 * )
-  cat <<EOS
-export PYENV_DEACTIVATE="${VIRTUAL_ENV}";
-unset VIRTUAL_ENV;
-EOS
+  echo "unset VIRTUAL_ENV;"
   ;;
 esac
-
 
 # anaconda/miniconda
 if [ -n "${CONDA_DEFAULT_ENV}" ]; then

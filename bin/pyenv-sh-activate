@@ -70,7 +70,7 @@ fi
 venv="${versions}"
 
 # exit as success if some virtualenv outside from pyenv is already activated
-if [ -n "${VIRTUAL_ENV}" ] && [[ "${VIRTUAL_ENV}" == "${VIRTUAL_ENV#${PYENV_ROOT}/versions/}" ]]; then
+if [ -n "${VIRTUAL_ENV}" ] && [[ "${VIRTUAL_ENV}" != "${PYENV_ROOT}/versions/"* ]]; then
   if [ -z "${FORCE}" ]; then
     if [ -z "${QUIET}" ]; then
       echo "pyenv-virtualenv: virtualenv \`${VIRTUAL_ENV}' is already activated" 1>&2

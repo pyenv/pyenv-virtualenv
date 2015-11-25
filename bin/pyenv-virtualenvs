@@ -112,7 +112,7 @@ for path in "$versions_dir"/*; do
   if [ -d "$path" ]; then
     if [ -n "$skip_aliases" ] && [ -L "$path" ]; then
       target="$(realpath "$path")"
-      [ "${taget%/*/envs/*}" == "$versions_dir" ] || continue
+      [ "${target%/*/envs/*}" != "$versions_dir" ] || continue
     fi
     virtualenv_prefix="$(pyenv-virtualenv-prefix "${path##*/}" 2>/dev/null || true)"
     if [ -d "${virtualenv_prefix}" ]; then

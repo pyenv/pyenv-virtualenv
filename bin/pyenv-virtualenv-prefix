@@ -37,11 +37,16 @@ for version in "${versions[@]}"; do
     exit 1
   fi
   PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"
-  if [ -f "${PYENV_PREFIX_PATH}/bin/activate" ]; then
-    VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"
-    VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${VIRTUALENV_PREFIX_PATH:-${PYENV_PREFIX_PATH}}")
+  if [ -x "${PYENV_PREFIX_PATH}/bin/python" ]; then
+    if [ -f "${PYENV_PREFIX_PATH}/bin/activate" ]; then
+      VIRTUALENV_PREFIX_PATH="$(real_prefix "${version}" || base_prefix "${version}" || true)"
+      VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${VIRTUALENV_PREFIX_PATH:-${PYENV_PREFIX_PATH}}")
+    else
+      echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
+      exit 1
+    fi
   else
-    echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
+    echo "pyenv-virtualenv: \`python' not found in version \`${version}'" 1>&2
     exit 1
   fi
 done

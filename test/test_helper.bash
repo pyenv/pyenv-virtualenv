@@ -123,12 +123,16 @@ create_conda() {
   mkdir -p "${PYENV_ROOT}/versions/$version/bin"
   touch "${PYENV_ROOT}/versions/$version/bin/activate"
   touch "${PYENV_ROOT}/versions/$version/bin/conda"
+  touch "${PYENV_ROOT}/versions/$version/bin/python"
   chmod +x "${PYENV_ROOT}/versions/$version/bin/conda"
+  chmod +x "${PYENV_ROOT}/versions/$version/bin/python"
   local conda_env
   for conda_env; do
     mkdir -p "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin"
     touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/activate"
     touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/conda"
+    touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/python"
     chmod +x "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/conda"
+    chmod +x "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/python"
   done
 }

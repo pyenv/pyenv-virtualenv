@@ -7,7 +7,6 @@ setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   unset PYENV_VERSION
   unset PYENV_ACTIVATE_SHELL
-  unset PYENV_DEACTIVATE
   unset VIRTUAL_ENV
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
@@ -36,7 +35,6 @@ setup() {
   assert_output <<EOS
 false
 pyenv-virtualenv: activate anaconda-2.3.0
-unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
 export CONDA_DEFAULT_ENV="root";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -63,7 +61,6 @@ EOS
   assert_output <<EOS
 false
 pyenv-virtualenv: activate anaconda-2.3.0
-set -e PYENV_DEACTIVATE;
 setenv VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv CONDA_DEFAULT_ENV "root";
 pyenv-virtualenv: prompt changing not work for fish.
@@ -89,7 +86,6 @@ false
 pyenv-virtualenv: activate miniconda-3.9.1
 export PYENV_VERSION="miniconda-3.9.1";
 export PYENV_ACTIVATE_SHELL=1;
-unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1";
 export CONDA_DEFAULT_ENV="root";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -116,7 +112,6 @@ EOS
   assert_output <<EOS
 false
 pyenv-virtualenv: activate anaconda-2.3.0/envs/foo
-unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 export CONDA_DEFAULT_ENV="foo";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -144,7 +139,6 @@ false
 pyenv-virtualenv: activate miniconda-3.9.1/envs/bar
 export PYENV_VERSION="miniconda-3.9.1/envs/bar";
 export PYENV_ACTIVATE_SHELL=1;
-unset PYENV_DEACTIVATE;
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
 export CONDA_DEFAULT_ENV="bar";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.

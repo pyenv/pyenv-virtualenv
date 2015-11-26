@@ -24,16 +24,13 @@ setup() {
   stub pyenv-version-name "echo anaconda-2.3.0"
   stub pyenv-virtualenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
   stub pyenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="anaconda-2.3.0" run pyenv-sh-activate
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-
   assert_success
   assert_output <<EOS
-false
+deactivated
 pyenv-virtualenv: activate anaconda-2.3.0
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
 export CONDA_DEFAULT_ENV="root";
@@ -41,6 +38,11 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(anaconda-2.3.0) \${PS1}";
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate conda root from current version (fish)" {
@@ -50,21 +52,23 @@ EOS
   stub pyenv-version-name "echo anaconda-2.3.0"
   stub pyenv-virtualenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
   stub pyenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="fish" PYENV_VERSION="anaconda-2.3.0" run pyenv-sh-activate
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-
   assert_success
   assert_output <<EOS
-false
+deactivated
 pyenv-virtualenv: activate anaconda-2.3.0
 setenv VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv CONDA_DEFAULT_ENV "root";
 pyenv-virtualenv: prompt changing not work for fish.
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate conda root from command-line argument" {
@@ -74,15 +78,13 @@ EOS
   create_conda "miniconda-3.9.1"
   stub pyenv-virtualenv-prefix "miniconda-3.9.1 : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1\""
   stub pyenv-prefix "miniconda-3.9.1 : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="anaconda-2.3.0" run pyenv-sh-activate "miniconda-3.9.1"
 
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-
   assert_success
   assert_output <<EOS
-false
+deactivated
 pyenv-virtualenv: activate miniconda-3.9.1
 export PYENV_VERSION="miniconda-3.9.1";
 export PYENV_ACTIVATE_SHELL=1;
@@ -92,6 +94,10 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(miniconda-3.9.1) \${PS1}";
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate conda env from current version" {
@@ -101,16 +107,13 @@ EOS
   stub pyenv-version-name "echo anaconda-2.3.0/envs/foo"
   stub pyenv-virtualenv-prefix "anaconda-2.3.0/envs/foo : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo\""
   stub pyenv-prefix "anaconda-2.3.0/envs/foo : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="anaconda-2.3.0/envs/foo" run pyenv-sh-activate
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-
   assert_success
   assert_output <<EOS
-false
+deactivated
 pyenv-virtualenv: activate anaconda-2.3.0/envs/foo
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 export CONDA_DEFAULT_ENV="foo";
@@ -118,6 +121,11 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(anaconda-2.3.0/envs/foo) \${PS1}";
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate conda env from command-line argument" {
@@ -127,15 +135,13 @@ EOS
   create_conda "miniconda-3.9.1" "bar"
   stub pyenv-virtualenv-prefix "miniconda-3.9.1/envs/bar : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1\""
   stub pyenv-prefix "miniconda-3.9.1/envs/bar : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="anaconda-2.3.0/envs/foo" run pyenv-sh-activate "miniconda-3.9.1/envs/bar"
 
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-
   assert_success
   assert_output <<EOS
-false
+deactivated
 pyenv-virtualenv: activate miniconda-3.9.1/envs/bar
 export PYENV_VERSION="miniconda-3.9.1/envs/bar";
 export PYENV_ACTIVATE_SHELL=1;
@@ -145,4 +151,8 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(miniconda-3.9.1/envs/bar) \${PS1}";
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }

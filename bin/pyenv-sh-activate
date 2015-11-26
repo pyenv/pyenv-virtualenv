@@ -81,11 +81,21 @@ if [ -n "${VIRTUAL_ENV}" ] && [[ "${VIRTUAL_ENV}" != "${PYENV_ROOT}/versions/"* 
 fi
 
 if ! pyenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
-  if [ -z "${QUIET}" ]; then
-    echo "pyenv-virtualenv: version \`${venv}' is not a virtualenv" 1>&2
+  # fallback to virtualenv of current version
+  OLDIFS="$IFS"
+  IFS=: current_versions=($(pyenv-version-name))
+  IFS="$OLDIFS"
+  new_venv="${current_versions%/envs/*}/envs/${venv}"
+  if pyenv-virtualenv-prefix "${new_venv}" 1>/dev/null 2>&1; then
+    venv="${new_venv}"
+    versions[0]="${new_venv}"
+  else
+    if [ -z "${QUIET}" ]; then
+      echo "pyenv-virtualenv: version \`${venv}' is not a virtualenv" 1>&2
+    fi
+    echo "false"
+    exit 1
   fi
-  echo "false"
-  exit 1
 fi
 
 # exit as error if there are multiple virtualenvs

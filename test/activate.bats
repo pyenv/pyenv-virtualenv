@@ -27,11 +27,6 @@ setup() {
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  stub pyenv-sh-deactivate
-
   assert_success
   assert_output <<EOS
 deactivated
@@ -41,6 +36,11 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv) \${PS1}";
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from current version (verbose)" {
@@ -53,11 +53,6 @@ EOS
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate --verbose
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
-
   assert_success
   assert_output <<EOS
 deactivated
@@ -67,6 +62,11 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv) \${PS1}";
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from current version (without pyenv-virtualenv-init)" {
@@ -78,11 +78,6 @@ EOS
   stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
-
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
@@ -100,6 +95,11 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv) \${PS1}";
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from current version (fish)" {
@@ -112,11 +112,6 @@ EOS
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
-
   assert_success
   assert_output <<EOS
 deactivated
@@ -124,6 +119,11 @@ pyenv-virtualenv: activate venv
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not work for fish.
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from current version (fish) (without pyenv-virtualenv-init)" {
@@ -135,11 +135,6 @@ EOS
   stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate
-
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
@@ -155,6 +150,11 @@ setenv PYENV_ACTIVATE_SHELL 1;
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not work for fish.
 EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from command-line argument" {
@@ -165,10 +165,6 @@ EOS
   stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
-
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
@@ -181,6 +177,10 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv27) \${PS1}";
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from command-line argument (without pyenv-virtualenv-init)" {
@@ -191,10 +191,6 @@ EOS
   stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
-
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
@@ -212,6 +208,10 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv27) \${PS1}";
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from command-line argument (fish)" {
@@ -223,10 +223,6 @@ EOS
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
 
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
-
   assert_success
   assert_output <<EOS
 deactivated
@@ -236,6 +232,10 @@ setenv PYENV_ACTIVATE_SHELL 1;
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing not work for fish.
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "activate virtualenv from command-line argument (fish) (without pyenv-virtualenv-init)" {
@@ -246,10 +246,6 @@ EOS
   stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate "venv27"
-
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-  unstub pyenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
@@ -265,6 +261,10 @@ setenv PYENV_ACTIVATE_SHELL 1;
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing not work for fish.
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
 }
 
 @test "unset invokes deactivate" {
@@ -275,16 +275,18 @@ EOS
 
   run pyenv-sh-activate --unset
 
-  unstub pyenv-sh-deactivate
-
   assert_success
   assert_output <<EOS
 deactivated
 EOS
+
+  unstub pyenv-sh-deactivate
 }
 
 @test "should fail if the version is not a virtualenv" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
+  stub pyenv-version-name " : echo 3.3.3"
+  stub pyenv-virtualenv-prefix "3.3.3/envs/3.3.3 : false"
 
   run pyenv-sh-activate "3.3.3"
 
@@ -293,19 +295,25 @@ EOS
 pyenv-virtualenv: version \`3.3.3' is not a virtualenv
 false
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-version-name
 }
 
 @test "should fail if the version is not a virtualenv (quiet)" {
   stub pyenv-virtualenv-prefix "3.3.3 : false"
+  stub pyenv-version-name " : echo 3.3.3"
+  stub pyenv-virtualenv-prefix "3.3.3/envs/3.3.3 : false"
 
   run pyenv-sh-activate --quiet "3.3.3"
-
-  unstub pyenv-virtualenv-prefix
 
   assert_failure
   assert_output <<EOS
 false
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-version-name
 }
 
 @test "should fail if there are multiple versions" {
@@ -314,13 +322,13 @@ EOS
 
   run pyenv-sh-activate "venv" "venv27"
 
-  unstub pyenv-virtualenv-prefix
-
   assert_failure
   assert_output <<EOS
 pyenv-virtualenv: cannot activate multiple versions at once: venv venv27
 false
 EOS
+
+  unstub pyenv-virtualenv-prefix
 }
 
 @test "should fail if there are multiple virtualenvs (quiet)" {
@@ -329,18 +337,20 @@ EOS
 
   run pyenv-sh-activate --quiet "venv" "venv27"
 
-  unstub pyenv-virtualenv-prefix
-
   assert_failure
   assert_output <<EOS
 false
 EOS
+
+  unstub pyenv-virtualenv-prefix
 }
 
 @test "should fail if the first version is not a virtualenv" {
   export PYENV_VIRTUALENV_INIT=1
 
   stub pyenv-virtualenv-prefix "2.7.10 : false"
+  stub pyenv-version-name " : echo 2.7.10"
+  stub pyenv-virtualenv-prefix "2.7.10/envs/2.7.10 : false"
 
   run pyenv-sh-activate "2.7.10" "venv27"
 
@@ -349,6 +359,9 @@ EOS
 pyenv-virtualenv: version \`2.7.10' is not a virtualenv
 false
 EOS
+
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-version-name
 }
 
 @test "activate if the first virtualenv is a virtualenv" {
@@ -361,10 +374,6 @@ EOS
 
   run pyenv-sh-activate "venv27" "2.7.10"
 
-  unstub pyenv-sh-deactivate
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-prefix
-
   assert_success
   assert_output <<EOS
 deactivated
@@ -376,6 +385,10 @@ pyenv-virtualenv: prompt changing will be removed from future release. configure
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv27) \${PS1}";
 EOS
+
+  unstub pyenv-sh-deactivate
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
 }
 
 @test "should fail if activate is invoked as a command" {

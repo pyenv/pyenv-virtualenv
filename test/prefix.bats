@@ -6,13 +6,23 @@ setup() {
   export PYENV_ROOT="${TMP}/pyenv"
 }
 
-create_virtualenv() {
+create_version() {
   mkdir -p "${PYENV_ROOT}/versions/$1/bin"
+  touch "${PYENV_ROOT}/versions/$1/bin/python"
+  chmod +x "${PYENV_ROOT}/versions/$1/bin/python"
+}
+
+remove_version() {
+  rm -fr "${PYENV_ROOT}/versions/$1"
+}
+
+create_virtualenv() {
+  create_version "$@"
   touch "${PYENV_ROOT}/versions/$1/bin/activate"
 }
 
 remove_virtualenv() {
-  rm -fr "${PYENV_ROOT}/versions/$1"
+  remove_version "$@"
 }
 
 @test "display prefix with using sys.real_prefix" {
@@ -118,13 +128,13 @@ OUT
 @test "should fail if the version is not a virtualenv" {
   stub pyenv-version-name "echo 3.4.0"
   stub pyenv-prefix "3.4.0 : echo \"${PYENV_ROOT}/versions/3.4.0\""
-  mkdir -p "${PYENV_ROOT}/versions/3.4.0"
+  create_version "3.4.0"
 
   PYENV_VERSION="3.4.0" run pyenv-virtualenv-prefix
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  rmdir "${PYENV_ROOT}/versions/3.4.0"
+  remove_version "3.4.0"
 
   assert_failure
   assert_output <<OUT
@@ -139,7 +149,7 @@ OUT
   stub pyenv-exec "false" \
                   "echo \"${PYENV_ROOT}/versions/3.3.3\""
   create_virtualenv "venv33"
-  mkdir -p "${PYENV_ROOT}/versions/3.4.0"
+  create_version "3.4.0"
 
   PYENV_VERSION="venv33:3.4.0" run pyenv-virtualenv-prefix
 
@@ -147,7 +157,7 @@ OUT
   unstub pyenv-prefix
   unstub pyenv-exec
   remove_virtualenv "venv33"
-  rmdir "${PYENV_ROOT}/versions/3.4.0"
+  remove_version "3.4.0"
 
   assert_failure
   assert_output <<OUT

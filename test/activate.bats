@@ -32,7 +32,6 @@ setup() {
 
   assert_success
   assert_output <<EOS
-false
 pyenv-virtualenv: activate venv
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -56,7 +55,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-false
 pyenv-virtualenv: activate venv
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -85,7 +83,6 @@ EOS
 
 eval "\$(pyenv virtualenv-init -)"
 
-false
 pyenv-virtualenv: activate venv
 export PYENV_VERSION="venv";
 export PYENV_ACTIVATE_SHELL=1;
@@ -111,7 +108,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-false
 pyenv-virtualenv: activate venv
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not work for fish.
@@ -138,7 +134,6 @@ EOS
 
 status --is-interactive; and . (pyenv virtualenv-init -|psub)
 
-false
 pyenv-virtualenv: activate venv
 setenv PYENV_VERSION "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
@@ -160,7 +155,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-false
 pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
@@ -189,7 +183,6 @@ EOS
 
 eval "\$(pyenv virtualenv-init -)"
 
-false
 pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
@@ -213,7 +206,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-false
 pyenv-virtualenv: activate venv27
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
@@ -240,7 +232,6 @@ EOS
 
 status --is-interactive; and . (pyenv virtualenv-init -|psub)
 
-false
 pyenv-virtualenv: activate venv27
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
@@ -351,7 +342,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-false
 pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27:2.7.10";
 export PYENV_ACTIVATE_SHELL=1;

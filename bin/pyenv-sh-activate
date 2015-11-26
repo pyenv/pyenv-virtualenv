@@ -128,7 +128,7 @@ if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
   fi
 fi
 
-pyenv-sh-deactivate --quiet ${VERBOSE+--verbose} || true
+pyenv-sh-deactivate --quiet ${VERBOSE+--verbose} 1>/dev/null || true
 
 echo "pyenv-virtualenv: activate ${venv}" 1>&2
 

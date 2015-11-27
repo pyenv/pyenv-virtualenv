@@ -137,13 +137,14 @@ usage() {
 detect_venv() {
   # Check the existence of executables as a workaround for the issue with pyenv-which-ext
   # https://github.com/yyuu/pyenv-virtualenv/issues/26
-  if [ -x "$(pyenv-prefix)/bin/conda" ]; then
+  local prefix="$(pyenv-prefix)"
+  if [ -x "${prefix}/bin/conda" ]; then
     HAS_CONDA=1
   else
-    if [ -x "$(pyenv-prefix)/bin/virtualenv" ]; then
+    if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    if [ -x "$(pyenv-prefix)/bin/pyvenv" ]; then
+    if [ -x "${prefix}/bin/pyvenv" ]; then
       HAS_PYVENV=1
     fi
   fi

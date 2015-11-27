@@ -24,13 +24,13 @@ unstub_pyenv() {
   export PYENV_VERSION="3.4.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pyvenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
+  create_executable "3.4.1" "python"
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
+  remove_executable "3.4.1" "conda"
 
   run pyenv-virtualenv venv
 
@@ -48,13 +48,13 @@ OUT
   export PYENV_VERSION="3.4.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
+  create_executable "3.4.1" "python"
   create_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
+  remove_executable "3.4.1" "conda"
 
   run pyenv-virtualenv venv
 
@@ -72,16 +72,16 @@ OUT
   export PYENV_VERSION="3.2.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
 
+  create_executable "3.2.1" "python"
   remove_executable "3.2.1" "virtualenv"
   remove_executable "3.2.1" "pyvenv"
+  remove_executable "3.2.1" "conda"
 
   run pyenv-virtualenv venv
 
@@ -102,14 +102,14 @@ OUT
   export PYENV_VERSION="3.4.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
+  create_executable "3.4.1" "python"
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
+  remove_executable "3.4.1" "conda"
 
   run pyenv-virtualenv -p ${TMP}/python3 venv
 
@@ -128,14 +128,14 @@ OUT
   export PYENV_VERSION="3.4.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
+  create_executable "3.4.1" "python"
   remove_executable "3.4.1" "virtualenv"
   create_executable "3.4.1" "pyvenv"
+  remove_executable "3.4.1" "conda"
 
   run pyenv-virtualenv --python=${TMP}/python3 venv
 
@@ -154,16 +154,16 @@ OUT
   export PYENV_VERSION="3.2.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pip install virtualenv : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
 
+  create_executable "3.2.1" "python"
   remove_executable "3.2.1" "virtualenv"
   remove_executable "3.2.1" "pyvenv"
+  remove_executable "3.2.1" "conda"
 
   PIP_REQUIRE_VENV="true" run pyenv-virtualenv venv
 

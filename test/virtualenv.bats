@@ -7,11 +7,11 @@ setup() {
 }
 
 stub_pyenv() {
+  create_executable "${PYENV_VERSION}" "python"
   create_executable "${PYENV_VERSION}" "virtualenv"
   remove_executable "${PYENV_VERSION}" "pyvenv"
+  remove_executable "${PYENV_VERSION}" "conda"
 
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-hooks "virtualenv : echo"

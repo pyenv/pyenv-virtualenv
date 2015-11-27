@@ -9,7 +9,6 @@ setup() {
 
 @test "display virtualenv version" {
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/2.7.7'"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/2.7.7'"
   stub pyenv-exec "virtualenv --version : echo \"1.11\""
 
   create_executable "2.7.7" "virtualenv"
@@ -25,7 +24,6 @@ setup() {
 }
 
 @test "display pyvenv version" {
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
   stub pyenv-which "pyvenv : echo \"${PYENV_ROOT}/versions/3.4.1/bin/pyvenv\""
 

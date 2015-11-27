@@ -161,7 +161,7 @@ command is not available.
 Because Anaconda and Miniconda may install standard commands (e.g. `curl`, `openssl`, `sqlite3`, etc.) into their prefix,
 we'd recommend you to install [pyenv-which-ext](https://github.com/yyuu/pyenv-which-ext).
 
-You can manage `conda` environments by `conda env` as same manner as standard Anaconda/Miniconda installations.
+You can manage `conda` environments by `conda create` as same manner as standard Anaconda/Miniconda installations.
 To use those environments, you can use `pyenv activate` and `pyenv deactivate`.
 
 ```
@@ -172,13 +172,27 @@ $ conda env list
 #
 myenv                    /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv
 root                  *  /home/yyuu/.pyenv/versions/miniconda3-3.9.1
-$ pyenv activate myenv
+$ pyenv activate miniconda3-3.9.1/envs/myenv
 discarding /home/yyuu/.pyenv/versions/miniconda3-3.9.1/bin from PATH
 prepending /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin to PATH
 $ python --version
 Python 3.4.3 :: Continuum Analytics, Inc.
 $ pyenv deactivate
 discarding /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin from PATH
+```
+
+If `conda` is available, `pyenv virtualenv` will use it to create environment by `conda create`.
+
+```
+$ pyenv version
+miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
+$ pyenv virtualenv myenv2
+$ conda env list
+# conda environments:
+#
+myenv                    /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv
+myenv                    /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv2
+root                  *  /home/yyuu/.pyenv/versions/miniconda3-3.9.1
 ```
 
 You can use version like `miniconda3-3.9.1/envs/myenv` to specify `conda` environment as a version in pyenv.

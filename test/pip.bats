@@ -22,15 +22,11 @@ unstub_pyenv() {
 
 @test "install pip with ensurepip" {
   export PYENV_VERSION="3.4.1"
+  setup_pyvenv "3.4.1"
   stub_pyenv "${PYENV_VERSION}"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pyvenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/3.4.1/envs/venv/bin"
   stub pyenv-exec "python -s -m ensurepip : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/3.4.1/envs/venv/bin/pip"
-
-  remove_executable "3.4.1" "virtualenv"
-  create_executable "3.4.1" "pyvenv"
 
   run pyenv-virtualenv venv
 
@@ -44,21 +40,18 @@ OUT
 
   unstub_pyenv
   unstub pyenv-exec
+  teardown_pyvenv "3.4.1"
 }
 
 @test "install pip without using ensurepip" {
   export PYENV_VERSION="3.3.5"
+  setup_pyvenv "3.3.5"
   stub_pyenv "${PYENV_VERSION}"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "pyvenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/3.3.5/envs/venv/bin"
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/3.3.5/envs/venv/bin/pip"
   stub curl true
-
-  remove_executable "3.3.5" "virtualenv"
-  create_executable "3.3.5" "pyvenv"
 
   run pyenv-virtualenv venv
 
@@ -73,4 +66,5 @@ OUT
 
   unstub_pyenv
   unstub pyenv-exec
+  teardown_pyvenv "3.3.5"
 }

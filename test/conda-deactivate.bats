@@ -21,7 +21,7 @@ setup() {
   export PYENV_ACTIVATE_SHELL=
   export CONDA_DEFAULT_ENV="root"
 
-  create_conda "anaconda-2.3.0"
+  setup_conda "anaconda-2.3.0"
 
   PYENV_SHELL="bash" run pyenv-sh-deactivate
 
@@ -46,6 +46,8 @@ if declare -f deactivate 1>/dev/null 2>&1; then
   unset -f deactivate;
 fi;
 EOS
+
+  teardown_conda "anaconda-2.3.0"
 }
 
 @test "deactivate conda root (fish)" {
@@ -53,8 +55,7 @@ EOS
   export PYENV_ACTIVATE_SHELL=
   export CONDA_DEFAULT_ENV="root"
 
-
-  create_conda "anaconda-2.3.0"
+  setup_conda "anaconda-2.3.0"
 
   PYENV_SHELL="fish" run pyenv-sh-deactivate
 
@@ -75,6 +76,8 @@ if functions -g deactivate;
   functions -e deactivate;
 end;
 EOS
+
+  teardown_conda "anaconda-2.3.0"
 }
 
 @test "deactivate conda env" {
@@ -82,8 +85,7 @@ EOS
   export PYENV_ACTIVATE_SHELL=
   export CONDA_DEFAULT_ENV="foo"
 
-
-  create_conda "anaconda-2.3.0" "foo"
+  setup_conda "anaconda-2.3.0" "foo"
 
   PYENV_SHELL="bash" run pyenv-sh-deactivate
 
@@ -108,4 +110,6 @@ if declare -f deactivate 1>/dev/null 2>&1; then
   unset -f deactivate;
 fi;
 EOS
+
+  teardown_conda "anaconda-2.3.0" "foo"
 }

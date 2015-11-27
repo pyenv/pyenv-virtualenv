@@ -7,11 +7,8 @@ setup() {
 }
 
 stub_pyenv() {
+  setup_version "${PYENV_VERSION}"
   create_executable "${PYENV_VERSION}" "virtualenv"
-  remove_executable "${PYENV_VERSION}" "pyvenv"
-
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-hooks "virtualenv : echo"
@@ -22,6 +19,7 @@ unstub_pyenv() {
   unstub pyenv-prefix
   unstub pyenv-hooks
   unstub pyenv-rehash
+  teardown_version "${PYENV_VERSION}"
 }
 
 @test "create virtualenv from given version" {

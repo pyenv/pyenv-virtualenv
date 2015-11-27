@@ -20,7 +20,7 @@ setup() {
 @test "activate conda root from current version" {
   export PYENV_VIRTUALENV_INIT=1
 
-  create_conda "anaconda-2.3.0"
+  setup_conda "anaconda-2.3.0"
   stub pyenv-version-name "echo anaconda-2.3.0"
   stub pyenv-virtualenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
   stub pyenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
@@ -43,12 +43,13 @@ EOS
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
   unstub pyenv-sh-deactivate
+  teardown_conda "anaconda-2.3.0"
 }
 
 @test "activate conda root from current version (fish)" {
   export PYENV_VIRTUALENV_INIT=1
 
-  create_conda "anaconda-2.3.0"
+  setup_conda "anaconda-2.3.0"
   stub pyenv-version-name "echo anaconda-2.3.0"
   stub pyenv-virtualenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
   stub pyenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
@@ -69,13 +70,14 @@ EOS
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
   unstub pyenv-sh-deactivate
+  teardown_conda "anaconda-2.3.0"
 }
 
 @test "activate conda root from command-line argument" {
   export PYENV_VIRTUALENV_INIT=1
 
-  create_conda "anaconda-2.3.0"
-  create_conda "miniconda-3.9.1"
+  setup_conda "anaconda-2.3.0"
+  setup_conda "miniconda-3.9.1"
   stub pyenv-virtualenv-prefix "miniconda-3.9.1 : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1\""
   stub pyenv-prefix "miniconda-3.9.1 : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1\""
   stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
@@ -98,12 +100,14 @@ EOS
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
   unstub pyenv-sh-deactivate
+  teardown_conda "anaconda-2.3.0"
+  teardown_conda "miniconda-3.9.1"
 }
 
 @test "activate conda env from current version" {
   export PYENV_VIRTUALENV_INIT=1
 
-  create_conda "anaconda-2.3.0" "foo"
+  setup_conda "anaconda-2.3.0" "foo"
   stub pyenv-version-name "echo anaconda-2.3.0/envs/foo"
   stub pyenv-virtualenv-prefix "anaconda-2.3.0/envs/foo : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo\""
   stub pyenv-prefix "anaconda-2.3.0/envs/foo : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo\""
@@ -126,13 +130,14 @@ EOS
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
   unstub pyenv-sh-deactivate
+  teardown_conda "anaconda-2.3.0" "foo"
 }
 
 @test "activate conda env from command-line argument" {
   export PYENV_VIRTUALENV_INIT=1
 
-  create_conda "anaconda-2.3.0" "foo"
-  create_conda "miniconda-3.9.1" "bar"
+  setup_conda "anaconda-2.3.0" "foo"
+  setup_conda "miniconda-3.9.1" "bar"
   stub pyenv-virtualenv-prefix "miniconda-3.9.1/envs/bar : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1\""
   stub pyenv-prefix "miniconda-3.9.1/envs/bar : echo \"${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar\""
   stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
@@ -155,4 +160,6 @@ EOS
   unstub pyenv-virtualenv-prefix
   unstub pyenv-prefix
   unstub pyenv-sh-deactivate
+  teardown_conda "anaconda-2.3.0" "foo"
+  teardown_conda "miniconda-3.9.1" "bar"
 }

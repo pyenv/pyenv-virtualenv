@@ -7,8 +7,7 @@ setup() {
 }
 
 @test "display conda root" {
-  create_conda "anaconda-2.3.0"
-
+  setup_conda "anaconda-2.3.0"
   stub pyenv-version-name "echo anaconda-2.3.0"
   stub pyenv-prefix "anaconda-2.3.0 : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0\""
 
@@ -21,11 +20,11 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
+  teardown_conda "anaconda-2.3.0"
 }
 
 @test "display conda env" {
-  create_conda "anaconda-2.3.0" "foo"
-
+  setup_conda "anaconda-2.3.0" "foo"
   stub pyenv-version-name "echo anaconda-2.3.0/envs/foo"
   stub pyenv-prefix "anaconda-2.3.0/envs/foo : echo \"${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo\""
 
@@ -38,4 +37,5 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
+  teardown_conda "anaconda-2.3.0" "foo"
 }

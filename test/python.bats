@@ -5,8 +5,8 @@ load test_helper
 setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   export PYENV_VERSION="2.7.8"
-  create_executable "${PYENV_VERSION}" "virtualenv"
-  remove_executable "${PYENV_VERSION}" "pyvenv"
+  setup_version "2.7.8"
+  create_executable "2.7.8" "virtualenv"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
@@ -22,6 +22,7 @@ teardown() {
   unstub pyenv-prefix
   unstub pyenv-hooks
   unstub pyenv-rehash
+  teardown_version "2.7.8"
   rm -fr "$TMP"/*
 }
 

@@ -117,22 +117,56 @@ remove_executable() {
   rm -f "${PYENV_ROOT}/versions/$1/bin/$2"
 }
 
-create_conda() {
-  local version="$1"
+setup_version() {
+  create_executable "$1" "python"
+  remove_executable "$1" "activate"
+  remove_executable "$1" "pyvenv"
+  remove_executable "$1" "conda"
+}
+
+teardown_version() {
+  rm -fr "${PYENV_ROOT}/versions/$1"
+}
+
+setup_virtualenv() {
+  create_executable "$1" "python"
+  create_executable "$1" "activate"
+  remove_executable "$1" "pyvenv"
+  remove_executable "$1" "conda"
+}
+
+teardown_virtualenv() {
+  rm -fr "${PYENV_ROOT}/versions/$1"
+}
+
+setup_pyvenv() {
+  create_executable "$1" "python"
+  create_executable "$1" "activate"
+  create_executable "$1" "pyvenv"
+  remove_executable "$1" "conda"
+}
+
+teardown_pyvenv() {
+  rm -fr "${PYENV_ROOT}/versions/$1"
+}
+
+setup_conda() {
+  create_executable "$1" "python"
+  create_executable "$1" "activate"
+  remove_executable "$1" "pyvenv"
+  create_executable "$1" "conda"
+  local conda="$1"
   shift 1
-  mkdir -p "${PYENV_ROOT}/versions/$version/bin"
-  touch "${PYENV_ROOT}/versions/$version/bin/activate"
-  touch "${PYENV_ROOT}/versions/$version/bin/conda"
-  touch "${PYENV_ROOT}/versions/$version/bin/python"
-  chmod +x "${PYENV_ROOT}/versions/$version/bin/conda"
-  chmod +x "${PYENV_ROOT}/versions/$version/bin/python"
-  local conda_env
-  for conda_env; do
-    mkdir -p "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin"
-    touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/activate"
-    touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/conda"
-    touch "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/python"
-    chmod +x "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/conda"
-    chmod +x "${PYENV_ROOT}/versions/$version/envs/$conda_env/bin/python"
+  local env
+  for env; do
+    create_executable "${conda}/envs/${env}" "python"
+    create_executable "${conda}/envs/${env}" "activate"
+    remove_executable "${conda}/envs/${env}" "pyvenv"
+    create_executable "${conda}/envs/${env}" "conda"
   done
+  
+}
+
+teardown_conda() {
+  rm -fr "${PYENV_ROOT}/versions/$1"
 }

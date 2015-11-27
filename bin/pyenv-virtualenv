@@ -103,45 +103,57 @@ http_get_wget() {
 version() {
   detect_venv
   local version
-  if [ -n "$USE_PYVENV" ]; then
-    version="$(pyenv-which pyvenv 2>/dev/null || true)"
-    version="${version#${PYENV_ROOT}/versions/}"
-    version="${version%/bin/pyvenv}"
-    echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv ${version:-unknown})"
+  if [ -n "${USE_CONDA}" ]; then
+    version="$(pyenv-exec conda --version 2>/dev/null || true)"
+    echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (conda ${version:-unknown})"
   else
-    version="$(venv --version 2>/dev/null || true)"
-    echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
+    if [ -n "$USE_PYVENV" ]; then
+      version="$(pyenv-which pyvenv 2>/dev/null || true)"
+      version="${version#${PYENV_ROOT}/versions/}"
+      version="${version%/bin/pyvenv}"
+      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv ${version:-unknown})"
+    else
+      version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
+      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
+    fi
   fi
 }
 
 usage() {
   # We can remove the sed fallback once pyenv 0.2.0 is widely available.
   pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
-  venv --help 2>/dev/null || true
+  if [ -n "${USE_CONDA}" ]; then
+    pyenv-exec conda create --help 2>/dev/null || true
+  else
+    if [ -n "${USE_PYVENV}" ]; then
+      pyenv-exec pyvenv --help 2>/dev/null || true
+    else
+      pyenv-exec virtualenv --help 2>/dev/null || true
+    fi
+  fi
   [ -z "$1" ] || exit "$1"
 }
 
 detect_venv() {
   # Check the existence of executables as a workaround for the issue with pyenv-which-ext
   # https://github.com/yyuu/pyenv-virtualenv/issues/26
-  if [ -x "$(pyenv-prefix)/bin/virtualenv" ]; then
-    HAS_VIRTUALENV=1
-  fi
-  if [ -x "$(pyenv-prefix)/bin/pyvenv" ]; then
-    HAS_PYVENV=1
+  if [ -x "$(pyenv-prefix)/bin/conda" ]; then
+    HAS_CONDA=1
+  else
+    if [ -x "$(pyenv-prefix)/bin/virtualenv" ]; then
+      HAS_VIRTUALENV=1
+    fi
+    if [ -x "$(pyenv-prefix)/bin/pyvenv" ]; then
+      HAS_PYVENV=1
+    fi
   fi
   # Use pyvenv only if there is pyvenv, virtualenv is not installed, and `-p` not given
-  if [ -n "${HAS_PYVENV}" ] && [ -z "${HAS_VIRTUALENV}" ] && [ -z "${VIRTUALENV_PYTHON}" ]; then
-    USE_PYVENV=1
-  fi
-}
-
-venv() {
-  local args=("$@")
-  if [ -n "${USE_PYVENV}" ]; then
-    pyenv-exec pyvenv "${args[@]}"
+  if [ -n "${HAS_CONDA}" ]; then
+    USE_CONDA=1
   else
-    pyenv-exec virtualenv "${args[@]}"
+    if [ -n "${HAS_PYVENV}" ] && [ -z "${HAS_VIRTUALENV}" ] && [ -z "${VIRTUALENV_PYTHON}" ]; then
+      USE_PYVENV=1
+    fi
   fi
 }
 
@@ -296,12 +308,13 @@ fi
 export PYENV_VERSION="${VERSION_NAME}"
 
 # Source version must exist before creating virtualenv.
-if ! pyenv-prefix 1>/dev/null 2>&1; then
+PREFIX="$(pyenv-prefix 2>/dev/null || true)"
+if [ ! -d "${PREFIX}" ]; then
   echo "pyenv-virtualenv: \`${PYENV_VERSION}' is not installed in pyenv." 1>&2
   exit 1
 fi
 
-if pyenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
+if [[ "${PREFIX}" != "${PREFIX%/envs/*}" ]]; then
   echo "pyenv-virtualenv: nested virtualenv is not supported." 1>&2
   exit 1
 fi
@@ -333,6 +346,7 @@ fi
 
 unset HAS_VIRTUALENV
 unset HAS_PYVENV
+unset USE_CONDA
 unset USE_PYVENV
 detect_venv
 
@@ -350,37 +364,41 @@ if [ -n "$UPGRADE" ]; then
   fi
 fi
 
-if [ -n "${USE_PYVENV}" ]; then
-  # Unset some arguments not supported by pyvenv
-  unset QUIET
-  unset VERBOSE
-  if [ -n "${VIRTUALENV_PYTHON}" ]; then
-    echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by pyvenv." 1>&2
-    exit 1
-  fi
+if [ -n "${USE_CONDA}" ]; then
+  :
 else
-  if [ -n "${VIRTUALENV_PYTHON}" ]; then
-    if [[ "${VIRTUALENV_PYTHON}" == "${VIRTUALENV_PYTHON##*/}" ]] || [[ "${VIRTUALENV_PYTHON}" == "${PYENV_ROOT}/shims/"* ]]; then
-      python="$(pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
-      if [ -x "${python}" ]; then
-        VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
-      else
-        python="$(PYENV_VERSION="$(pyenv-whence "${VIRTUALENV_PYTHON##*/}" 2>/dev/null | tail -n 1 || true)" pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+  if [ -n "${USE_PYVENV}" ]; then
+    # Unset some arguments not supported by pyvenv
+    unset QUIET
+    unset VERBOSE
+    if [ -n "${VIRTUALENV_PYTHON}" ]; then
+      echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by pyvenv." 1>&2
+      exit 1
+    fi
+  else
+    if [ -n "${VIRTUALENV_PYTHON}" ]; then
+      if [[ "${VIRTUALENV_PYTHON}" == "${VIRTUALENV_PYTHON##*/}" ]] || [[ "${VIRTUALENV_PYTHON}" == "${PYENV_ROOT}/shims/"* ]]; then
+        python="$(pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
         if [ -x "${python}" ]; then
           VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
         else
-          echo "pyenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in pyenv." 1>&2
-          exit 1
+          python="$(PYENV_VERSION="$(pyenv-whence "${VIRTUALENV_PYTHON##*/}" 2>/dev/null | tail -n 1 || true)" pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+          if [ -x "${python}" ]; then
+            VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
+          else
+            echo "pyenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in pyenv." 1>&2
+            exit 1
+          fi
         fi
+      else
+        VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"
       fi
-    else
-      VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"
     fi
-  fi
-  if [ -z "${HAS_VIRTUALENV}" ]; then
-    VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
-    pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
-    HAS_VIRTUALENV=1
+    if [ -z "${HAS_VIRTUALENV}" ]; then
+      VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
+      pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
+      HAS_VIRTUALENV=1
+    fi
   fi
 fi
 
@@ -456,7 +474,15 @@ STATUS=0
 # Change to cache directory to reuse them between invocations.
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
-venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+if [ -n "${USE_CONDA}" ]; then
+  pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
+else
+  if [ -n "${USE_PYVENV}" ]; then
+    pyenv-exec pyvenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+  else
+    pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+  fi
+fi
 
 ## Create symlink in the `versions` directory for backward compatibility
 if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then

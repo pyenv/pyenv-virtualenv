@@ -365,7 +365,14 @@ if [ -n "$UPGRADE" ]; then
 fi
 
 if [ -n "${USE_CONDA}" ]; then
-  :
+  # e.g. `conda create -n py35 python=3.5 anaconda`
+  if [ -n "${VIRTUALENV_PYTHON}" ]; then
+    VIRTUALENV_PYTHON="${VIRTUALENV_PYTHON##*/}"
+    VIRTUALENV_PYTHON="${VIRTUALENV_PYTHON#python}"
+    if [ -n "${VIRTUALENV_PYTHON}" ]; then
+      VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="python=${VIRTUALENV_PYTHON}"
+    fi
+  fi
 else
   if [ -n "${USE_PYVENV}" ]; then
     # Unset some arguments not supported by pyvenv

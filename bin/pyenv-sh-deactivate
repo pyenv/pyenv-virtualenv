@@ -18,6 +18,10 @@ while [ $# -gt 0 ]; do
   "-f" | "--force" )
     FORCE=1
     ;;
+  "--no-error" )
+    # for backward compatibility with v20151103 and earlier
+    QUIET=1
+    ;;
   "-q" | "--quiet")
     QUIET=1
     ;;

@@ -130,14 +130,6 @@ if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
   fi
 fi
 
-# Display setup instruction, if pyenv-virtualenv has not been initialized.
-# if 'pyenv virtualenv-init -' is not found in "$profile"
-if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
-  if [ -z "${QUIET}" ]; then
-    pyenv-virtualenv-init >&2 || true
-  fi
-fi
-
 pyenv-sh-deactivate --force --quiet ${VERBOSE+--verbose} || true
 
 echo "pyenv-virtualenv: activate ${venv}" 1>&2

@@ -30,13 +30,13 @@ From inside that directory you can:
 
 1. **Check out pyenv-virtualenv into plugin directory**
 
-    ```
+    ```sh
     $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
     ```
 
 2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenv. This is entirely optional but pretty useful.
 
-    ```
+    ```sh
     $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
     ```
 
@@ -45,7 +45,7 @@ From inside that directory you can:
 
 3. **Restart your shell to enable pyenv-virtualenv**
 
-    ```
+    ```sh
     $ exec "$SHELL"
     ```
 
@@ -60,18 +60,18 @@ installed, you will also be able to use the `pyenv virtualenv` command.
 *This is the recommended method of installation if you installed pyenv
  with Homebrew.*
 
-```
+```sh
 $ brew install pyenv-virtualenv
 ```
 
 Or, if you would like to install the latest development release:
 
-```
+```sh
 $ brew install --HEAD pyenv-virtualenv
 ```
 
 After installation, you'll still need to add 
-```
+```sh
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 ```
@@ -86,7 +86,7 @@ To create a virtualenv for the Python version used with pyenv, run
 `pyenv virtualenv`, specifying the Python version you want and the name
 of the virtualenv directory. For example,
 
-```
+```sh
 $ pyenv virtualenv 2.7.10 my-virtual-env-2.7.10
 ```
 
@@ -99,7 +99,7 @@ folder called `my-virtual-env-2.7.10`.
 If there is only one argument given to `pyenv virtualenv`, the virtualenv will
 be created with the given name based on the current pyenv Python version.
 
-```
+```sh
 $ pyenv version
 3.4.3 (set by /home/yyuu/.pyenv/version)
 $ pyenv virtualenv venv34
@@ -110,7 +110,7 @@ $ pyenv virtualenv venv34
 
 `pyenv virtualenvs` shows you the list of existing virtualenvs and `conda` environments.
 
-```
+```sh
 $ pyenv shell venv27
 $ pyenv virtualenvs
   miniconda3-3.9.1 (created from /home/yyuu/.pyenv/versions/miniconda3-3.9.1)
@@ -158,13 +158,10 @@ command is not available.
 
 ### Anaconda and Miniconda
 
-Because Anaconda and Miniconda may install standard commands (e.g. `curl`, `openssl`, `sqlite3`, etc.) into their prefix,
-we'd recommend you to install [pyenv-which-ext](https://github.com/yyuu/pyenv-which-ext).
-
 You can manage `conda` environments by `conda create` as same manner as standard Anaconda/Miniconda installations.
 To use those environments, you can use `pyenv activate` and `pyenv deactivate`.
 
-```
+```sh
 $ pyenv version
 miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
 $ conda env list
@@ -183,7 +180,7 @@ discarding /home/yyuu/.pyenv/versions/miniconda3-3.9.1/envs/myenv/bin from PATH
 
 If `conda` is available, `pyenv virtualenv` will use it to create environment by `conda create`.
 
-```
+```sh
 $ pyenv version
 miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
 $ pyenv virtualenv myenv2
@@ -197,7 +194,7 @@ root                  *  /home/yyuu/.pyenv/versions/miniconda3-3.9.1
 
 You can use version like `miniconda3-3.9.1/envs/myenv` to specify `conda` environment as a version in pyenv.
 
-```
+```sh
 $ pyenv version
 miniconda3-3.9.1 (set by /home/yyuu/.pyenv/version)
 $ pyenv shell miniconda3-3.9.1/envs/myenv

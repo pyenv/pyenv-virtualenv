@@ -25,6 +25,7 @@ unstub_pyenv() {
   setup_pyvenv "3.4.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "pyvenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/3.4.1/envs/venv/bin"
   stub pyenv-exec "python -s -m ensurepip : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/3.4.1/envs/venv/bin/pip"
 
@@ -39,6 +40,7 @@ OUT
   assert [ -e "${PYENV_ROOT}/versions/3.4.1/envs/venv/bin/pip" ]
 
   unstub_pyenv
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   teardown_pyvenv "3.4.1"
 }
@@ -48,6 +50,7 @@ OUT
   setup_pyvenv "3.3.5"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "pyvenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/3.3.5/envs/venv/bin"
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/3.3.5/envs/venv/bin/pip"
@@ -65,6 +68,7 @@ OUT
   assert [ -e "${PYENV_ROOT}/versions/3.3.5/envs/venv/bin/pip" ]
 
   unstub_pyenv
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   teardown_pyvenv "3.3.5"
 }

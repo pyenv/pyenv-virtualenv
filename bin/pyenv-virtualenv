@@ -11,12 +11,12 @@
 
 PYENV_VIRTUALENV_VERSION="20151103"
 
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
 if [ -z "${PYENV_ROOT}" ]; then
   PYENV_ROOT="$(pyenv-root)"
 fi
-
-set -e
-[ -n "$PYENV_DEBUG" ] && set -x
 
 # Provide pyenv completions
 if [ "$1" = "--complete" ]; then
@@ -328,11 +328,6 @@ if [ ! -d "${PREFIX}" ]; then
   exit 1
 fi
 
-if [[ "${PREFIX}" != "${PREFIX%/envs/*}" ]]; then
-  echo "pyenv-virtualenv: nested virtualenv is not supported." 1>&2
-  exit 1
-fi
-
 if [ -z "$TMPDIR" ]; then
   TMP="/tmp"
 else
@@ -343,11 +338,16 @@ fi
 if [[ "${VERSION_NAME%/envs/*}" == "system" ]]; then
   VIRTUALENV_NAME="${VIRTUALENV_NAME##*/}"
 else
-  VIRTUALENV_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME##*/}"
+  VIRTUALENV_PREFIX="$(pyenv-virtualenv-prefix 2>/dev/null || true)"
+  if [[ "${VIRTUALENV_PREFIX%/*}" == "${PYENV_ROOT}/versions" ]]; then
+    VIRTUALENV_NAME="${VIRTUALENV_PREFIX#${PYENV_ROOT}/versions/}/envs/${VIRTUALENV_NAME##*/}"
+  else
+    VIRTUALENV_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME##*/}"
+  fi
 fi
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
-if [[ "${VIRTUALENV_PATH}" != "${VIRTUALENV_PATH%/envs/*}" ]]; then
+if [[ "${VIRTUALENV_PATH/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
   COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME##*/}"
 fi
 

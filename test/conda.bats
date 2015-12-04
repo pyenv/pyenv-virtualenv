@@ -25,6 +25,7 @@ unstub_pyenv() {
   setup_conda "${PYENV_VERSION}"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
@@ -37,6 +38,7 @@ rehashed
 OUT
 
   unstub_pyenv
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   teardown_pyvenv "miniconda3-3.16.0"
 }
@@ -46,6 +48,7 @@ OUT
   setup_conda "${PYENV_VERSION}"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
@@ -58,6 +61,7 @@ rehashed
 OUT
 
   unstub_pyenv
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   teardown_pyvenv "miniconda3-3.16.0"
 }
@@ -67,6 +71,7 @@ OUT
   setup_conda "${PYENV_VERSION}"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
@@ -79,6 +84,7 @@ rehashed
 OUT
 
   unstub_pyenv
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   teardown_pyvenv "miniconda3-3.16.0"
 }

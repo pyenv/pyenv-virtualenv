@@ -9,6 +9,10 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+if [ -z "${PYENV_ROOT}" ]; then
+  PYENV_ROOT="$(pyenv-root)"
+fi
+
 unset FORCE
 unset QUIET
 unset VERBOSE
@@ -48,8 +52,8 @@ fi
 shell="$(basename "${PYENV_SHELL:-$SHELL}")"
 prefix="${VIRTUAL_ENV}"
 
-if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
-  venv="$(basename "${prefix%/envs/*}")/envs/${prefix##*/}"
+if [[ "${prefix%/*/envs/*}" == "${PYENV_ROOT}/versions" ]]; then
+  venv="${prefix#${PYENV_ROOT}/versions/}"
 else
   venv="${prefix##*/}"
 fi

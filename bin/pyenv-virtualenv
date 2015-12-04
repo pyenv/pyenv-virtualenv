@@ -228,10 +228,11 @@ fi
 VIRTUALENV_OPTIONS=()
 
 unset FORCE
-unset VIRTUALENV_PYTHON
+unset NO_ENSUREPIP
 unset QUIET
 unset UPGRADE
 unset VERBOSE
+unset VIRTUALENV_PYTHON
 
 parse_options "$@"
 for option in "${OPTIONS[@]}"; do
@@ -241,6 +242,14 @@ for option in "${OPTIONS[@]}"; do
     ;;
   "h" | "help" )
     usage 0
+    ;;
+  "no-pip" )
+    NO_ENSUREPIP=1
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    ;;
+  "no-setuptools" )
+    NO_ENSUREPIP=1
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
     ;;
   "p" | "python" )
     VIRTUALENV_PYTHON="${ARGUMENTS[0]}"
@@ -258,6 +267,10 @@ for option in "${OPTIONS[@]}"; do
   "version" )
     version
     exit 0
+    ;;
+  "without-pip" )
+    NO_ENSUREPIP=1
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
     ;;
   * ) # virtualenv long options
     if [[ "$option" == "python="* ]]; then
@@ -462,7 +475,12 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   fi
 
   if [ -n "$UPGRADE" ]; then
-    PYENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
+    if [ -n "${NO_ENSUREPIP}" ]; then
+      echo "pyenv-virtualenv: upgrading will not work with --no-setuptools or --no-pip" 1>&2
+      exit 1
+    else
+      PYENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
+    fi
   fi
 fi
 
@@ -497,11 +515,13 @@ if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
   ln -fs "${VIRTUALENV_PATH}" "${COMPAT_VIRTUALENV_PATH}"
 fi
 
-## Install setuptools and pip.
-PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
+if [ -z "${NO_ENSUREPIP}" ]; then
+  ## Install setuptools and pip.
+  PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
 
-## Migrate previously installed packages from requirements.txt.
-PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
+  ## Migrate previously installed packages from requirements.txt.
+  PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
+fi
 
 # Execute `after_virtualenv` hooks.
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

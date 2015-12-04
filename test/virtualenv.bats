@@ -25,6 +25,7 @@ unstub_pyenv() {
 @test "create virtualenv from given version" {
   export PYENV_VERSION="3.2.1"
   stub_pyenv "${PYENV_VERSION}"
+  stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
@@ -40,6 +41,7 @@ rehashed
 OUT
 
   unstub_pyenv
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   unstub curl
 }
@@ -48,6 +50,7 @@ OUT
   export PYENV_VERSION="3.2.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-version-name "echo \${PYENV_VERSION}"
+  stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
@@ -64,6 +67,7 @@ OUT
 
   unstub_pyenv
   unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   unstub curl
 }
@@ -72,6 +76,7 @@ OUT
   export PYENV_VERSION="3.2.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-version-name "echo \${PYENV_VERSION}"
+  stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
@@ -88,6 +93,7 @@ OUT
 
   unstub_pyenv
   unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   unstub curl
 }
@@ -96,6 +102,7 @@ OUT
   export PYENV_VERSION="3.2.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-version-name "echo \${PYENV_VERSION}"
+  stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
@@ -112,6 +119,7 @@ OUT
 
   unstub_pyenv
   unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   unstub curl
 }
@@ -155,6 +163,7 @@ OUT
 @test "slash allowed if it is the long name of the virtualenv" {
   export PYENV_VERSION="3.2.1"
   stub_pyenv "${PYENV_VERSION}"
+  stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
@@ -170,6 +179,7 @@ rehashed
 OUT
 
   unstub_pyenv
+  unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
   unstub curl
 }

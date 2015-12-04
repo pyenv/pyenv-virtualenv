@@ -11,12 +11,12 @@
 
 PYENV_VIRTUALENV_VERSION="20151103"
 
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
 if [ -z "${PYENV_ROOT}" ]; then
   PYENV_ROOT="$(pyenv-root)"
 fi
-
-set -e
-[ -n "$PYENV_DEBUG" ] && set -x
 
 # Provide pyenv completions
 if [ "$1" = "--complete" ]; then
@@ -347,7 +347,7 @@ else
 fi
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
-if [[ "${VIRTUALENV_PATH}" != "${VIRTUALENV_PATH%/envs/*}" ]]; then
+if [[ "${VIRTUALENV_PATH/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
   COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME##*/}"
 fi
 

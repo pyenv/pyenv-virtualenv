@@ -13,6 +13,10 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
+if [ -z "${PYENV_ROOT}" ]; then
+  PYENV_ROOT="$(pyenv-root)"
+fi
+
 # Provide pyenv completions
 if [ "$1" = "--complete" ]; then
   exec pyenv virtualenvs --bare
@@ -63,7 +67,7 @@ if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
 else
   if [ -L "${COMPAT_PREFIX}" ]; then
     PREFIX="$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)"
-    if [[ "${PREFIX}" == "${PREFIX%/envs/*}" ]]; then
+    if [[ "${PREFIX%/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
       echo "pyenv-virtualenv: \`${COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
       exit 1
     fi

@@ -7,6 +7,7 @@ setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   unset PYENV_VERSION
   unset PYENV_ACTIVATE_SHELL
+  unset PYENV_VIRTUAL_ENV
   unset VIRTUAL_ENV
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
@@ -32,6 +33,7 @@ setup() {
   assert_output <<EOS
 deactivated
 pyenv-virtualenv: activate anaconda-2.3.0
+export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
 export CONDA_DEFAULT_ENV="root";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -61,6 +63,7 @@ EOS
   assert_output <<EOS
 deactivated
 pyenv-virtualenv: activate anaconda-2.3.0
+setenv PYENV_VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv CONDA_DEFAULT_ENV "root";
 pyenv-virtualenv: prompt changing not work for fish.
@@ -90,6 +93,7 @@ deactivated
 pyenv-virtualenv: activate miniconda-3.9.1
 export PYENV_VERSION="miniconda-3.9.1";
 export PYENV_ACTIVATE_SHELL=1;
+export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1";
 export CONDA_DEFAULT_ENV="root";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -119,6 +123,7 @@ EOS
   assert_output <<EOS
 deactivated
 pyenv-virtualenv: activate anaconda-2.3.0/envs/foo
+export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 export CONDA_DEFAULT_ENV="foo";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -150,6 +155,7 @@ deactivated
 pyenv-virtualenv: activate miniconda-3.9.1/envs/bar
 export PYENV_VERSION="miniconda-3.9.1/envs/bar";
 export PYENV_ACTIVATE_SHELL=1;
+export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";
 export CONDA_DEFAULT_ENV="bar";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.

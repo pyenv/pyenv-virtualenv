@@ -73,14 +73,16 @@ fi
 
 venv="${versions}"
 
-# exit as success if some virtualenv outside from pyenv is already activated
-if [ -n "${VIRTUAL_ENV}" ] && [[ "${VIRTUAL_ENV}" != "${PYENV_ROOT}/versions/"* ]]; then
-  if [ -z "${FORCE}" ]; then
-    if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: virtualenv \`${VIRTUAL_ENV}' is already activated" 1>&2
+if [ -n "${VIRTUAL_ENV}" ]; then
+  # exit as success if some virtualenv is already activated outside from pyenv-virtualenv
+  if [ -z "${PYENV_VIRTUAL_ENV}" ]; then
+    if [ -z "${FORCE}" ]; then
+      if [ -z "${QUIET}" ]; then
+        echo "pyenv-virtualenv: virtualenv \`${VIRTUAL_ENV}' is already activated" 1>&2
+      fi
+      echo "true"
+      exit 0
     fi
-    echo "true"
-    exit 0
   fi
 fi
 
@@ -163,10 +165,16 @@ fi
 # virtualenv/pyvenv
 case "${shell}" in
 fish )
-  echo "setenv VIRTUAL_ENV \"${prefix}\";"
+  cat <<EOS
+setenv PYENV_VIRTUAL_ENV "${prefix}";
+setenv VIRTUAL_ENV "${prefix}";
+EOS
   ;;
 * )
-  echo "export VIRTUAL_ENV=\"${prefix}\";"
+  cat <<EOS
+export PYENV_VIRTUAL_ENV="${prefix}";
+export VIRTUAL_ENV="${prefix}";
+EOS
   ;;
 esac
 

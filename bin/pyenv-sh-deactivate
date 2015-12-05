@@ -82,10 +82,16 @@ fi
 # virtualenv/pyvenv
 case "${shell}" in
 fish )
-  echo "set -e VIRTUAL_ENV;"
+  cat <<EOS
+set -e PYENV_VIRTUAL_ENV;
+set -e VIRTUAL_ENV;
+EOS
   ;;
 * )
-  echo "unset VIRTUAL_ENV;"
+  cat <<EOS
+unset PYENV_VIRTUAL_ENV;
+unset VIRTUAL_ENV;
+EOS
   ;;
 esac
 

@@ -138,7 +138,7 @@ pyenv deactivate
 
 ### Delete existing virtualenv
 
-Removing the directory in `~/.pyenv/versions` will delete the virtualenv, or you can run:
+Removing the directories in `~/.pyenv/versions` and `~/.pyenv/versions/{version}/envs` will delete the virtualenv, or you can run:
 
 ```sh
 pyenv uninstall my-virtual-env

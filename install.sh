@@ -13,9 +13,18 @@ fi
 
 BIN_PATH="${PREFIX}/bin"
 SHIMS_PATH="${PREFIX}/shims"
+HOOKS_PATH="${PREFIX}/etc/pyenv.d"
 
 mkdir -p "$BIN_PATH"
 mkdir -p "$SHIMS_PATH"
+mkdir -p "$HOOKS_PATH"
 
 install -p bin/* "$BIN_PATH"
 install -p shims/* "$SHIMS_PATH"
+for hook in etc/pyenv.d/*; do
+  if [ -d "$hook" ]; then
+    cp -RPp "$hook" "$HOOKS_PATH"
+  else
+    install -p -m 0644 "$hook" "$HOOKS_PATH"
+  fi
+done

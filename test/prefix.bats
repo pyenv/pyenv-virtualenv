@@ -24,6 +24,22 @@ create_virtualenv() {
   touch "${PYENV_ROOT}/versions/$1/bin/activate"
 }
 
+create_virtualenv_jython() {
+  create_version "$1"
+  create_version "${2:-$1}"
+  mkdir -p "${PYENV_ROOT}/versions/$1/Lib/"
+  echo "${PYENV_ROOT}/versions/${2:-$1}" > "${PYENV_ROOT}/versions/$1/Lib/orig-prefix.txt"
+  touch "${PYENV_ROOT}/versions/$1/bin/activate"
+}
+
+create_virtualenv_pypy() {
+  create_version "$1"
+  create_version "${2:-$1}"
+  mkdir -p "${PYENV_ROOT}/versions/$1/lib-python/${2:-$1}"
+  echo "${PYENV_ROOT}/versions/${2:-$1}" > "${PYENV_ROOT}/versions/$1/lib-python/${2:-$1}/orig-prefix.txt"
+  touch "${PYENV_ROOT}/versions/$1/bin/activate"
+}
+
 remove_virtualenv() {
   remove_version "$1"
   remove_version "${2:-$1}"
@@ -45,18 +61,21 @@ create_conda() {
   create_version "${2:-$1}"
   touch "${PYENV_ROOT}/versions/$1/bin/conda"
   touch "${PYENV_ROOT}/versions/$1/bin/activate"
+  mkdir -p "${PYENV_ROOT}/versions/${2:-$1}/bin"
+  touch "${PYENV_ROOT}/versions/${2:-$1}/bin/conda"
+  touch "${PYENV_ROOT}/versions/${2:-$1}/bin/activate"
 }
 
 remove_conda() {
   remove_version "${2:-$1}"
 }
 
-@test "display prefix with using sys.real_prefix" {
-  stub pyenv-version-name "echo venv27"
-  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
-  create_virtualenv "venv27" "2.7.6"
+@test "display prefix of virtualenv created by virtualenv" {
+  stub pyenv-version-name "echo foo"
+  stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\""
+  create_virtualenv "foo" "2.7.6"
 
-  PYENV_VERSION="venv27" run pyenv-virtualenv-prefix
+  PYENV_VERSION="foo" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
@@ -65,17 +84,51 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_virtualenv "venv27" "2.7.6"
+  remove_virtualenv "foo" "2.7.6"
 }
 
-@test "display prefixes with using sys.real_prefix" {
-  stub pyenv-version-name "echo venv27:venv32"
-  stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\"" \
-                    "venv32 : echo \"${PYENV_ROOT}/versions/venv32\""
-  create_virtualenv "venv27" "2.7.6"
-  create_virtualenv "venv32" "3.2.1"
+@test "display prefix of virtualenv created by virtualenv (pypy)" {
+  stub pyenv-version-name "echo foo"
+  stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\""
+  create_virtualenv_pypy "foo" "pypy-4.0.1"
 
-  PYENV_VERSION="venv27:venv32" run pyenv-virtualenv-prefix
+  PYENV_VERSION="foo" run pyenv-virtualenv-prefix
+
+  assert_success
+  assert_output <<OUT
+${PYENV_ROOT}/versions/pypy-4.0.1
+OUT
+
+  unstub pyenv-version-name
+  unstub pyenv-prefix
+  remove_virtualenv "foo" "pypy-4.0.1"
+}
+
+@test "display prefix of virtualenv created by virtualenv (jython)" {
+  stub pyenv-version-name "echo foo"
+  stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\""
+  create_virtualenv_jython "foo" "jython-2.7.0"
+
+  PYENV_VERSION="foo" run pyenv-virtualenv-prefix
+
+  assert_success
+  assert_output <<OUT
+${PYENV_ROOT}/versions/jython-2.7.0
+OUT
+
+  unstub pyenv-version-name
+  unstub pyenv-prefix
+  remove_virtualenv "foo" "jython-2.7.0"
+}
+
+@test "display prefixes of virtualenv created by virtualenv" {
+  stub pyenv-version-name "echo foo:bar"
+  stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\"" \
+                    "bar : echo \"${PYENV_ROOT}/versions/bar\""
+  create_virtualenv "foo" "2.7.6"
+  create_virtualenv "bar" "3.2.1"
+
+  PYENV_VERSION="foo:bar" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
@@ -84,16 +137,16 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_virtualenv "venv27" "2.7.6"
-  remove_virtualenv "venv32" "3.2.1"
+  remove_virtualenv "foo" "2.7.6"
+  remove_virtualenv "bar" "3.2.1"
 }
 
-@test "display prefix with using sys.base_prefix" {
-  stub pyenv-version-name "echo venv33"
-  stub pyenv-prefix "venv33 : echo \"${PYENV_ROOT}/versions/venv33\""
-  create_virtualenv "venv33" "3.3.3"
+@test "display prefix of virtualenv created by pyvenv" {
+  stub pyenv-version-name "echo foo"
+  stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\""
+  create_pyvenv "foo" "3.3.3"
 
-  PYENV_VERSION="venv33" run pyenv-virtualenv-prefix
+  PYENV_VERSION="foo" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
@@ -102,17 +155,17 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_virtualenv "venv33" "3.3.3"
+  remove_pyvenv "foo" "3.3.3"
 }
 
-@test "display prefixes with using sys.base_prefix" {
-  stub pyenv-version-name "echo venv33:venv34"
-  stub pyenv-prefix "venv33 : echo \"${PYENV_ROOT}/versions/venv33\"" \
-                    "venv34 : echo \"${PYENV_ROOT}/versions/venv34\""
-  create_virtualenv "venv33" "3.3.3"
-  create_virtualenv "venv34" "3.4.0"
+@test "display prefixes of virtualenv created by pyvenv" {
+  stub pyenv-version-name "echo foo:bar"
+  stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\"" \
+                    "bar : echo \"${PYENV_ROOT}/versions/bar\""
+  create_pyvenv "foo" "3.3.3"
+  create_pyvenv "bar" "3.4.0"
 
-  PYENV_VERSION="venv33:venv34" run pyenv-virtualenv-prefix
+  PYENV_VERSION="foo:bar" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
@@ -121,8 +174,25 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_virtualenv "venv33" "3.3.3"
-  remove_virtualenv "venv34" "3.4.0"
+  remove_pyvenv "foo" "3.3.3"
+  remove_pyvenv "bar" "3.4.0"
+}
+
+@test "display prefix of virtualenv created by conda" {
+  stub pyenv-version-name "echo miniconda3-3.16.0/envs/foo"
+  stub pyenv-prefix "miniconda3-3.16.0/envs/foo : echo \"${PYENV_ROOT}/versions/miniconda3-3.16.0/envs/foo\""
+  create_conda "miniconda3-3.16.0/envs/foo" "miniconda3-3.16.0"
+
+  PYENV_VERSION="miniconda3-3.16.0/envs/foo" run pyenv-virtualenv-prefix
+
+  assert_success
+  assert_output <<OUT
+${PYENV_ROOT}/versions/miniconda3-3.16.0/envs/foo
+OUT
+
+  unstub pyenv-version-name
+  unstub pyenv-prefix
+  remove_conda "miniconda3-3.16.0/envs/foo" "miniconda3-3.16.0"
 }
 
 @test "should fail if the version is the system" {

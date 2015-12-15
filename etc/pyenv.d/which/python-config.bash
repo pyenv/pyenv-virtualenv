@@ -18,9 +18,21 @@ if [ ! -x "${PYENV_COMMAND_PATH}" ] && [[ "${PYENV_COMMAND_PATH##*/}" == "python
         virtualenv_prefix="${virtualenv_binpath%/bin}"
       else
         # virtualenv
-        shopt -s nullglob
-        virtualenv_prefix="$(cat "${PYENV_ROOT}/versions/${version}/lib/"*"/orig-prefix.txt" </dev/null 2>&1 || true)"
-        shopt -u nullglob
+        if [ -d "${PYENV_ROOT}/versions/${version}/Lib" ]; then
+          # jython
+          virtualenv_libpath="${PYENV_ROOT}/versions/${version}/Lib"
+        else
+          if [ -d "${PYENV_ROOT}/versions/${version}/lib-python" ]; then
+            # pypy
+            virtualenv_libpath="${PYENV_ROOT}/versions/${version}/lib-python"
+          else
+            virtualenv_libpath="${PYENV_ROOT}/versions/${version}/lib"
+          fi
+        fi
+        virtualenv_orig_prefix="$(find "${virtualenv_libpath}/" -maxdepth 2 -type f -and -name "orig-prefix.txt" 2>/dev/null | head -1)"
+        if [ -f "${virtualenv_orig_prefix}" ]; then
+          virtualenv_prefix="$(cat "${virtualenv_orig_prefix}" 2>/dev/null || true)"
+        fi
       fi
       virtualenv_command_path="${virtualenv_prefix}/bin/${PYENV_COMMAND_PATH##*/}"
       if [ -x "${virtualenv_command_path}" ]; then

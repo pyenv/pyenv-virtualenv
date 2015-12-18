@@ -61,7 +61,7 @@ versions=("$@")
 if [ -z "${versions}" ]; then
   no_shell=1
   OLDIFS="$IFS"
-  IFS=: versions=($(pyenv-version-name))
+  IFS=: versions=($(pyenv-version-name 2>/dev/null))
   IFS="$OLDIFS"
 fi
 

@@ -4,7 +4,6 @@ load test_helper
 
 setup() {
   export PYENV_ROOT="${TMP}/pyenv"
-  export PYENV_VIRTUALENV_VERSION="20151103"
 }
 
 @test "display virtualenv version" {
@@ -15,7 +14,7 @@ setup() {
   run pyenv-virtualenv --version
 
   assert_success
-  assert_output "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv 1.11)"
+  [[ "$output" == "pyenv-virtualenv 20"*" (virtualenv 1.11)" ]]
 
   unstub pyenv-prefix
   unstub pyenv-exec
@@ -30,7 +29,7 @@ setup() {
   run pyenv-virtualenv --version
 
   assert_success
-  assert_output "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv 3.4.1)"
+  [[ "$output" == "pyenv-virtualenv 20"*" (pyvenv 3.4.1)" ]]
 
   unstub pyenv-prefix
   teardown_pyvenv "3.4.1"

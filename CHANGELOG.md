@@ -1,5 +1,9 @@
 ## Version History
 
+#### 20151229
+
+* Fix `deactivate` error on `fish` (#136)
+
 #### 20151222
 
 * Improved interoperability with Anaconda/Miniconda (#103, #106, #107, #108)

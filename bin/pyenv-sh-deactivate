@@ -162,7 +162,7 @@ esac
 case "${shell}" in
 fish )
   cat <<EOS
-if functions -g deactivate;
+if functions -q deactivate;
   functions -e deactivate;
 end;
 EOS

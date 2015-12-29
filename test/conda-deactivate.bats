@@ -77,7 +77,7 @@ if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
   setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
   set -e _OLD_VIRTUAL_PYTHONHOME;
 end;
-if functions -g deactivate;
+if functions -q deactivate;
   functions -e deactivate;
 end;
 EOS

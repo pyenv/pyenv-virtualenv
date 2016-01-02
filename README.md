@@ -34,7 +34,7 @@ From inside that directory you can:
     $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
     ```
 
-2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenv. This is entirely optional but pretty useful.
+2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenvs. This is entirely optional but pretty useful. See "Activate virtualenv" below.
 
     ```sh
     $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
@@ -125,8 +125,7 @@ $ pyenv virtualenvs
 Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might
 require you to `activate` the virtualenv and `conda` environments.
 
-`pyenv-virtualenv` will automatically activate/deactivate the virtualenv if
-the `eval "$(pyenv virtualenv-init -)"` is properly configured in your shell.
+If `eval "$(pyenv virtualenv-init -)"` is configured in your shell, `pyenv-virtualenv` will automatically activate/deactivate virtualenvs on entering/leaving directories which contain a `.python-version` file that lists a valid virtual environment. `.python-version` files denote local Python versions and can be created and deleted with the [`pyenv local`](https://github.com/yyuu/pyenv/blob/master/COMMANDS.md#pyenv-local) command.
 
 You can also activate and deactivate a pyenv virtualenv manually:
 

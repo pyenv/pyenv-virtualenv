@@ -1,5 +1,9 @@
 ## Version History
 
+#### 20160112
+
+* Fix problem with `virtualenv` to look up executables from source version with `--system-site-packages` (#62)
+
 #### 20151229
 
 * Fix `deactivate` error on `fish` (#136)

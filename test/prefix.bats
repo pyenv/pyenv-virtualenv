@@ -73,18 +73,18 @@ remove_conda() {
 @test "display prefix of virtualenv created by virtualenv" {
   stub pyenv-version-name "echo foo"
   stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\""
-  create_virtualenv "foo" "2.7.6"
+  create_virtualenv "foo" "2.7.11"
 
   PYENV_VERSION="foo" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
-${PYENV_ROOT}/versions/2.7.6
+${PYENV_ROOT}/versions/2.7.11
 OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_virtualenv "foo" "2.7.6"
+  remove_virtualenv "foo" "2.7.11"
 }
 
 @test "display prefix of virtualenv created by virtualenv (pypy)" {
@@ -125,57 +125,57 @@ OUT
   stub pyenv-version-name "echo foo:bar"
   stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\"" \
                     "bar : echo \"${PYENV_ROOT}/versions/bar\""
-  create_virtualenv "foo" "2.7.6"
-  create_virtualenv "bar" "3.2.1"
+  create_virtualenv "foo" "2.7.11"
+  create_virtualenv "bar" "3.5.1"
 
   PYENV_VERSION="foo:bar" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
-${PYENV_ROOT}/versions/2.7.6:${PYENV_ROOT}/versions/3.2.1
+${PYENV_ROOT}/versions/2.7.11:${PYENV_ROOT}/versions/3.5.1
 OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_virtualenv "foo" "2.7.6"
-  remove_virtualenv "bar" "3.2.1"
+  remove_virtualenv "foo" "2.7.11"
+  remove_virtualenv "bar" "3.5.1"
 }
 
 @test "display prefix of virtualenv created by pyvenv" {
   stub pyenv-version-name "echo foo"
   stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\""
-  create_pyvenv "foo" "3.3.3"
+  create_pyvenv "foo" "3.3.6"
 
   PYENV_VERSION="foo" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
-${PYENV_ROOT}/versions/3.3.3
+${PYENV_ROOT}/versions/3.3.6
 OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_pyvenv "foo" "3.3.3"
+  remove_pyvenv "foo" "3.3.6"
 }
 
 @test "display prefixes of virtualenv created by pyvenv" {
   stub pyenv-version-name "echo foo:bar"
   stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\"" \
                     "bar : echo \"${PYENV_ROOT}/versions/bar\""
-  create_pyvenv "foo" "3.3.3"
-  create_pyvenv "bar" "3.4.0"
+  create_pyvenv "foo" "3.3.6"
+  create_pyvenv "bar" "3.4.4"
 
   PYENV_VERSION="foo:bar" run pyenv-virtualenv-prefix
 
   assert_success
   assert_output <<OUT
-${PYENV_ROOT}/versions/3.3.3:${PYENV_ROOT}/versions/3.4.0
+${PYENV_ROOT}/versions/3.3.6:${PYENV_ROOT}/versions/3.4.4
 OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_pyvenv "foo" "3.3.3"
-  remove_pyvenv "bar" "3.4.0"
+  remove_pyvenv "foo" "3.3.6"
+  remove_pyvenv "bar" "3.4.4"
 }
 
 @test "display prefix of virtualenv created by conda" {
@@ -209,38 +209,38 @@ OUT
 }
 
 @test "should fail if the version is not a virtualenv" {
-  stub pyenv-version-name "echo 3.4.0"
-  stub pyenv-prefix "3.4.0 : echo \"${PYENV_ROOT}/versions/3.4.0\""
-  create_version "3.4.0"
+  stub pyenv-version-name "echo 3.4.4"
+  stub pyenv-prefix "3.4.4 : echo \"${PYENV_ROOT}/versions/3.4.4\""
+  create_version "3.4.4"
 
-  PYENV_VERSION="3.4.0" run pyenv-virtualenv-prefix
+  PYENV_VERSION="3.4.4" run pyenv-virtualenv-prefix
 
   assert_failure
   assert_output <<OUT
-pyenv-virtualenv: version \`3.4.0' is not a virtualenv
+pyenv-virtualenv: version \`3.4.4' is not a virtualenv
 OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_version "3.4.0"
+  remove_version "3.4.4"
 }
 
 @test "should fail if one of the versions is not a virtualenv" {
-  stub pyenv-version-name "echo venv33:3.4.0"
+  stub pyenv-version-name "echo venv33:3.4.4"
   stub pyenv-prefix "venv33 : echo \"${PYENV_ROOT}/versions/venv33\"" \
-                    "3.4.0 : echo \"${PYENV_ROOT}/versions/3.4.0\""
-  create_virtualenv "venv33" "3.3.3"
-  create_version "3.4.0"
+                    "3.4.4 : echo \"${PYENV_ROOT}/versions/3.4.4\""
+  create_virtualenv "venv33" "3.3.6"
+  create_version "3.4.4"
 
-  PYENV_VERSION="venv33:3.4.0" run pyenv-virtualenv-prefix
+  PYENV_VERSION="venv33:3.4.4" run pyenv-virtualenv-prefix
 
   assert_failure
   assert_output <<OUT
-pyenv-virtualenv: version \`3.4.0' is not a virtualenv
+pyenv-virtualenv: version \`3.4.4' is not a virtualenv
 OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_virtualenv "venv33" "3.3.3"
-  remove_version "3.4.0"
+  remove_virtualenv "venv33" "3.3.6"
+  remove_version "3.4.4"
 }

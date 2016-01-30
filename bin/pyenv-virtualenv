@@ -378,6 +378,23 @@ if [ -n "$UPGRADE" ]; then
   fi
 fi
 
+if [ -z "${VIRTUALEN_VERSION}" ]; then
+  case "${PYENV_VERSION}" in
+  "3.0"* )
+    NO_ENSUREPIP=1
+    ;;
+  "3.1"* )
+    NO_ENSUREPIP=1
+    ;;
+  "3.2"* | "stackless-3.2"* )
+    # pip 8.x (bundled with virtualenv 14+) doesn't support 3.2 anymore
+    # https://github.com/yyuu/pyenv/issues/531
+    VIRTUALENV_VERSION="13.1.2"
+    NO_ENSUREPIP=1
+    ;;
+  esac
+fi
+
 if [ -n "${USE_CONDA}" ]; then
   # e.g. `conda create -n py35 python=3.5 anaconda`
   if [ -n "${VIRTUALENV_PYTHON}" ]; then
@@ -416,8 +433,12 @@ else
       fi
     fi
     if [ -z "${HAS_VIRTUALENV}" ]; then
-      VIRTUALENV_VERSION="==${VIRTUALENV_VERSION}"
-      pyenv-exec pip install $QUIET $VERBOSE "virtualenv${VIRTUALENV_VERSION%==}"
+      if [ -n "${VIRTUALENV_VERSION}" ]; then
+        virtualenv_spec="virtualenv==${VIRTUALENV_VERSION}"
+      else
+        virtualenv_spec="virtualenv"
+      fi
+      pyenv-exec pip install $QUIET $VERBOSE "${virtualenv_spec}"
       HAS_VIRTUALENV=1
     fi
   fi

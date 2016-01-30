@@ -23,7 +23,7 @@ unstub_pyenv() {
 }
 
 @test "create virtualenv from given version" {
-  export PYENV_VERSION="3.2.1"
+  export PYENV_VERSION="2.7.11"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
@@ -31,11 +31,11 @@ unstub_pyenv() {
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
 
-  run pyenv-virtualenv "3.2.1" "venv"
+  run pyenv-virtualenv "2.7.11" "venv"
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/venv
+PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -47,7 +47,7 @@ OUT
 }
 
 @test "create virtualenv from current version" {
-  export PYENV_VERSION="3.2.1"
+  export PYENV_VERSION="2.7.11"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub pyenv-virtualenv-prefix " : false"
@@ -60,7 +60,7 @@ OUT
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/venv
+PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -73,7 +73,7 @@ OUT
 }
 
 @test "create virtualenv with short options" {
-  export PYENV_VERSION="3.2.1"
+  export PYENV_VERSION="2.7.11"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub pyenv-virtualenv-prefix " : false"
@@ -85,7 +85,7 @@ OUT
   run pyenv-virtualenv -v -p ${TMP}/python venv
 
   assert_output <<OUT
-PYENV_VERSION=3.2.1 virtualenv --verbose --python=${TMP}/python ${PYENV_ROOT}/versions/3.2.1/envs/venv
+PYENV_VERSION=2.7.11 virtualenv --verbose --python=${TMP}/python ${PYENV_ROOT}/versions/2.7.11/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -99,7 +99,7 @@ OUT
 }
 
 @test "create virtualenv with long options" {
-  export PYENV_VERSION="3.2.1"
+  export PYENV_VERSION="2.7.11"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub pyenv-virtualenv-prefix " : false"
@@ -111,7 +111,7 @@ OUT
   run pyenv-virtualenv --verbose --python=${TMP}/python venv
 
   assert_output <<OUT
-PYENV_VERSION=3.2.1 virtualenv --verbose --python=${TMP}/python ${PYENV_ROOT}/versions/3.2.1/envs/venv
+PYENV_VERSION=2.7.11 virtualenv --verbose --python=${TMP}/python ${PYENV_ROOT}/versions/2.7.11/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
@@ -125,7 +125,7 @@ OUT
 }
 
 @test "no whitespace allowed in virtualenv name" {
-  run pyenv-virtualenv "3.2.1" "foo bar"
+  run pyenv-virtualenv "2.7.11" "foo bar"
 
   assert_failure
   assert_output <<OUT
@@ -134,7 +134,7 @@ OUT
 }
 
 @test "no tab allowed in virtualenv name" {
-  run pyenv-virtualenv "3.2.1" "foo	bar baz"
+  run pyenv-virtualenv "2.7.11" "foo	bar baz"
 
   assert_failure
   assert_output <<OUT
@@ -143,7 +143,7 @@ OUT
 }
 
 @test "system not allowed as virtualenv name" {
-  run pyenv-virtualenv "3.2.1" "system"
+  run pyenv-virtualenv "2.7.11" "system"
 
   assert_failure
   assert_output <<OUT
@@ -152,7 +152,7 @@ OUT
 }
 
 @test "no slash allowed in virtualenv name" {
-  run pyenv-virtualenv "3.2.1" "foo/bar"
+  run pyenv-virtualenv "2.7.11" "foo/bar"
 
   assert_failure
   assert_output <<OUT
@@ -161,7 +161,7 @@ OUT
 }
 
 @test "slash allowed if it is the long name of the virtualenv" {
-  export PYENV_VERSION="3.2.1"
+  export PYENV_VERSION="2.7.11"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-virtualenv-prefix " : false"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
@@ -169,11 +169,11 @@ OUT
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
 
-  run pyenv-virtualenv "3.2.1" "3.2.1/envs/foo"
+  run pyenv-virtualenv "2.7.11" "2.7.11/envs/foo"
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/foo
+PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/foo
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT

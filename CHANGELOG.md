@@ -1,5 +1,9 @@
 ## Version History
 
+#### 20160202
+
+* Install virtualenv 13.1.2 for CPython/Stackless 3.2.x (yyuu/pyenv#531)
+
 #### 20160112
 
 * Fix problem with `virtualenv` to look up executables from source version with `--system-site-packages` (#62)

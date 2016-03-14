@@ -180,7 +180,7 @@ esac
 
 # anaconda/miniconda
 if [ -x "${prefix}/bin/conda" ]; then
-  if [[ "${venv}" != "${venv%/envs/*}" ]]; then
+  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
     CONDA_DEFAULT_ENV="${venv##*/envs/}"
   else
     CONDA_DEFAULT_ENV="root"

@@ -1,5 +1,10 @@
 ## Version History
 
+#### 20160315
+
+* Evaluate `${PATH}` when outputted code is eval'd. (#154)
+* Set proper `CONDA_DEFAULT_ENV` for shorter name (#160)
+
 #### 20160202
 
 * Install virtualenv 13.1.2 for CPython/Stackless 3.2.x (yyuu/pyenv#531)

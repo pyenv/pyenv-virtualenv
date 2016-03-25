@@ -66,7 +66,7 @@ pyenv-virtualenv: activate anaconda-2.3.0
 setenv PYENV_VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv CONDA_DEFAULT_ENV "root";
-pyenv-virtualenv: prompt changing not work for fish.
+pyenv-virtualenv: prompt changing not working for fish.
 EOS
 
   unstub pyenv-version-name

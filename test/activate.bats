@@ -116,7 +116,7 @@ deactivated
 pyenv-virtualenv: activate venv
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
-pyenv-virtualenv: prompt changing not work for fish.
+pyenv-virtualenv: prompt changing not working for fish.
 EOS
 
   unstub pyenv-version-name

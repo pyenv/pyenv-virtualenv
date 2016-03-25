@@ -218,7 +218,7 @@ PYENV_VIRTUALENV_DISABLE_PROMPT="${PYENV_VIRTUALENV_DISABLE_PROMPT:-${VIRTUAL_EN
 if [ -z "${PYENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
   case "${shell}" in
   fish )
-    echo "pyenv-virtualenv: prompt changing not work for fish." 1>&2
+    echo "pyenv-virtualenv: prompt changing not working for fish." 1>&2
     ;;
   * )
     echo "pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior." 1>&2

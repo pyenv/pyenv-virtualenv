@@ -30,6 +30,7 @@ setup() {
 
   assert_success
   assert_output <<EOS
+deactivated
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -84,6 +85,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 export PYENV_VERSION="venv";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
@@ -111,6 +113,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not working for fish.
@@ -134,6 +137,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 setenv PYENV_VERSION "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
@@ -158,6 +162,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
@@ -183,6 +188,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
@@ -208,6 +214,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
@@ -231,6 +238,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
@@ -254,6 +262,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 EOS
 
   unstub pyenv-sh-deactivate
@@ -352,6 +361,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+deactivated
 export PYENV_VERSION="venv27:2.7.10";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";

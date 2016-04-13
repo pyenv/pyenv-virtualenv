@@ -46,7 +46,6 @@ EOS
 
 @test "activate virtualenv from current version (verbose)" {
   export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUALENV_DISABLE_PROMPT=1
   export PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
 
   stub pyenv-version-name "echo venv"

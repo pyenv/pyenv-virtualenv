@@ -11,6 +11,7 @@ setup() {
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
   unset _OLD_VIRTUAL_PYTHONHOME
+  unset PYENV_VIRTUALENV_VERBOSE_ACTIVATE
   unset PYENV_VIRTUALENV_DISABLE_PROMPT
   unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
@@ -29,7 +30,6 @@ setup() {
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate anaconda-2.3.0
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
@@ -65,7 +65,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate anaconda-2.3.0
 set -e PYENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 set -e CONDA_DEFAULT_ENV;
@@ -97,7 +96,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate anaconda-2.3.0/envs/foo
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;

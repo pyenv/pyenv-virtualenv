@@ -138,7 +138,9 @@ fi
 
 pyenv-sh-deactivate --force --quiet ${VERBOSE+--verbose} || true
 
-echo "pyenv-virtualenv: activate ${venv}" 1>&2
+if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
+  echo "pyenv-virtualenv: activate ${venv}" 1>&2
+fi
 
 if [ -z "$no_shell" ]; then
   # shell version set in pyenv-sh-activate should be unset

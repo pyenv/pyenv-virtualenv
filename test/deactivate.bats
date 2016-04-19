@@ -11,6 +11,7 @@ setup() {
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
   unset _OLD_VIRTUAL_PYTHONHOME
+  unset PYENV_VIRTUALENV_VERBOSE_ACTIVATE
   unset PYENV_VIRTUALENV_DISABLE_PROMPT
   unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
@@ -27,7 +28,6 @@ setup() {
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
@@ -53,6 +53,7 @@ EOS
   export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
   export PYENV_ACTIVATE_SHELL=
+  export PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
 
   PYENV_SHELL="bash" run pyenv-sh-deactivate --verbose
 
@@ -89,7 +90,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
@@ -120,7 +120,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
 unset PYENV_VIRTUAL_ENV;
@@ -153,7 +152,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 unset PYENV_VERSION;
 unset PYENV_ACTIVATE_SHELL;
 unset PYENV_VIRTUAL_ENV;
@@ -186,7 +184,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
@@ -217,7 +214,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 set -e PYENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
@@ -244,7 +240,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 set -e PYENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
@@ -271,7 +266,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
 set -e PYENV_VIRTUAL_ENV;
@@ -300,7 +294,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 set -e PYENV_VERSION;
 set -e PYENV_ACTIVATE_SHELL;
 set -e PYENV_VIRTUAL_ENV;
@@ -329,7 +322,6 @@ EOS
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
 set -e PYENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];

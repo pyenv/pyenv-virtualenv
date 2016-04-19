@@ -58,7 +58,9 @@ else
   venv="${prefix##*/}"
 fi
 
-echo "pyenv-virtualenv: deactivate ${venv}" 1>&2
+if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
+  echo "pyenv-virtualenv: deactivate ${venv}" 1>&2
+fi
 
 if [ -n "${PYENV_ACTIVATE_SHELL}" ]; then
   # shell version set in pyenv-sh-activate should be unset

@@ -11,6 +11,7 @@ setup() {
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
   unset _OLD_VIRTUAL_PYTHONHOME
+  unset PYENV_VIRTUALENV_VERBOSE_ACTIVATE
   unset PYENV_VIRTUALENV_DISABLE_PROMPT
   unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
@@ -30,7 +31,6 @@ setup() {
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
@@ -46,6 +46,7 @@ EOS
 
 @test "activate virtualenv from current version (verbose)" {
   export PYENV_VIRTUALENV_INIT=1
+  export PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
@@ -84,7 +85,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv
 export PYENV_VERSION="venv";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
@@ -113,7 +113,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not working for fish.
@@ -138,7 +137,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv
 setenv PYENV_VERSION "venv";
 setenv PYENV_ACTIVATE_SHELL 1;
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
@@ -164,7 +162,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
@@ -191,7 +188,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
@@ -218,7 +214,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv27
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
@@ -243,7 +238,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv27
 setenv PYENV_VERSION "venv27";
 setenv PYENV_ACTIVATE_SHELL 1;
 setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
@@ -367,7 +361,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate venv27
 export PYENV_VERSION="venv27:2.7.10";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";

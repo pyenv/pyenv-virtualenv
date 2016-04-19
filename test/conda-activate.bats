@@ -12,6 +12,7 @@ setup() {
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
   unset _OLD_VIRTUAL_PYTHONHOME
+  unset PYENV_VIRTUALENV_VERBOSE_ACTIVATE
   unset PYENV_VIRTUALENV_DISABLE_PROMPT
   unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
@@ -32,7 +33,6 @@ setup() {
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate anaconda-2.3.0
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0";
 export CONDA_DEFAULT_ENV="root";
@@ -62,7 +62,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate anaconda-2.3.0
 setenv PYENV_VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 setenv CONDA_DEFAULT_ENV "root";
@@ -90,7 +89,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate miniconda-3.9.1
 export PYENV_VERSION="miniconda-3.9.1";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1";
@@ -122,7 +120,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate anaconda-2.3.0/envs/foo
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo";
 export CONDA_DEFAULT_ENV="foo";
@@ -152,7 +149,6 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-pyenv-virtualenv: activate miniconda-3.9.1/envs/bar
 export PYENV_VERSION="miniconda-3.9.1/envs/bar";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar";

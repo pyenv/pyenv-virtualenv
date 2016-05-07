@@ -24,7 +24,6 @@ resolve_link() {
 
 unset FORCE
 unset QUIET
-unset VERBOSE
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -36,10 +35,6 @@ while [ $# -gt 0 ]; do
   "-f" | "--force" )
     FORCE=1
     ;;
-  "--no-error" )
-    # for backward compatibility with v20151103 and earlier
-    QUIET=1
-    ;;
   "-q" | "--quiet" )
     QUIET=1
     ;;
@@ -47,7 +42,8 @@ while [ $# -gt 0 ]; do
     exec pyenv-sh-deactivate
     ;;
   "-v" | "--verbose" )
-    VERBOSE=1
+    unset QUIET
+    PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
     ;;
   * )
     break
@@ -136,7 +132,7 @@ if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
   fi
 fi
 
-pyenv-sh-deactivate --force --quiet ${VERBOSE+--verbose} || true
+pyenv-sh-deactivate --force --quiet || true
 
 if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
   echo "pyenv-virtualenv: activate ${venv}" 1>&2
@@ -220,10 +216,14 @@ PYENV_VIRTUALENV_DISABLE_PROMPT="${PYENV_VIRTUALENV_DISABLE_PROMPT:-${VIRTUAL_EN
 if [ -z "${PYENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
   case "${shell}" in
   fish )
-    echo "pyenv-virtualenv: prompt changing not working for fish." 1>&2
+    if [ -z "${QUIET}" ]; then
+      echo "pyenv-virtualenv: prompt changing not working for fish." 1>&2
+    fi
     ;;
   * )
-    echo "pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior." 1>&2
+    if [ -z "${QUIET}" ]; then
+      echo "pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior." 1>&2
+    fi
     cat <<EOS
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(${venv}) \${PS1}";

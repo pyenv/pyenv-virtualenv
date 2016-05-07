@@ -15,22 +15,18 @@ fi
 
 unset FORCE
 unset QUIET
-unset VERBOSE
 
 while [ $# -gt 0 ]; do
   case "$1" in
   "-f" | "--force" )
     FORCE=1
     ;;
-  "--no-error" )
-    # for backward compatibility with v20151103 and earlier
-    QUIET=1
-    ;;
   "-q" | "--quiet")
     QUIET=1
     ;;
   "-v" | "--verbose" )
-    VERBOSE=1
+    unset QUIET
+    PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
     ;;
   * )
     break

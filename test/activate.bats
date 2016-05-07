@@ -44,6 +44,31 @@ EOS
   unstub pyenv-sh-deactivate
 }
 
+@test "activate virtualenv from current version (quiet)" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
+
+  PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate --quiet
+
+  assert_success
+  assert_output <<EOS
+deactivated
+export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
+export _OLD_VIRTUAL_PS1="\${PS1}";
+export PS1="(venv) \${PS1}";
+EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
+}
+
 @test "activate virtualenv from current version (verbose)" {
   export PYENV_VIRTUALENV_INIT=1
   export PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
@@ -51,7 +76,7 @@ EOS
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
   stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
-  stub pyenv-sh-deactivate "--force --quiet --verbose : echo deactivated"
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
 
   PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate --verbose
 

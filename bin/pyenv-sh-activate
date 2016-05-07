@@ -43,6 +43,7 @@ while [ $# -gt 0 ]; do
     ;;
   "-v" | "--verbose" )
     unset QUIET
+    PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
     ;;
   * )
     break

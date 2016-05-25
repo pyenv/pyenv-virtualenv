@@ -231,3 +231,19 @@ EOS
     ;;
   esac
 fi
+
+# conda package anaconda/miniconda scripts (#173)
+if [ -x "${prefix}/bin/conda" ]; then
+  shopt -s nullglob
+  case "${shell}" in
+  fish )
+    : # conda doesn't support fish
+    ;;
+  * )
+    for script in "${prefix}/etc/conda/activate.d"/*.sh; do
+      echo ". \"${script}\";"
+    done
+    ;;
+  esac
+  shopt -u nullglob
+fi

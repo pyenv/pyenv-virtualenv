@@ -96,6 +96,7 @@ EOS
 
   assert_success
   assert_output <<EOS
+. "${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo/etc/conda/deactivate.d/deactivate.sh";
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;

@@ -163,8 +163,11 @@ setup_conda() {
     create_executable "${conda}/envs/${env}" "activate"
     remove_executable "${conda}/envs/${env}" "pyvenv"
     create_executable "${conda}/envs/${env}" "conda"
+    mkdir -p "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d"
+    touch "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d/activate.sh"
+    mkdir -p "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/deactivate.d"
+    touch "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/deactivate.d/deactivate.sh"
   done
-  
 }
 
 teardown_conda() {

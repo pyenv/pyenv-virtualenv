@@ -42,7 +42,7 @@ load test_helper
 @test "fish instructions" {
   run pyenv-virtualenv-init fish
   assert [ "$status" -eq 1 ]
-  assert_output_contains 'status --is-interactive; and . (pyenv virtualenv-init -|psub)'
+  assert_output_contains 'status --is-interactive; and source (pyenv virtualenv-init -|psub)'
 }
 
 @test "outputs bash-specific syntax" {

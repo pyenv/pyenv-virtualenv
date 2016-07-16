@@ -93,7 +93,7 @@ EOS
   esac
 fi
 
-# virtualenv/pyvenv
+# virtualenv/venv
 case "${shell}" in
 fish )
   cat <<EOS

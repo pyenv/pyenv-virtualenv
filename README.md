@@ -148,14 +148,14 @@ pyenv uninstall my-virtual-env
 ```
 
 
-### virtualenv and pyvenv
+### virtualenv and venv
 
 There is a [venv](http://docs.python.org/3/library/venv.html) module available
 for CPython 3.3 and newer.
-It provides a command-line tool `pyvenv` which is the successor of `virtualenv`
+It provides an executable module `venv` which is the successor of `virtualenv`
 and distributed by default.
 
-`pyenv-virtualenv` uses `pyvenv` if it is available and the `virtualenv`
+`pyenv-virtualenv` uses `python -m venv` if it is available and the `virtualenv`
 command is not available.
 
 
@@ -215,11 +215,11 @@ You can set certain environment variables to control pyenv-virtualenv.
 * `VIRTUALENV_VERSION`, if set, forces pyenv-virtualenv to install the desired
   version of virtualenv. If `virtualenv` has not been installed,
   pyenv-virtualenv will try to install the given version of virtualenv.
-* `GET_PIP`, if set and `pyvenv` is preferred over `virtualenv`,
+* `GET_PIP`, if set and `venv` is preferred over `virtualenv`,
   use `get_pip.py` from the specified location.
-* `GET_PIP_URL`, if set and `pyvenv` is preferred over
+* `GET_PIP_URL`, if set and `venv` is preferred over
   `virtualenv`, download `get_pip.py` from the specified URL.
-* `PIP_VERSION`, if set and `pyvenv` is preferred
+* `PIP_VERSION`, if set and `venv` is preferred
   over `virtualenv`, install the specified version of pip.
 
 

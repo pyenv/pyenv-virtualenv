@@ -9,6 +9,7 @@ setup() {
 @test "display virtualenv version" {
   setup_virtualenv "2.7.7"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/2.7.7'"
+  stub pyenv-exec "python -m venv --help : false"
   stub pyenv-exec "virtualenv --version : echo \"1.11\""
 
   run pyenv-virtualenv --version
@@ -21,16 +22,16 @@ setup() {
   teardown_virtualenv "2.7.7"
 }
 
-@test "display pyvenv version" {
-  setup_pyvenv "3.4.1"
+@test "display venv version" {
+  setup_m_venv "3.4.1"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
-  stub pyenv-which "pyvenv : echo \"${PYENV_ROOT}/versions/3.4.1/bin/pyvenv\""
+  stub pyenv-exec "python -m venv --help : true"
 
   run pyenv-virtualenv --version
 
   assert_success
-  [[ "$output" == "pyenv-virtualenv 20"*" (pyvenv 3.4.1)" ]]
+  [[ "$output" == "pyenv-virtualenv 20"*" (python -m venv)" ]]
 
   unstub pyenv-prefix
-  teardown_pyvenv "3.4.1"
+  teardown_m_venv "3.4.1"
 }

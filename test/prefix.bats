@@ -45,14 +45,14 @@ remove_virtualenv() {
   remove_version "${2:-$1}"
 }
 
-create_pyvenv() {
+create_m_venv() {
   create_version "$1"
   create_version "${2:-$1}"
   echo "home = ${PYENV_ROOT}/versions/${2:-$1}/bin" > "${PYENV_ROOT}/versions/$1/pyvenv.cfg"
   touch "${PYENV_ROOT}/versions/$1/bin/activate"
 }
 
-remove_pyvenv() {
+remove_m_venv() {
   remove_version "${2:-$1}"
 }
 
@@ -141,10 +141,10 @@ OUT
   remove_virtualenv "bar" "3.5.1"
 }
 
-@test "display prefix of virtualenv created by pyvenv" {
+@test "display prefix of virtualenv created by venv" {
   stub pyenv-version-name "echo foo"
   stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\""
-  create_pyvenv "foo" "3.3.6"
+  create_m_venv "foo" "3.3.6"
 
   PYENV_VERSION="foo" run pyenv-virtualenv-prefix
 
@@ -155,15 +155,15 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_pyvenv "foo" "3.3.6"
+  remove_m_venv "foo" "3.3.6"
 }
 
-@test "display prefixes of virtualenv created by pyvenv" {
+@test "display prefixes of virtualenv created by venv" {
   stub pyenv-version-name "echo foo:bar"
   stub pyenv-prefix "foo : echo \"${PYENV_ROOT}/versions/foo\"" \
                     "bar : echo \"${PYENV_ROOT}/versions/bar\""
-  create_pyvenv "foo" "3.3.6"
-  create_pyvenv "bar" "3.4.4"
+  create_m_venv "foo" "3.3.6"
+  create_m_venv "bar" "3.4.4"
 
   PYENV_VERSION="foo:bar" run pyenv-virtualenv-prefix
 
@@ -174,8 +174,8 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_pyvenv "foo" "3.3.6"
-  remove_pyvenv "bar" "3.4.4"
+  remove_m_venv "foo" "3.3.6"
+  remove_m_venv "bar" "3.4.4"
 }
 
 @test "display prefix of virtualenv created by conda" {

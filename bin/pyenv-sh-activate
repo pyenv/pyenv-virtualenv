@@ -160,7 +160,7 @@ EOS
   IFS="$OLDIFS"
 fi
 
-# virtualenv/pyvenv
+# virtualenv/venv
 case "${shell}" in
 fish )
   cat <<EOS

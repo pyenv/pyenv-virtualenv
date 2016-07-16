@@ -108,10 +108,7 @@ version() {
     echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (conda ${version:-unknown})"
   else
     if [ -n "$USE_PYVENV" ]; then
-      version="$(pyenv-which pyvenv 2>/dev/null || true)"
-      version="${version#${PYENV_ROOT}/versions/}"
-      version="${version%/bin/pyvenv}"
-      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (pyvenv ${version:-unknown})"
+      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (python -m venv)"
     else
       version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
       echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
@@ -126,7 +123,7 @@ usage() {
     pyenv-exec conda create --help 2>/dev/null || true
   else
     if [ -n "${USE_PYVENV}" ]; then
-      pyenv-exec pyvenv --help 2>/dev/null || true
+      pyenv-exec python -m venv --help 2>/dev/null || true
     else
       pyenv-exec virtualenv --help 2>/dev/null || true
     fi
@@ -144,11 +141,11 @@ detect_venv() {
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    if [ -x "${prefix}/bin/pyvenv" ]; then
+    if "${prefix}/bin/python" -m venv --help 1>/dev/null 2>&1; then
       HAS_PYVENV=1
     fi
   fi
-  # Use pyvenv only if there is pyvenv, virtualenv is not installed, and `-p` not given
+  # Use `python -m venv` only if there is venv available, virtualenv is not installed, and `-p` not given
   if [ -n "${HAS_CONDA}" ]; then
     USE_CONDA=1
   else
@@ -371,7 +368,7 @@ REQUIREMENTS="${TMP}/requirements.${SEED}.txt"
 # Upgrade existing virtualenv
 if [ -n "$UPGRADE" ]; then
   FORCE=1
-  # pyvenv has `--upgrade` by default
+  # `python -m venv` has `--upgrade` by default
   if [ -n "${USE_PYVENV}" ]; then
     unset UPGRADE
     VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
@@ -406,11 +403,11 @@ if [ -n "${USE_CONDA}" ]; then
   fi
 else
   if [ -n "${USE_PYVENV}" ]; then
-    # Unset some arguments not supported by pyvenv
+    # Unset some arguments not supported by `python -m venv`
     unset QUIET
     unset VERBOSE
     if [ -n "${VIRTUALENV_PYTHON}" ]; then
-      echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by pyvenv." 1>&2
+      echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by \`python -m venv'." 1>&2
       exit 1
     fi
   else
@@ -525,7 +522,7 @@ if [ -n "${USE_CONDA}" ]; then
   pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
 else
   if [ -n "${USE_PYVENV}" ]; then
-    pyenv-exec pyvenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+    pyenv-exec python -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   else
     pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   fi

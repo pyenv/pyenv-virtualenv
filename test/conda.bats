@@ -40,7 +40,7 @@ OUT
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
-  teardown_pyvenv "miniconda3-3.16.0"
+  teardown_m_venv "miniconda3-3.16.0"
 }
 
 @test "create virtualenv by conda create with -p" {
@@ -63,7 +63,7 @@ OUT
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
-  teardown_pyvenv "miniconda3-3.16.0"
+  teardown_m_venv "miniconda3-3.16.0"
 }
 
 @test "create virtualenv by conda create with --python" {
@@ -86,5 +86,5 @@ OUT
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
-  teardown_pyvenv "miniconda3-3.16.0"
+  teardown_m_venv "miniconda3-3.16.0"
 }

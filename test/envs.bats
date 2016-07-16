@@ -20,7 +20,7 @@ unstub_pyenv() {
 
 @test "path should be handled properly even if there is 'envs' in PYENV_ROOT" {
   export PYENV_VERSION="3.5.1"
-  setup_pyvenv "3.5.1"
+  setup_m_venv "3.5.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-version-name "echo '${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
@@ -43,5 +43,5 @@ OUT
   unstub pyenv-version-name
   unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
-  teardown_pyvenv "3.5.1"
+  teardown_m_venv "3.5.1"
 }

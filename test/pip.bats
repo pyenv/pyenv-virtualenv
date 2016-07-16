@@ -22,7 +22,7 @@ unstub_pyenv() {
 
 @test "install pip with ensurepip" {
   export PYENV_VERSION="3.5.1"
-  setup_pyvenv "3.5.1"
+  setup_m_venv "3.5.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
@@ -43,12 +43,12 @@ OUT
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
-  teardown_pyvenv "3.5.1"
+  teardown_m_venv "3.5.1"
 }
 
 @test "install pip without using ensurepip" {
   export PYENV_VERSION="3.3.6"
-  setup_pyvenv "3.3.6"
+  setup_m_venv "3.3.6"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
@@ -72,5 +72,5 @@ OUT
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
   unstub pyenv-exec
-  teardown_pyvenv "3.3.6"
+  teardown_m_venv "3.3.6"
 }

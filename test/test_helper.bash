@@ -137,13 +137,13 @@ teardown_virtualenv() {
   rm -fr "${PYENV_ROOT}/versions/$1"
 }
 
-setup_pyvenv() {
+setup_m_venv() {
   create_executable "$1" "python"
   create_executable "$1" "activate"
   remove_executable "$1" "conda"
 }
 
-teardown_pyvenv() {
+teardown_m_venv() {
   rm -fr "${PYENV_ROOT}/versions/$1"
 }
 

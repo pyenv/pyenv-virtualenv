@@ -120,7 +120,6 @@ remove_executable() {
 setup_version() {
   create_executable "$1" "python"
   remove_executable "$1" "activate"
-  remove_executable "$1" "pyvenv"
   remove_executable "$1" "conda"
 }
 
@@ -131,7 +130,6 @@ teardown_version() {
 setup_virtualenv() {
   create_executable "$1" "python"
   create_executable "$1" "activate"
-  remove_executable "$1" "pyvenv"
   remove_executable "$1" "conda"
 }
 
@@ -142,7 +140,6 @@ teardown_virtualenv() {
 setup_pyvenv() {
   create_executable "$1" "python"
   create_executable "$1" "activate"
-  create_executable "$1" "pyvenv"
   remove_executable "$1" "conda"
 }
 
@@ -153,7 +150,6 @@ teardown_pyvenv() {
 setup_conda() {
   create_executable "$1" "python"
   create_executable "$1" "activate"
-  remove_executable "$1" "pyvenv"
   create_executable "$1" "conda"
   local conda="$1"
   shift 1
@@ -161,7 +157,6 @@ setup_conda() {
   for env; do
     create_executable "${conda}/envs/${env}" "python"
     create_executable "${conda}/envs/${env}" "activate"
-    remove_executable "${conda}/envs/${env}" "pyvenv"
     create_executable "${conda}/envs/${env}" "conda"
     mkdir -p "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d"
     touch "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d/activate.sh"

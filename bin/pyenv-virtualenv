@@ -141,7 +141,7 @@ detect_venv() {
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    if "${prefix}/bin/python" -m venv --help 1>/dev/null 2>&1; then
+    if pyenv-exec python -m venv --help 1>/dev/null 2>&1; then
       HAS_PYVENV=1
     fi
   fi

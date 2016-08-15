@@ -1,9 +1,13 @@
 ## Version History
 
+#### 1.0.0
+
+* Use similar versioning scheme as pyenv; YYYYMMDD -> X.Y.Z
+
 #### 20160716
 
 * Suppress activate/deactivate messages by default (#169, #170, #171)
-+ Source conda package activate/deactivat scripts if exist (#173)
+* Source conda package activate/deactivat scripts if exist (#173)
 * Use `source` in favor of `.` for `fish` (#175)
 * Use `python -m venv` instead of `pyvenv` due to deprecation of `pyvenv` after 3.6 (#184, #185)
 

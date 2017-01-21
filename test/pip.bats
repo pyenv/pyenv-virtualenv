@@ -34,7 +34,7 @@ unstub_pyenv() {
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.5.1 python -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
+PYENV_VERSION=3.5.1 python -m venv --copies ${PYENV_ROOT}/versions/3.5.1/envs/venv
 PYENV_VERSION=3.5.1/envs/venv python -s -m ensurepip
 rehashed
 OUT
@@ -62,7 +62,7 @@ OUT
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.3.6 python -m venv ${PYENV_ROOT}/versions/3.3.6/envs/venv
+PYENV_VERSION=3.3.6 python -m venv --copies ${PYENV_ROOT}/versions/3.3.6/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 PYENV_VERSION=3.3.6/envs/venv python -s ${TMP}/pyenv/cache/get-pip.py
 rehashed

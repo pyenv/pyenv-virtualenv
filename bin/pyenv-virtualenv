@@ -522,7 +522,7 @@ if [ -n "${USE_CONDA}" ]; then
   pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
 else
   if [ -n "${USE_M_VENV}" ]; then
-    pyenv-exec python -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+    pyenv-exec python -m venv --copies $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   else
     pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   fi

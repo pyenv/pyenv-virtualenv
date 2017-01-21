@@ -33,7 +33,7 @@ unstub_pyenv() {
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.5.1 python -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
+PYENV_VERSION=3.5.1 python -m venv --copies ${PYENV_ROOT}/versions/3.5.1/envs/venv
 PYENV_VERSION=3.5.1/envs/venv python -s -m ensurepip
 rehashed
 OUT

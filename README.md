@@ -17,7 +17,7 @@ and you love it, [pyenv-virtualenvwrapper](https://github.com/yyuu/pyenv-virtual
 ### Installing as a pyenv plugin
 
 This will install the latest development version of pyenv-virtualenv into
-the `~/.pyenv/plugins/pyenv-virtualenv` directory.
+the `$(pyenv root)/plugins/pyenv-virtualenv` directory.
 
 **Important note:**  If you installed pyenv into a non-standard directory, make
 sure that you clone this repo into the 'plugins' directory of wherever you
@@ -31,7 +31,7 @@ From inside that directory you can:
 1. **Check out pyenv-virtualenv into plugin directory**
 
     ```sh
-    $ git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+    $ git clone https://github.com/yyuu/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
     ```
 
 2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenvs. This is entirely optional but pretty useful. See "Activate virtualenv" below.
@@ -90,7 +90,7 @@ of the virtualenv directory. For example,
 $ pyenv virtualenv 2.7.10 my-virtual-env-2.7.10
 ```
 
-will create a virtualenv based on Python 2.7.10 under `~/.pyenv/versions` in a
+will create a virtualenv based on Python 2.7.10 under `$(pyenv root)/versions` in a
 folder called `my-virtual-env-2.7.10`.
 
 
@@ -141,7 +141,7 @@ pyenv deactivate
 
 ### Delete existing virtualenv
 
-Removing the directories in `~/.pyenv/versions` and `~/.pyenv/versions/{version}/envs` will delete the virtualenv, or you can run:
+Removing the directories in `$(pyenv root)/versions` and `$(pyenv root)/versions/{version}/envs` will delete the virtualenv, or you can run:
 
 ```sh
 pyenv uninstall my-virtual-env

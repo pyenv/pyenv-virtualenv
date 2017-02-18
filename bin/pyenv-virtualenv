@@ -375,7 +375,7 @@ if [ -n "$UPGRADE" ]; then
   fi
 fi
 
-if [ -z "${VIRTUALEN_VERSION}" ]; then
+if [ -z "${VIRTUALENV_VERSION}" ]; then
   case "${PYENV_VERSION}" in
   "3.0"* )
     NO_ENSUREPIP=1

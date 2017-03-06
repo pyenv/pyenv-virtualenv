@@ -4,12 +4,12 @@
 
 [![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.svg?branch=master)](https://travis-ci.org/yyuu/pyenv-virtualenv)
 
-pyenv-virtualenv is a [pyenv](https://github.com/yyuu/pyenv) plugin
+pyenv-virtualenv is a [pyenv](https://github.com/pyenv/pyenv) plugin
 that provides features to manage virtualenvs and conda environments
 for Python on UNIX-like systems.
 
 (NOTICE: If you are an existing user of [virtualenvwrapper](http://pypi.python.org/pypi/virtualenvwrapper)
-and you love it, [pyenv-virtualenvwrapper](https://github.com/yyuu/pyenv-virtualenvwrapper) may help you
+and you love it, [pyenv-virtualenvwrapper](https://github.com/pyenv/pyenv-virtualenvwrapper) may help you
 (additionally) to manage your virtualenvs.)
 
 ## Installation
@@ -31,7 +31,7 @@ From inside that directory you can:
 1. **Check out pyenv-virtualenv into plugin directory**
 
     ```sh
-    $ git clone https://github.com/yyuu/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+    $ git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
     ```
 
 2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenvs. This is entirely optional but pretty useful. See "Activate virtualenv" below.
@@ -129,7 +129,7 @@ There are two entries for each virtualenv, and the shorter one is just a symlink
 Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might
 require you to `activate` the virtualenv and `conda` environments.
 
-If `eval "$(pyenv virtualenv-init -)"` is configured in your shell, `pyenv-virtualenv` will automatically activate/deactivate virtualenvs on entering/leaving directories which contain a `.python-version` file that lists a valid virtual environment. `.python-version` files denote local Python versions and can be created and deleted with the [`pyenv local`](https://github.com/yyuu/pyenv/blob/master/COMMANDS.md#pyenv-local) command.
+If `eval "$(pyenv virtualenv-init -)"` is configured in your shell, `pyenv-virtualenv` will automatically activate/deactivate virtualenvs on entering/leaving directories which contain a `.python-version` file that lists a valid virtual environment. `.python-version` files denote local Python versions and can be created and deleted with the [`pyenv local`](https://github.com/pyenv/pyenv/blob/master/COMMANDS.md#pyenv-local) command.
 
 You can also activate and deactivate a pyenv virtualenv manually:
 

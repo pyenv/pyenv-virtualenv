@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/yyuu/pyenv-virtualenv](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/yyuu/pyenv-virtualenv?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Build Status](https://travis-ci.org/yyuu/pyenv-virtualenv.svg?branch=master)](https://travis-ci.org/yyuu/pyenv-virtualenv)
+[![Build Status](https://travis-ci.org/pyenv/pyenv-virtualenv.svg?branch=master)](https://travis-ci.org/pyenv/pyenv-virtualenv)
 
 pyenv-virtualenv is a [pyenv](https://github.com/pyenv/pyenv) plugin
 that provides features to manage virtualenvs and conda environments

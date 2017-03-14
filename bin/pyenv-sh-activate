@@ -172,6 +172,7 @@ EOS
   cat <<EOS
 export PYENV_VIRTUAL_ENV="${prefix}";
 export VIRTUAL_ENV="${prefix}";
+source \$PYENV_VIRTUAL_ENV/bin/activate \$PYENV_VERSION;
 EOS
   ;;
 esac

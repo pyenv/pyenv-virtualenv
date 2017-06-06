@@ -146,8 +146,8 @@ if [ -z "$no_shell" ]; then
   case "$shell" in
   fish )
     cat <<EOS
-setenv PYENV_VERSION "${versions[*]}";
-setenv PYENV_ACTIVATE_SHELL 1;
+set -gx PYENV_VERSION "${versions[*]}";
+set -gx PYENV_ACTIVATE_SHELL 1;
 EOS
     ;;
   * )
@@ -164,8 +164,8 @@ fi
 case "${shell}" in
 fish )
   cat <<EOS
-setenv PYENV_VIRTUAL_ENV "${prefix}";
-setenv VIRTUAL_ENV "${prefix}";
+set -gx PYENV_VIRTUAL_ENV "${prefix}";
+set -gx VIRTUAL_ENV "${prefix}";
 EOS
   ;;
 * )
@@ -185,7 +185,7 @@ if [ -x "${prefix}/bin/conda" ]; then
   fi
   case "${shell}" in
   fish )
-    echo "setenv CONDA_DEFAULT_ENV \"${CONDA_DEFAULT_ENV}\";"
+    echo "set -gx CONDA_DEFAULT_ENV \"${CONDA_DEFAULT_ENV}\";"
     ;;
   * )
     echo "export CONDA_DEFAULT_ENV=\"${CONDA_DEFAULT_ENV}\";"
@@ -197,7 +197,7 @@ if [ -n "${PYTHONHOME}" ]; then
   case "${shell}" in
   fish )
     cat <<EOS
-setenv _OLD_VIRTUAL_PYTHONHOME "${PYTHONHOME}";
+set -gx _OLD_VIRTUAL_PYTHONHOME "${PYTHONHOME}";
 set -e PYTHONHOME;
 EOS
     ;;

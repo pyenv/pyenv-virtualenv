@@ -138,8 +138,8 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
-setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not working for fish.
 EOS
 
@@ -162,10 +162,10 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-setenv PYENV_VERSION "venv";
-setenv PYENV_ACTIVATE_SHELL 1;
-setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
-setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+set -gx PYENV_VERSION "venv";
+set -gx PYENV_ACTIVATE_SHELL 1;
+set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not working for fish.
 EOS
 
@@ -239,10 +239,10 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-setenv PYENV_VERSION "venv27";
-setenv PYENV_ACTIVATE_SHELL 1;
-setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
-setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
+set -gx PYENV_VERSION "venv27";
+set -gx PYENV_ACTIVATE_SHELL 1;
+set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
+set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing not working for fish.
 EOS
 
@@ -263,10 +263,10 @@ EOS
   assert_success
   assert_output <<EOS
 deactivated
-setenv PYENV_VERSION "venv27";
-setenv PYENV_ACTIVATE_SHELL 1;
-setenv PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
-setenv VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
+set -gx PYENV_VERSION "venv27";
+set -gx PYENV_ACTIVATE_SHELL 1;
+set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
+set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing not working for fish.
 EOS
 
@@ -381,7 +381,7 @@ EOS
   stub pyenv-virtualenv-prefix "2.7.10 : false"
   stub pyenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/venv27\""
 
-  run pyenv-sh-activate "venv27" "2.7.10"
+  PYENV_SHELL="bash" run pyenv-sh-activate "venv27" "2.7.10"
 
   assert_success
   assert_output <<EOS

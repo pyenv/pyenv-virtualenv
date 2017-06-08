@@ -72,8 +72,8 @@ EOS
   run pyenv-virtualenv-init - fish
   assert_success
   assert_output <<EOS
-setenv PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
-setenv PYENV_VIRTUALENV_INIT 1;
+set -gx PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
+set -gx PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l ret \$status
   if [ -n "\$VIRTUAL_ENV" ]

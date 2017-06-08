@@ -125,7 +125,7 @@ case "${shell}" in
 fish )
   cat <<EOS
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
-  setenv PATH "\$_OLD_VIRTUAL_PATH";
+  set -gx PATH "\$_OLD_VIRTUAL_PATH";
   set -e _OLD_VIRTUAL_PATH;
 end;
 EOS
@@ -144,7 +144,7 @@ case "${shell}" in
 fish )
   cat <<EOS
 if [ -n "\$_OLD_VIRTUAL_PYTHONHOME" ];
-  setenv PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
+  set -gx PYTHONHOME "\$_OLD_VIRTUAL_PYTHONHOME";
   set -e _OLD_VIRTUAL_PYTHONHOME;
 end;
 EOS

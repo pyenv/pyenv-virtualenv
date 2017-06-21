@@ -129,7 +129,7 @@ There are two entries for each virtualenv, and the shorter one is just a symlink
 Some external tools (e.g. [jedi](https://github.com/davidhalter/jedi)) might
 require you to `activate` the virtualenv and `conda` environments.
 
-If `eval "$(pyenv virtualenv-init -)"` is configured in your shell, `pyenv-virtualenv` will automatically activate/deactivate virtualenvs on entering/leaving directories which contain a `.python-version` file that lists a valid virtual environment. `.python-version` files denote local Python versions and can be created and deleted with the [`pyenv local`](https://github.com/pyenv/pyenv/blob/master/COMMANDS.md#pyenv-local) command.
+If `eval "$(pyenv virtualenv-init -)"` is configured in your shell, `pyenv-virtualenv` will automatically activate/deactivate virtualenvs on entering/leaving directories which contain a `.python-version` file that contains the name of a valid virtual environment as shown in the output of `pyenv virtualenvs` (e.g., `venv34` or `3.4.3/envs/venv34` in example above) . `.python-version` files are used by pyenv to denote local Python versions and can be created and deleted with the [`pyenv local`](https://github.com/pyenv/pyenv/blob/master/COMMANDS.md#pyenv-local) command.
 
 You can also activate and deactivate a pyenv virtualenv manually:
 

@@ -1,5 +1,9 @@
 ## Version History
 
+#### 1.1.0
+
+* fish: use "set -gx" instead of "setenv" (#215, #216, #217, #218)
+
 #### 1.0.0
 
 * Use similar versioning scheme as pyenv; YYYYMMDD -> X.Y.Z

@@ -240,6 +240,8 @@ if [ -x "${prefix}/bin/conda" ]; then
     : # conda doesn't support fish
     ;;
   * )
+    CONDA_PREFIX="$prefix"
+    echo "export CONDA_PREFIX=\"${CONDA_PREFIX}\";"
     for script in "${prefix}/etc/conda/activate.d"/*.sh; do
       echo ". \"${script}\";"
     done

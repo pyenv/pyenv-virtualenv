@@ -69,6 +69,7 @@ if [ -x "${prefix}/bin/conda" ]; then
     for script in "${prefix}/etc/conda/deactivate.d"/*.sh; do
       echo ". \"${script}\";"
     done
+    echo "unset CONDA_PREFIX"
     ;;
   esac
   shopt -u nullglob

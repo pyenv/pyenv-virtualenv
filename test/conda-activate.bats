@@ -39,6 +39,7 @@ export CONDA_DEFAULT_ENV="root";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(anaconda-2.3.0) \${PS1}";
+export CONDA_PREFIX="${TMP}/pyenv/versions/anaconda-2.3.0";
 EOS
 
   unstub pyenv-version-name
@@ -97,6 +98,7 @@ export CONDA_DEFAULT_ENV="root";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(miniconda-3.9.1) \${PS1}";
+export CONDA_PREFIX="${TMP}/pyenv/versions/miniconda-3.9.1";
 EOS
 
   unstub pyenv-virtualenv-prefix
@@ -126,6 +128,7 @@ export CONDA_DEFAULT_ENV="foo";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(anaconda-2.3.0/envs/foo) \${PS1}";
+export CONDA_PREFIX="${TMP}/pyenv/versions/anaconda-2.3.0/envs/foo";
 . "${PYENV_ROOT}/versions/anaconda-2.3.0/envs/foo/etc/conda/activate.d/activate.sh";
 EOS
 
@@ -158,6 +161,7 @@ export CONDA_DEFAULT_ENV="bar";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(miniconda-3.9.1/envs/bar) \${PS1}";
+export CONDA_PREFIX="${TMP}/pyenv/versions/miniconda-3.9.1/envs/bar";
 . "${PYENV_ROOT}/versions/miniconda-3.9.1/envs/bar/etc/conda/activate.d/activate.sh";
 EOS
 

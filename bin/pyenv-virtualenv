@@ -534,6 +534,7 @@ if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
 fi
 
 if [ ! -e "${VIRTUALENV_PATH}/bin/pydoc" ]; then
+  mkdir -p "${VIRTUALENV_PATH}/bin"
   cat <<EOS > "${VIRTUALENV_PATH}/bin/pydoc"
 #!${VIRTUALENV_PATH}/bin/python
 import pydoc

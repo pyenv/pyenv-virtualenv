@@ -533,6 +533,16 @@ if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
   ln -fs "${VIRTUALENV_PATH}" "${COMPAT_VIRTUALENV_PATH}"
 fi
 
+if [ ! -e "${VIRTUALENV_PATH}/bin/pydoc" ]; then
+  cat <<EOS > "${VIRTUALENV_PATH}/bin/pydoc"
+#!${VIRTUALENV_PATH}/bin/python
+import pydoc
+if __name__ == '__main__':
+      pydoc.cli()
+EOS
+  chmod +x "${VIRTUALENV_PATH}/bin/pydoc"
+fi
+
 if [ -z "${NO_ENSUREPIP}" ]; then
   ## Install setuptools and pip.
   PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip

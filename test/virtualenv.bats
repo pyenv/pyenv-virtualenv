@@ -34,12 +34,13 @@ unstub_pyenv() {
 
   run pyenv-virtualenv "2.7.11" "venv"
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/pydoc" ]
+  assert_success
 
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
@@ -60,12 +61,13 @@ OUT
 
   run pyenv-virtualenv venv
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/venv
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/pydoc" ]
+  assert_success
 
   unstub_pyenv
   unstub pyenv-version-name
@@ -92,6 +94,7 @@ PYENV_VERSION=2.7.11 virtualenv --verbose --python=${TMP}/python ${PYENV_ROOT}/v
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/pydoc" ]
   assert_success
 
   unstub_pyenv
@@ -119,6 +122,7 @@ PYENV_VERSION=2.7.11 virtualenv --verbose --python=${TMP}/python ${PYENV_ROOT}/v
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/pydoc" ]
   assert_success
 
   unstub_pyenv
@@ -176,12 +180,13 @@ OUT
 
   run pyenv-virtualenv "2.7.11" "2.7.11/envs/foo"
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/foo
 Installing pip from https://bootstrap.pypa.io/get-pip.py...
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/foo/bin/pydoc" ]
+  assert_success
 
   unstub_pyenv
   unstub pyenv-virtualenv-prefix

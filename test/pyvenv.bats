@@ -32,11 +32,12 @@ unstub_pyenv() {
 
   run pyenv-virtualenv venv
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=3.5.1 python -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pydoc" ]
+  assert_success
 
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
@@ -57,11 +58,12 @@ OUT
 
   run pyenv-virtualenv venv
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=3.5.1 virtualenv ${PYENV_ROOT}/versions/3.5.1/envs/venv
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pydoc" ]
+  assert_success
 
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
@@ -69,7 +71,7 @@ OUT
   teardown_m_venv "3.5.1"
 }
 
-@test "install virtualenv if venv is not avaialble" {
+@test "install virtualenv if venv is not available" {
   export PYENV_VERSION="3.2.1"
   setup_version "3.2.1"
   stub_pyenv "${PYENV_VERSION}"
@@ -81,12 +83,13 @@ OUT
 
   run pyenv-virtualenv venv
 
-  assert_success
   assert_output <<OUT
 PYENV_VERSION=3.2.1 pip install virtualenv==13.1.2
 PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/venv
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/3.2.1/envs/venv/bin/pydoc" ]
+  assert_success
 
   unstub_pyenv
   unstub pyenv-virtualenv-prefix
@@ -112,6 +115,7 @@ PYENV_VERSION=3.5.1 pip install virtualenv
 PYENV_VERSION=3.5.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/3.5.1/envs/venv
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pydoc" ]
   assert_success
 
   unstub_pyenv
@@ -138,6 +142,7 @@ PYENV_VERSION=3.5.1 pip install virtualenv
 PYENV_VERSION=3.5.1 virtualenv --python=${TMP}/python3 ${PYENV_ROOT}/versions/3.5.1/envs/venv
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pydoc" ]
   assert_success
 
   unstub_pyenv
@@ -158,12 +163,13 @@ OUT
 
   PIP_REQUIRE_VENV="true" run pyenv-virtualenv venv
 
-  assert_success
   assert_output <<OUT
 PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 pip install virtualenv==13.1.2
 PIP_REQUIRE_VENV= PYENV_VERSION=3.2.1 virtualenv ${PYENV_ROOT}/versions/3.2.1/envs/venv
 rehashed
 OUT
+  assert [ -x "${PYENV_ROOT}/versions/3.2.1/envs/venv/bin/pydoc" ]
+  assert_success
 
   unstub_pyenv
   unstub pyenv-virtualenv-prefix

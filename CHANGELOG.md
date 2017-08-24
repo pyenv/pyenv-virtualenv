@@ -1,5 +1,10 @@
 ## Version History
 
+#### 1.1.1
+
+* Set `CONDA_PREFIX` to make is useable in conda activate/deactivate scripts (#224)
+* Generate `pydoc` executable after creating new virtualenv (#197, #230)
+
 #### 1.1.0
 
 * fish: use "set -gx" instead of "setenv" (#215, #216, #217, #218)

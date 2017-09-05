@@ -42,7 +42,7 @@
 * Improved interoperability with Anaconda/Miniconda (#103, #106, #107, #108)
 * Create `virtualenv` inside `envs` directory of source version, like Anaconda/Miniconda (#103, #107)
 * Rewrite `pyenv activate` and `pyenv deactivate` without using scripts provided by virtualenv and conda (#51, #69, #103, #104, #121)
-* Improve the `pyenv activate` behaviour on multipe versions (#105, #111)
+* Improve the `pyenv activate` behaviour on multiple versions (#105, #111)
 * Reject creating a virtualenv named `system` (yyuu/pyenv#475)
 * Add `--skip-aliases` to `pyenv virtualenvs` (#120)
 * Stop showing `version not installed` warning messages in precmd (#49)

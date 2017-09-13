@@ -12,7 +12,7 @@ if [ ! -x "${PYENV_COMMAND_PATH}" ] && [[ "${PYENV_COMMAND_PATH##*/}" == "python
     if [ -f "${PYENV_ROOT}/versions/${version}/bin/conda" ]; then
       : # do nothing for conda's environments
     else
-      if [ -f "${PYENV_ROOT}/versions/${version}/bin/pyvenv.cfg" ]; then
+      if [ -f "${PYENV_ROOT}/versions/${version}/pyvenv.cfg" ]; then
         # venv
         virtualenv_binpath="$(cut -b 1-1024 "${PYENV_ROOT}/versions/${version}/pyvenv.cfg" | sed -n '/^ *home *= */s///p' || true)"
         virtualenv_prefix="${virtualenv_binpath%/bin}"

@@ -40,6 +40,12 @@ From inside that directory you can:
     $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
     ```
 
+    **Fish shell note**:  Add this to your `~/.config/fish/config.fish`
+
+    ```sh
+    status --is-interactive; and source (pyenv virtualenv-init -|psub)
+    ```
+
     **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
     **Pyenv note**: You may also need to add `eval "$(pyenv init -)"` to your profile if you haven't done so already.
 

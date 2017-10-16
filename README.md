@@ -153,6 +153,12 @@ Removing the directories in `$(pyenv root)/versions` and `$(pyenv root)/versions
 pyenv uninstall my-virtual-env
 ```
 
+You can also delete existing virtualenvs by using `virtualenv-delete` command, e.g. you can run:
+```sh
+pyenv virtualenv-delete my-virtual-env
+```
+This will delete virtualenv called `my-virtual-env`.
+
 
 ### virtualenv and venv
 

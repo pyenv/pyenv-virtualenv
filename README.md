@@ -47,6 +47,7 @@ From inside that directory you can:
     ```
 
     **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
+    
     **Pyenv note**: You may also need to add `eval "$(pyenv init -)"` to your profile if you haven't done so already.
 
 3. **Restart your shell to enable pyenv-virtualenv**

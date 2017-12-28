@@ -108,7 +108,7 @@ version() {
     echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (conda ${version:-unknown})"
   else
     if [ -n "$USE_M_VENV" ]; then
-      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (python -m venv)"
+      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (python${PYENV_VERSION:0:3} -m venv)"
     else
       version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
       echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
@@ -123,7 +123,7 @@ usage() {
     pyenv-exec conda create --help 2>/dev/null || true
   else
     if [ -n "${USE_M_VENV}" ]; then
-      pyenv-exec python -m venv --help 2>/dev/null || true
+      pyenv-exec python${PYENV_VERSION:0:3} -m venv --help 2>/dev/null || true
     else
       pyenv-exec virtualenv --help 2>/dev/null || true
     fi
@@ -141,7 +141,7 @@ detect_venv() {
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    if pyenv-exec python -m venv --help 1>/dev/null 2>&1; then
+    if pyenv-exec python${PYENV_VERSION:0:3} -m venv --help 1>/dev/null 2>&1; then
       HAS_M_VENV=1
     fi
   fi
@@ -409,7 +409,7 @@ else
     unset QUIET
     unset VERBOSE
     if [ -n "${VIRTUALENV_PYTHON}" ]; then
-      echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by \`python -m venv'." 1>&2
+      echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by \`python${PYENV_VERSION:0:3} -m venv'." 1>&2
       exit 1
     fi
   else
@@ -524,7 +524,7 @@ if [ -n "${USE_CONDA}" ]; then
   pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
 else
   if [ -n "${USE_M_VENV}" ]; then
-    pyenv-exec python -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+    pyenv-exec python${PYENV_VERSION:0:3} -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   else
     pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   fi

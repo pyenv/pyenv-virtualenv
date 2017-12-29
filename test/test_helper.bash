@@ -5,6 +5,8 @@ PATH="$BATS_TEST_DIRNAME/../bin:$PATH"
 PATH="$TMP/bin:$PATH"
 export PATH
 
+export PYENV_PYTHON_VERSION=$(python3 --version | awk '{ print $2 }')
+
 teardown() {
   rm -fr "$TMP"/*
 }

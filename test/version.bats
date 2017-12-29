@@ -25,12 +25,12 @@ setup() {
 @test "display venv version" {
   setup_m_venv "3.4.1"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
-  stub pyenv-exec "python -m venv --help : true"
+  stub pyenv-exec "python${PYENV_PYTHON_VERSION:0:3} -m venv --help : true"
 
   run pyenv-virtualenv --version
 
   assert_success
-  [[ "$output" == "pyenv-virtualenv "?.?.?" (python -m venv)" ]]
+  [[ "$output" == "pyenv-virtualenv "?.?.?" (python${PYENV_PYTHON_VERSION:0:3} -m venv)" ]]
 
   unstub pyenv-prefix
   teardown_m_venv "3.4.1"

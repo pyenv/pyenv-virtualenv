@@ -139,7 +139,7 @@ EOS
   case "$shell" in
   bash )
     cat <<EOS
-if ! [[ "\$PROMPT_COMMAND" =~ _pyenv_virtualenv_hook ]]; then
+if ! [[ "\${PROMPT_COMMAND:=}" =~ _pyenv_virtualenv_hook ]]; then
   PROMPT_COMMAND="_pyenv_virtualenv_hook;\$PROMPT_COMMAND";
 fi
 EOS

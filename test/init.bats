@@ -61,7 +61,7 @@ _pyenv_virtualenv_hook() {
   fi
   return \$ret
 };
-if ! [[ "${PROMPT_COMMAND:=}" =~ _pyenv_virtualenv_hook ]]; then
+if ! [[ "\${PROMPT_COMMAND:=}" =~ _pyenv_virtualenv_hook ]]; then
   PROMPT_COMMAND="_pyenv_virtualenv_hook;\$PROMPT_COMMAND";
 fi
 EOS

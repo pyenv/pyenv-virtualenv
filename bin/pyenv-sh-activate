@@ -237,12 +237,19 @@ if [ -x "${prefix}/bin/conda" ]; then
   shopt -s nullglob
   case "${shell}" in
   fish )
-    : # conda doesn't support fish
+    # conda 4.4 and above
+    for script in "${prefix}/etc/fish/conf.d"/*.fish; do
+      echo "source \"${script}\";"
+    done
     ;;
   * )
     CONDA_PREFIX="$prefix"
     echo "export CONDA_PREFIX=\"${CONDA_PREFIX}\";"
     for script in "${prefix}/etc/conda/activate.d"/*.sh; do
+      echo ". \"${script}\";"
+    done
+    # conda 4.4 and above
+    for script in "${prefix}/etc/profile.d"/*.sh; do
       echo ". \"${script}\";"
     done
     ;;

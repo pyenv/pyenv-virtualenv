@@ -63,7 +63,7 @@ OUT
   assert_success
   assert_output <<OUT
 PYENV_VERSION=3.3.6 python -m venv ${PYENV_ROOT}/versions/3.3.6/envs/venv
-Installing pip from https://bootstrap.pypa.io/get-pip.py...
+Installing pip from https://bootstrap.pypa.io/3.3/get-pip.py...
 PYENV_VERSION=3.3.6/envs/venv python -s ${TMP}/pyenv/cache/get-pip.py
 rehashed
 OUT

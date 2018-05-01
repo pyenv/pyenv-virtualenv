@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-#
 # Summary: Activate virtual environment
 #
 # Usage: pyenv activate <virtualenv>

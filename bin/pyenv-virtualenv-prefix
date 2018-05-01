@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-#
 # Summary: Display real_prefix for a Python virtualenv version
 # Usage: pyenv virtualenv-prefix [<virtualenv>]
 #

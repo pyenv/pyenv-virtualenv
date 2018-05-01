@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-#
 # Summary: List all Python virtualenvs found in `$PYENV_ROOT/versions/*'.
 # Usage: pyenv virtualenvs [--bare] [--skip-aliases]
 #

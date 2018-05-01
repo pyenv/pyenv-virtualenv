@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-#
 # Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
 #
 # Usage: pyenv virtualenv [-f|--force] [VIRTUALENV_OPTIONS] [version] <virtualenv-name>

@@ -5,3 +5,9 @@ language: c
 notifications:
   email:
     on_success: never
+deploy:
+  provider: releases
+  api_key:
+    secure: DsGAt0UmTSGVfsNJ6LmM+LvsV6FYmvX4FcET82XrskPiQW+N8+8JZR8WuZxfmwdJZu+dkkdoq6gYgL2xF7m4LxRG7aw3B5TtbMTrJQeW0hdtCSBwbbYyvwcp2m7ywE8lGAfZQITaGj1R6f2Cgh8cgtcrErjcF0KJsYlVlgNv+/M=
+  on:
+    tags: true

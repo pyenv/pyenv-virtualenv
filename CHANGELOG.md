@@ -1,5 +1,9 @@
 ## Version History
 
+#### 1.1.3
+
+* No code changes since 1.1.2
+
 #### 1.1.2
 
 * Use custom get-pip URL based on the target version (#253, #254, #255)

@@ -43,6 +43,7 @@ From inside that directory you can:
     **Fish shell note**:  Add this to your `~/.config/fish/config.fish`
 
     ```sh
+    status --is-interactive; and source (pyenv init -|psub)
     status --is-interactive; and source (pyenv virtualenv-init -|psub)
     ```
 

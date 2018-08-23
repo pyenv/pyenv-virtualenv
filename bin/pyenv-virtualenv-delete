@@ -100,5 +100,4 @@ if [ -d "$PREFIX" ]; then
   if [ -L "$COMPAT_PREFIX" ]; then
     rm -rf "$COMPAT_PREFIX"
   fi
-  pyenv-rehash
 fi

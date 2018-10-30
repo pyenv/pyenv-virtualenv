@@ -58,10 +58,10 @@ From inside that directory you can:
     ```
 
 
-### Installing with Homebrew (for OS X users)
+### Installing with Homebrew (for macOS users)
 
-Mac OS X users can install pyenv-virtualenv with the
-[Homebrew](http://brew.sh) package manager.
+macOS users can install pyenv-virtualenv with the
+[Homebrew](https://brew.sh) package manager.
 This will give you access to the `pyenv-virtualenv` command. If you have pyenv
 installed, you will also be able to use the `pyenv virtualenv` command.
 
@@ -238,7 +238,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ### License
 
-(The MIT License)
+[(The MIT License)](LICENSE)
 
 * Copyright (c) 2015 Yamashita, Yuu
 

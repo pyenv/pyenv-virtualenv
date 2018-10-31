@@ -43,8 +43,8 @@ From inside that directory you can:
     **Fish shell note**:  Add this to your `~/.config/fish/config.fish`
 
     ```sh
-    status --is-interactive; and source (pyenv init -|psub)
-    status --is-interactive; and source (pyenv virtualenv-init -|psub)
+    status --is-interactive; and pyenv init - | source
+    status --is-interactive; and pyenv virtualenv-init - | source
     ```
 
     **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.

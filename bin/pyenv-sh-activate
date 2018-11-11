@@ -177,7 +177,8 @@ EOS
 esac
 
 # anaconda/miniconda
-if [ -x "${prefix}/bin/conda" ]; then
+if [ -d "${prefix}/conda-meta" ] ||
+     [ -x "${prefix}/bin/conda" ]; then
   if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
     CONDA_DEFAULT_ENV="${venv##*/envs/}"
   else
@@ -233,7 +234,8 @@ EOS
 fi
 
 # conda package anaconda/miniconda scripts (#173)
-if [ -x "${prefix}/bin/conda" ]; then
+if [ -d "${prefix}/conda-meta" ] ||
+     [ -x "${prefix}/bin/conda" ]; then
   shopt -s nullglob
   case "${shell}" in
   fish )

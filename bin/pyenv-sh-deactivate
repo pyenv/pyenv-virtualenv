@@ -59,7 +59,8 @@ if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
 fi
 
 # conda package anaconda/miniconda scripts (#173)
-if [ -x "${prefix}/bin/conda" ]; then
+if [ -d "${prefix}/conda-meta" ] ||
+     [ -x "${prefix}/bin/conda" ]; then
   shopt -s nullglob
   case "${shell}" in
   fish )

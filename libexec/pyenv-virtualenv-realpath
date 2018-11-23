@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Summary: Substitute realpath if unavailable as a builtin or file
+# Usage: . pyenv-virtualenv-realpath
+
+if ! {
+    enable -f "${BASH_SOURCE%/*}"/../libexec/pyenv-realpath.dylib realpath ||
+      type realpath
+  } >/dev/null 2>&1; then
+  if [ -n "$PYENV_NATIVE_EXT" ]; then
+    echo "pyenv: failed to load \`realpath' builtin" >&2
+    exit 1
+  fi
+
+  READLINK=$(type -p greadlink readlink | head -1)
+  if [ -z "$READLINK" ]; then
+    echo "pyenv: cannot find readlink - are you missing GNU coreutils?" >&2
+    exit 1
+  fi
+
+  resolve_link() {
+    $READLINK "$1"
+  }
+
+  realpath() {
+    local f="$*" \
+          name dir
+    [[ $f ]] || {
+      >&2 echo ${FUNCNAME[0]}: missing operand
+      return
+    }
+    while [[ -L $f ]]; do
+      f="$(resolve_link "$f")"
+    done
+    if [[ ! -d $f ]]; then
+      name="/${f##*/}"
+      # parent?
+      dir="${f%/*}"
+      if [[ $dir == $f ]]; then
+        #lacks /: parent is current directory
+        f="$PWD"
+      else
+        f="$dir"
+      fi
+    fi
+    #absolute directory
+    dir="$(cd "$f"
+           pwd)"
+    echo "$dir$name"
+  }
+fi

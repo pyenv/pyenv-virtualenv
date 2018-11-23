@@ -6,6 +6,7 @@
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
+. "${BASH_SOURCE%/*}"/../libexec/pyenv-virtualenv-realpath
 
 if [ -z "$PYENV_ROOT" ]; then
   PYENV_ROOT="${HOME}/.pyenv"
@@ -18,6 +19,15 @@ if [ -n "$1" ]; then
 else
   IFS=: versions=($(pyenv-version-name))
 fi
+
+append_virtualenv_prefix() {
+  if [ -d "${VIRTUALENV_PREFIX_PATH}" ]; then
+    VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${VIRTUALENV_PREFIX_PATH:-${PYENV_PREFIX_PATH}}")
+  else
+    echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
+    exit 1
+  fi
+}
 
 VIRTUALENV_PREFIX_PATHS=()
 for version in "${versions[@]}"; do
@@ -55,12 +65,11 @@ for version in "${versions[@]}"; do
           fi
         fi
       fi
-      if [ -d "${VIRTUALENV_PREFIX_PATH}" ]; then
-        VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${VIRTUALENV_PREFIX_PATH:-${PYENV_PREFIX_PATH}}")
-      else
-        echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
-        exit 1
-      fi
+      append_virtualenv_prefix
+    elif [ -d "${PYENV_PREFIX_PATH}/conda-meta" ]; then
+      # conda
+      VIRTUALENV_PREFIX_PATH="$(realpath "${PYENV_PREFIX_PATH}"/../..)"
+      append_virtualenv_prefix
     else
       echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
       exit 1

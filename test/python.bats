@@ -31,6 +31,8 @@ teardown() {
   create_executable "2.7.8" "python2.7"
   remove_executable "2.7.9" "python2.7"
 
+  stub pyenv-exec "python2.7 -m venv --help : false"
+  stub pyenv-exec "python2 -m venv --help : false"
   stub pyenv-exec "python -m venv --help : false"
   stub pyenv-exec "virtualenv --verbose * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
@@ -56,6 +58,8 @@ OUT
   remove_executable "2.7.8" "python2.7"
   create_executable "2.7.9" "python2.7"
 
+  stub pyenv-exec "python2.7 -m venv --help : false"
+  stub pyenv-exec "python2 -m venv --help : false"
   stub pyenv-exec "python -m venv --help : false"
   stub pyenv-exec "virtualenv --verbose * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"

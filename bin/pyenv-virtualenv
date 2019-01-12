@@ -101,6 +101,10 @@ http_get_wget() {
 }
 
 version() {
+  if [[ -z "${PYENV_VERSION:-}" ]]; then
+    # `PYENV_VERSION` might not be declared if this was invoked via `--version`
+    export PYENV_VERSION="$(pyenv-version-name)"
+  fi
   detect_venv
   local version
   if [ -n "${USE_CONDA}" ]; then
@@ -108,7 +112,7 @@ version() {
     echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (conda ${version:-unknown})"
   else
     if [ -n "$USE_M_VENV" ]; then
-      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (python -m venv)"
+      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (${M_VENV_PYTHON_BIN:-python} -m venv)"
     else
       version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
       echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
@@ -123,7 +127,7 @@ usage() {
     pyenv-exec conda create --help 2>/dev/null || true
   else
     if [ -n "${USE_M_VENV}" ]; then
-      pyenv-exec python -m venv --help 2>/dev/null || true
+      pyenv-exec "${M_VENV_PYTHON_BIN:-python}" -m venv --help 2>/dev/null || true
     else
       pyenv-exec virtualenv --help 2>/dev/null || true
     fi
@@ -141,9 +145,15 @@ detect_venv() {
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    if pyenv-exec python -m venv --help 1>/dev/null 2>&1; then
-      HAS_M_VENV=1
-    fi
+    # Prefer `python3.x` executable if avaialble (#206, #282)
+    local python
+    for python in "python${PYENV_VERSION%.*}" "python${PYENV_VERSION%%.*}" "python"; do
+      if pyenv-exec "${python}" -m venv --help 1>/dev/null 2>&1; then
+        HAS_M_VENV=1
+        M_VENV_PYTHON_BIN="${python}"
+        break
+      fi
+    done
   fi
   # Use `python -m venv` only if there is venv available, virtualenv is not installed, and `-p` not given
   if [ -n "${HAS_CONDA}" ]; then
@@ -553,7 +563,7 @@ if [ -n "${USE_CONDA}" ]; then
   pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
 else
   if [ -n "${USE_M_VENV}" ]; then
-    pyenv-exec python -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+    pyenv-exec "${M_VENV_PYTHON_BIN:-python}" -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   else
     pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   fi

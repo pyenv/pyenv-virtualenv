@@ -17,7 +17,7 @@ OUT
   create_executable "3.5.1" "virtualenv"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.5.1'"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.5.1'"
-  stub pyenv-exec "python -m venv --help : true"
+  stub pyenv-exec "python3.5 -m venv --help : true"
   stub pyenv-hooks "virtualenv : echo '$HOOK_PATH'/virtualenv.bash"
   stub pyenv-exec "echo PYENV_VERSION=3.5.1 \"\$@\""
   stub pyenv-exec "echo PYENV_VERSION=3.5.1 \"\$@\""

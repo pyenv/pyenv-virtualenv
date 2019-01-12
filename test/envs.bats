@@ -25,15 +25,15 @@ unstub_pyenv() {
   stub pyenv-version-name "echo '${PYENV_VERSION}'"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python -m venv --help : true"
-  stub pyenv-exec "python -m venv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/3.5.1/envs/venv/bin"
+  stub pyenv-exec "python3.5 -m venv --help : true"
+  stub pyenv-exec "python3.5 -m venv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/3.5.1/envs/venv/bin"
   stub pyenv-exec "python -s -m ensurepip : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pip"
 
   run pyenv-virtualenv venv
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.5.1 python -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
+PYENV_VERSION=3.5.1 python3.5 -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
 PYENV_VERSION=3.5.1/envs/venv python -s -m ensurepip
 rehashed
 OUT

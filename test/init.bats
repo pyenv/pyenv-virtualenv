@@ -54,7 +54,7 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\${VIRTUAL_ENV:-}" ]; then
     eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true
@@ -76,7 +76,7 @@ set -gx PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
 set -gx PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l ret \$status
-  if [ -n "\$VIRTUAL_ENV" ]
+  if [ -n "\${VIRTUAL_ENV:-}" ]
     pyenv activate --quiet; or pyenv deactivate --quiet; or true
   else
     pyenv activate --quiet; or true
@@ -95,7 +95,7 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\${VIRTUAL_ENV:-}" ]; then
     eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true

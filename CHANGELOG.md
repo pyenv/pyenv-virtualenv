@@ -1,5 +1,9 @@
 ## Version History
 
+#### 1.1.5
+
+* Fix install script (#290, #302)
+
 #### 1.1.4
 
 * Support newer conda (#290)

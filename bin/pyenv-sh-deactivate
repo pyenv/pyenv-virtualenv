@@ -64,7 +64,7 @@ if [ -d "${prefix}/conda-meta" ] ||
   shopt -s nullglob
   case "${shell}" in
   fish )
-    : # conda doesn't support fish
+      echo "set -e CONDA_PREFIX"
     ;;
   * )
     for script in "${prefix}/etc/conda/deactivate.d"/*.sh; do

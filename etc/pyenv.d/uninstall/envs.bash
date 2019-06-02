@@ -20,11 +20,11 @@ if [ -n "${DEFINITION}" ]; then
       fi
     else
       # Uninstall all virtualenvs inside `envs` directory too
-      shopt -s nullglob
+      shopt -s dotglob nullglob
       for virtualenv in "${PREFIX}/envs/"*; do
         pyenv-virtualenv-delete ${FORCE+-f} "${DEFINITION}/envs/${virtualenv##*/}"
       done
-      shopt -u nullglob
+      shopt -u dotglob nullglob
     fi
   fi
 fi

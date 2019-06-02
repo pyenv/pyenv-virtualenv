@@ -76,7 +76,7 @@ print_version() {
   num_versions=$((num_versions + 1))
 }
 
-shopt -s nullglob
+shopt -s dotglob nullglob
 for path in "$versions_dir"/*; do
   if [ -d "$path" ]; then
     if [ -n "$skip_aliases" ] && [ -L "$path" ]; then
@@ -96,7 +96,7 @@ for path in "$versions_dir"/*; do
     done
   fi
 done
-shopt -u nullglob
+shopt -u dotglob nullglob
 
 if [ "$num_versions" -eq 0 ] && [ -n "$include_system" ]; then
   echo "Warning: no Python virtualenv detected on the system" >&2

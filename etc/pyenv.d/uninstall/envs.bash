@@ -5,8 +5,7 @@ resolve_link() {
 if [ -n "${DEFINITION}" ]; then
   if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
     # Uninstall virtualenv by long name
-    exec pyenv-virtualenv-delete ${FORCE+-f} "${DEFINITION}"
-    exit 128
+    pyenv-virtualenv-delete ${FORCE+-f} "${DEFINITION}"
   else
     VERSION_NAME="${VERSION_NAME:-${DEFINITION##*/}}"
     PREFIX="${PREFIX:-${PYENV_ROOT}/versions/${VERSION_NAME}}"
@@ -15,8 +14,7 @@ if [ -n "${DEFINITION}" ]; then
       REAL_DEFINITION="${REAL_PREFIX#${PYENV_ROOT}/versions/}"
       if [[ "${REAL_DEFINITION}" != "${REAL_DEFINITION%/envs/*}" ]]; then
         # Uninstall virtualenv by short name
-        exec pyenv-virtualenv-delete ${FORCE+-f} "${REAL_DEFINITION}"
-        exit 128
+        pyenv-virtualenv-delete ${FORCE+-f} "${REAL_DEFINITION}"
       fi
     else
       # Uninstall all virtualenvs inside `envs` directory too
@@ -28,3 +26,4 @@ if [ -n "${DEFINITION}" ]; then
     fi
   fi
 fi
+FORCE=t

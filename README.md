@@ -52,7 +52,7 @@ From inside that directory you can:
     
     **Pyenv note**: You may also need to add `eval "$(pyenv init -)"` to your profile if you haven't done so already.
 
-3. **Restart your shell to enable pyenv-virtualenv**
+3. **Restart your shell to enable pyenv-virtualenv (not needed in fish)**
 
     ```sh
     $ exec "$SHELL"

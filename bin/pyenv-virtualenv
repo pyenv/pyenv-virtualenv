@@ -141,6 +141,9 @@ detect_venv() {
   local prefix="$(pyenv-prefix)"
   if [ -d "${prefix}/conda-meta" ] || [ -x "${prefix}/bin/conda" ]; then
     HAS_CONDA=1
+		if [ -d "${prefix}/envs" ]; then
+			IS_BASE_CONDA=1
+		fi
   else
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
@@ -560,7 +563,11 @@ STATUS=0
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 if [ -n "${USE_CONDA}" ]; then
-  pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
+  if [ -n "${IS_BASE_CONDA}" ]; then
+    pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
+  else
+    pyenv-exec conda create $QUIET $VERBOSE --clone "${VERSION_NAME##*/}" --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" || STATUS="$?"
+  fi
 else
   if [ -n "${USE_M_VENV}" ]; then
     pyenv-exec "${M_VENV_PYTHON_BIN:-python}" -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"

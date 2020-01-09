@@ -1,6 +1,5 @@
 sudo: false
-install: git clone https://github.com/sstephenson/bats.git
-script: bats/bin/bats --tap test
+script: make test
 language: c
 notifications:
   email:

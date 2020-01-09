@@ -4,3 +4,4 @@
 /libexec/pyenv-virtualenv/*/__pycache__
 *.swo
 *.swp
+bats/

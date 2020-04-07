@@ -1,5 +1,9 @@
 ## Version History
 
+### 1.1.6 Unreleased
+
+* WIP: adds the ~virtualenv-local~ command for making envs in any directory
+
 #### 1.1.5
 
 * Fix install script (#290, #302)

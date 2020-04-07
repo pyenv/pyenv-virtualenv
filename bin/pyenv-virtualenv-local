@@ -1,0 +1,645 @@
+#!/usr/bin/env bash
+#
+# Summary: Create a Python virtualenv using the pyenv-virtualenv plugin in the local dir
+#
+# Usage: pyenv virtualenv [-f|--force] [VIRTUALENV_OPTIONS] [version] <virtualenv-name>
+#        pyenv virtualenv --version
+#        pyenv virtualenv --help
+#
+#   -f/--force       Install even if the version appears to be installed already
+#
+
+PYENV_VIRTUALENV_VERSION="1.1.5"
+
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+if [ -z "${PYENV_ROOT}" ]; then
+  PYENV_ROOT="$(pyenv-root)"
+fi
+
+# Provide pyenv completions
+if [ "$1" = "--complete" ]; then
+  exec pyenv-versions --bare
+fi
+
+unset PIP_REQUIRE_VENV
+unset PIP_REQUIRE_VIRTUALENV
+
+# Define library functions
+parse_options() {
+  OPTIONS=()
+  ARGUMENTS=()
+  local arg option index
+
+  for arg in "$@"; do
+    if [ "${arg:0:1}" = "-" ]; then
+      if [ "${arg:1:1}" = "-" ]; then
+        OPTIONS[${#OPTIONS[*]}]="${arg:2}"
+      else
+        index=1
+        while option="${arg:$index:1}"; do
+          [ -n "$option" ] || break
+          OPTIONS[${#OPTIONS[*]}]="$option"
+          index=$(($index+1))
+        done
+      fi
+    else
+      ARGUMENTS[${#ARGUMENTS[*]}]="$arg"
+    fi
+  done
+}
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+http() {
+  local method="$1"
+  local url="$2"
+  local file="$3"
+  [ -n "$url" ] || return 1
+
+  if type curl &>/dev/null; then
+    "http_${method}_curl" "$url" "$file"
+  elif type wget &>/dev/null; then
+    "http_${method}_wget" "$url" "$file"
+  else
+    echo "error: please install \`curl\` or \`wget\` and try again" >&2
+    exit 1
+  fi
+}
+
+http_head_curl() {
+  curl -qsILf "$1" >&4 2>&1
+}
+
+http_get_curl() {
+  curl -C - -o "${2:--}" -qsSLf "$1"
+}
+
+http_head_wget() {
+  wget -q --spider "$1" >&4 2>&1
+}
+
+http_get_wget() {
+  wget -nv -c -O "${2:--}" "$1"
+}
+
+version() {
+  if [[ -z "${PYENV_VERSION:-}" ]]; then
+    # `PYENV_VERSION` might not be declared if this was invoked via `--version`
+    export PYENV_VERSION="$(pyenv-version-name)"
+  fi
+  detect_venv
+  local version
+  if [ -n "${USE_CONDA}" ]; then
+    version="$(pyenv-exec conda --version 2>/dev/null || true)"
+    echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (conda ${version:-unknown})"
+  else
+    if [ -n "$USE_M_VENV" ]; then
+      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (${M_VENV_PYTHON_BIN:-python} -m venv)"
+    else
+      version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
+      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
+    fi
+  fi
+}
+
+usage() {
+  # We can remove the sed fallback once pyenv 0.2.0 is widely available.
+  pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
+  if [ -n "${USE_CONDA}" ]; then
+    pyenv-exec conda create --help 2>/dev/null || true
+  else
+    if [ -n "${USE_M_VENV}" ]; then
+      pyenv-exec "${M_VENV_PYTHON_BIN:-python}" -m venv --help 2>/dev/null || true
+    else
+      pyenv-exec virtualenv --help 2>/dev/null || true
+    fi
+  fi
+  [ -z "$1" ] || exit "$1"
+}
+
+detect_venv() {
+  # Check the existence of executables as a workaround for the issue with pyenv-which-ext
+  # https://github.com/yyuu/pyenv-virtualenv/issues/26
+  local prefix="$(pyenv-prefix)"
+  if [ -x "${prefix}/bin/conda" ]; then
+    HAS_CONDA=1
+  else
+    if [ -x "${prefix}/bin/virtualenv" ]; then
+      HAS_VIRTUALENV=1
+    fi
+    # Prefer `python3.x` executable if avaialble (#206, #282)
+    local python
+    for python in "python${PYENV_VERSION%.*}" "python${PYENV_VERSION%%.*}" "python"; do
+      if pyenv-exec "${python}" -m venv --help 1>/dev/null 2>&1; then
+        HAS_M_VENV=1
+        M_VENV_PYTHON_BIN="${python}"
+        break
+      fi
+    done
+  fi
+  # Use `python -m venv` only if there is venv available, virtualenv is not installed, and `-p` not given
+  if [ -n "${HAS_CONDA}" ]; then
+    USE_CONDA=1
+  else
+    if [ -n "${HAS_M_VENV}" ] && [ -z "${HAS_VIRTUALENV}" ] && [ -z "${VIRTUALENV_PYTHON}" ]; then
+      USE_M_VENV=1
+    fi
+  fi
+}
+
+build_package_ez_setup() {
+  local ez_setup="${PYENV_VIRTUALENV_CACHE_PATH}/ez_setup.py"
+  rm -f "${ez_setup}"
+  { if [ "${EZ_SETUP+defined}" ] && [ -f "${EZ_SETUP}" ]; then
+      echo "Installing setuptools from ${EZ_SETUP}..." 1>&2
+      cat "${EZ_SETUP}"
+    else
+      [ -n "${EZ_SETUP_URL}" ]
+      echo "Installing setuptools from ${EZ_SETUP_URL}..." 1>&2
+      http get "${EZ_SETUP_URL}"
+    fi
+  } 1> "${ez_setup}"
+  pyenv-exec python -s "${ez_setup}" ${EZ_SETUP_OPTS} 1>&2 || {
+    echo "error: failed to install setuptools via ez_setup.py" >&2
+    return 1
+  }
+}
+
+build_package_get_pip() {
+  local get_pip="${PYENV_VIRTUALENV_CACHE_PATH}/get-pip.py"
+  rm -f "${get_pip}"
+  { if [ "${GET_PIP+defined}" ] && [ -f "${GET_PIP}" ]; then
+      echo "Installing pip from ${GET_PIP}..." 1>&2
+      cat "${GET_PIP}"
+    else
+      [ -n "${GET_PIP_URL}" ]
+      echo "Installing pip from ${GET_PIP_URL}..." 1>&2
+      http get "${GET_PIP_URL}"
+    fi
+  } 1> "${get_pip}"
+  pyenv-exec python -s "${get_pip}" ${GET_PIP_OPTS} 1>&2 || {
+    echo "error: failed to install pip via get-pip.py" >&2
+    return 1
+  }
+}
+
+build_package_ensurepip() {
+  pyenv-exec python -s -m ensurepip 2>/dev/null || build_package_get_pip "$@" || return 1
+}
+
+prepare_requirements() {
+  pyenv-exec pip freeze > "${REQUIREMENTS}"
+  mv -f "${VIRTUALENV_PATH}" "${VIRTUALENV_ORIG}"
+}
+
+install_requirements() {
+  if [ -f "${REQUIREMENTS}" ]; then
+    ## Migrate previously installed packages from requirements.txt
+    pyenv-exec pip install $QUIET $VERBOSE --requirement "${REQUIREMENTS}" || {
+      echo
+      echo "PIP INSTALL FAILED"
+      echo
+      echo "Inspect or clean up the original tree at ${VIRTUALENV_ORIG}"
+      echo
+      echo "Package list:"
+      cat "${REQUIREMENTS}" | sed 's/^/ * /'
+      return 1
+    } 1>&2
+    rm -f "${REQUIREMENTS}"
+    rm -fr "${VIRTUALENV_ORIG}"
+  fi
+}
+
+PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
+if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
+  PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
+fi
+VIRTUALENV_OPTIONS=()
+
+unset FORCE
+unset NO_ENSUREPIP
+unset QUIET
+unset UPGRADE
+unset VERBOSE
+unset VIRTUALENV_PYTHON
+
+parse_options "$@"
+for option in "${OPTIONS[@]}"; do
+  case "$option" in
+  "f" | "force" )
+    FORCE=true
+    ;;
+  "h" | "help" )
+    usage 0
+    ;;
+  "no-pip" )
+    NO_ENSUREPIP=1
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    ;;
+  "no-setuptools" )
+    NO_ENSUREPIP=1
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    ;;
+  "p" | "python" )
+    VIRTUALENV_PYTHON="${ARGUMENTS[0]}"
+    ARGUMENTS=("${ARGUMENTS[@]:1}") # shift 1
+    ;;
+  "a" | "alt-dir" )
+      # request installation into an alternate directory
+      ALT_DIR_PATH="${ARGUMENTS[0]}"
+      # flag that says we are in this mode
+      ALT_DIR=true
+      ARGUMENTS=("${ARGUMENTS[@]:1}") # shift 1
+    ;;
+  "q" | "quiet" )
+    QUIET="--quiet"
+    ;;
+  "u" | "upgrade" )
+    UPGRADE=true
+    ;;
+  "v" | "verbose" )
+    VERBOSE="--verbose"
+    ;;
+  "version" )
+    version
+    exit 0
+    ;;
+  "without-pip" )
+    NO_ENSUREPIP=1
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    ;;
+  * ) # virtualenv long options
+    if [[ "$option" == "python="* ]]; then
+      VIRTUALENV_PYTHON="${option#python=}"
+    else
+      VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--$option"
+    fi
+    ;;
+  esac
+done
+
+if [[ "${#ARGUMENTS[@]}" == 0 ]]; then
+  echo "pyenv-virtualenv: no virtualenv name given." 1>&2
+  exit 1
+elif [[ "${#ARGUMENTS[@]}" == 1 ]]; then
+  # If only one argument given, use current version as source version
+  OLDIFS="${IFS}"
+  IFS=:
+  VERSION_NAMES=($(pyenv-version-name))
+  IFS="${OLDIFS}"
+  VERSION_NAME="${VERSION_NAMES}"
+  VIRTUALENV_NAME="${ARGUMENTS[0]}"
+else
+  # Otherwise, use former as source version, and latter as virtualenv version
+  VERSION_NAME="${ARGUMENTS[0]}"
+  VIRTUALENV_NAME="${ARGUMENTS[1]}"
+fi
+
+if [ -z "${VERSION_NAME}" ] || [ -z "${VIRTUALENV_NAME}" ]; then
+  usage 1
+fi
+
+if [[ "${VIRTUALENV_NAME##*/}" == "system" ]]; then
+  echo "pyenv-virtualenv: \`system' is not allowed as virtualenv name." 1>&2
+  exit 1
+fi
+
+if [ "$VIRTUALENV_NAME" != "${VIRTUALENV_NAME%[[:space:]]*}" ]; then
+  echo "pyenv-virtualenv: no whitespace allowed in virtualenv name." 1>&2
+  exit 1
+fi
+
+if [ "${VIRTUALENV_NAME}" != "${VIRTUALENV_NAME%/*}" ] && [[ "${VIRTUALENV_NAME}" != "${VERSION_NAME%%/*}/envs/${VIRTUALENV_NAME##*/}" ]] ; then
+  echo "pyenv-virtualenv: no slash allowed in virtualenv name." 1>&2
+  exit 1
+fi
+
+# Set VERSION_NAME as default version in this script
+export PYENV_VERSION="${VERSION_NAME}"
+
+# Source version must exist before creating virtualenv.
+PREFIX="$(pyenv-prefix 2>/dev/null || true)"
+if [ ! -d "${PREFIX}" ]; then
+  echo "pyenv-virtualenv: \`${PYENV_VERSION}' is not installed in pyenv." 1>&2
+  exit 1
+fi
+
+if [ -z "$TMPDIR" ]; then
+  TMP="/tmp"
+else
+  TMP="${TMPDIR%/}"
+fi
+
+
+
+# Not create `system/envs` directory even if source version is `system`
+if [[ "${VERSION_NAME%/envs/*}" == "system" ]]; then
+  VIRTUALENV_NAME="${VIRTUALENV_NAME##*/}"
+else
+  VIRTUALENV_PREFIX="$(pyenv-virtualenv-prefix 2>/dev/null || true)"
+  if [[ "${VIRTUALENV_PREFIX%/*}" == "${PYENV_ROOT}/versions" ]]; then
+      VIRTUALENV_NAME="${VIRTUALENV_PREFIX#${PYENV_ROOT}/versions/}/envs/${VIRTUALENV_NAME##*/}"
+  elif [[ -n $ALT_DIR ]]; then
+       VIRTUALENV_NAME="$VIRTUALENV_NAME"
+  else
+    VIRTUALENV_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME##*/}"
+  fi
+fi
+
+echo "$VIRTUALENV_PREFIX"
+echo "The virtualenv name is: $VIRTUALENV_NAME"
+
+if [[ -n $ALT_DIR ]]; then
+    VIRTUALENV_PATH="${ALT_DIR_PATH}/${VIRTUALENV_NAME}"
+else
+    VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
+fi
+
+
+
+## need to create symlinks in the top level versions for backwards
+## compatibility
+
+# TODO: I don't like this behavior... Maybe we could change it
+if [[ "${VIRTUALENV_PATH/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
+  COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME##*/}"
+fi
+
+# if [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
+#   if [ -z ${FORCE} ]; then
+#     if [ -e "${COMPAT_VIRTUALENV_PATH}" ] || [ -L "${COMPAT_VIRTUALENV_PATH}" ]; then
+#       echo "pyenv-virtualenv: \`${COMPAT_VIRTUALENV_PATH}' already exists." 1>&2
+#       exit 1
+#     fi
+#   fi
+# fi
+
+unset HAS_VIRTUALENV
+unset HAS_M_VENV
+unset USE_CONDA
+unset USE_M_VENV
+detect_venv
+
+SEED="$(date "+%Y%m%d%H%M%S").$$"
+VIRTUALENV_ORIG="${VIRTUALENV_PATH}.${SEED}"
+REQUIREMENTS="${TMP}/requirements.${SEED}.txt"
+
+# Upgrade existing virtualenv
+if [ -n "$UPGRADE" ]; then
+  FORCE=1
+  # `python -m venv` has `--upgrade` by default
+  if [ -n "${USE_M_VENV}" ]; then
+    unset UPGRADE
+    VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--upgrade"
+  fi
+fi
+
+if [ -z "${VIRTUALENV_VERSION}" ]; then
+  case "${PYENV_VERSION}" in
+  "3.0"* )
+    NO_ENSUREPIP=1
+    ;;
+  "3.1"* )
+    NO_ENSUREPIP=1
+    ;;
+  "3.2"* | "stackless-3.2"* )
+    # pip 8.x (bundled with virtualenv 14+) doesn't support 3.2 anymore
+    # https://github.com/yyuu/pyenv/issues/531
+    VIRTUALENV_VERSION="13.1.2"
+    NO_ENSUREPIP=1
+    ;;
+  esac
+fi
+
+if [ -n "${USE_CONDA}" ]; then
+  # e.g. `conda create -n py35 python=3.5 anaconda`
+  if [ -n "${VIRTUALENV_PYTHON}" ]; then
+    VIRTUALENV_PYTHON="${VIRTUALENV_PYTHON##*/}"
+    VIRTUALENV_PYTHON="${VIRTUALENV_PYTHON#python}"
+    if [ -n "${VIRTUALENV_PYTHON}" ]; then
+      VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="python=${VIRTUALENV_PYTHON}"
+    fi
+  fi
+else
+  if [ -n "${USE_M_VENV}" ]; then
+    # Unset some arguments not supported by `python -m venv`
+    unset QUIET
+    unset VERBOSE
+    if [ -n "${VIRTUALENV_PYTHON}" ]; then
+      echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by \`python -m venv'." 1>&2
+      exit 1
+    fi
+  else
+    if [ -n "${VIRTUALENV_PYTHON}" ]; then
+      if [[ "${VIRTUALENV_PYTHON}" == "${VIRTUALENV_PYTHON##*/}" ]] || [[ "${VIRTUALENV_PYTHON}" == "${PYENV_ROOT}/shims/"* ]]; then
+        python="$(pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+        if [ -x "${python}" ]; then
+          VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
+        else
+          python="$(PYENV_VERSION="$(pyenv-whence "${VIRTUALENV_PYTHON##*/}" 2>/dev/null | tail -n 1 || true)" pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+          if [ -x "${python}" ]; then
+            VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
+          else
+            echo "pyenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in pyenv." 1>&2
+            exit 1
+          fi
+        fi
+      else
+        VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${VIRTUALENV_PYTHON}"
+      fi
+    fi
+    if [ -z "${HAS_VIRTUALENV}" ]; then
+      if [ -n "${VIRTUALENV_VERSION}" ]; then
+        virtualenv_spec="virtualenv==${VIRTUALENV_VERSION}"
+      else
+        virtualenv_spec="virtualenv"
+      fi
+      pyenv-exec pip install $QUIET $VERBOSE "${virtualenv_spec}"
+      HAS_VIRTUALENV=1
+    fi
+  fi
+fi
+
+# Unset environment variables which start with `VIRTUALENV_`.
+# These variables are reserved for virtualenv.
+unset VIRTUALENV_VERSION
+
+
+# Download specified version of ez_setup.py/get-pip.py.
+if [ -z "${EZ_SETUP_URL}" ]; then
+  if [ -n "${SETUPTOOLS_VERSION}" ]; then
+    EZ_SETUP_URL="https://bitbucket.org/pypa/setuptools/raw/${SETUPTOOLS_VERSION}/ez_setup.py"
+    unset SETUPTOOLS_VERSION
+  else
+    EZ_SETUP_URL="https://bootstrap.pypa.io/ez_setup.py"
+  fi
+fi
+if [ -z "${GET_PIP_URL}" ]; then
+  if [ -n "${PIP_VERSION}" ]; then
+    { colorize 1 "WARNING"
+      echo ": Setting PIP_VERSION=${PIP_VERSION} is no longer supported and may cause failures during the install process."
+    } 1>&2
+    GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
+    # Unset `PIP_VERSION` from environment before invoking `get-pip.py` to deal with "ValueError: invalid truth value" (pypa/pip#4528)
+    unset PIP_VERSION
+  else
+    # Use custom get-pip URL based on the target version (#1127)
+    case "${PYENV_VERSION}" in
+    2.6 | 2.6.* )
+      GET_PIP_URL="https://bootstrap.pypa.io/2.6/get-pip.py"
+      ;;
+    3.2 | 3.2.* )
+      GET_PIP_URL="https://bootstrap.pypa.io/3.2/get-pip.py"
+      ;;
+    3.3 | 3.3.* )
+      GET_PIP_URL="https://bootstrap.pypa.io/3.3/get-pip.py"
+      ;;
+    * )
+      GET_PIP_URL="https://bootstrap.pypa.io/get-pip.py"
+      ;;
+    esac
+  fi
+fi
+
+
+# Define `before_virtualenv` and `after_virtualenv` functions that allow
+# plugin hooks to register a string of code for execution before or
+# after the installation process.
+declare -a before_hooks after_hooks
+
+before_virtualenv() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_virtualenv() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# Load plugin hooks.
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`pyenv-hooks virtualenv`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
+
+[ -d "${VIRTUALENV_PATH}" ] && PREFIX_EXISTS=1
+
+echo "The virtualenv path is:"
+echo $VIRTUALENV_PATH
+
+
+# If the virtualenv exists, prompt for confirmation unless
+# the --force option was specified.
+if [ -d "${VIRTUALENV_PATH}/bin" ]; then
+  if [ -z "$FORCE" ]; then
+    echo "pyenv-virtualenv: ${VIRTUALENV_PATH} already exists" 1>&2
+    read -p "continue with installation? (y/N) "
+
+    case "$REPLY" in
+    y* | Y* ) ;;
+    * ) exit 1 ;;
+    esac
+  fi
+
+  if [ -n "$UPGRADE" ]; then
+    if [ -n "${NO_ENSUREPIP}" ]; then
+      echo "pyenv-virtualenv: upgrading will not work with --no-setuptools or --no-pip" 1>&2
+      exit 1
+    else
+      PYENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
+    fi
+  fi
+fi
+
+# Execute `before_virtualenv` hooks.
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
+# Plan cleanup on unsuccessful installation.
+cleanup() {
+  [[ -L "${COMPAT_VIRTUALENV_PATH}" ]] && rm "${COMPAT_VIRTUALENV_PATH}"
+  [ -z "${PREFIX_EXISTS}" ] && rm -rf "$VIRTUALENV_PATH"
+}
+
+trap cleanup SIGINT ERR
+
+
+echo "The virtualenv path is:"
+echo $VIRTUALENV_PATH
+
+# Invoke virtualenv and record exit status in $STATUS.
+STATUS=0
+# virtualenv may download distribute/setuptools into the current directory.
+# Change to cache directory to reuse them between invocations.
+if [[ -n $ALT_DIR ]]; then
+    echo "no cache"
+else
+    mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
+    cd "${PYENV_VIRTUALENV_CACHE_PATH}"
+fi
+
+echo "Current dir is $(pwd)"
+if [ -n "${USE_CONDA}" ]; then
+  pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
+else
+    if [ -n "${USE_M_VENV}" ]; then
+        pyenv-exec "${M_VENV_PYTHON_BIN:-python}" -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+  else
+      pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+  fi
+fi
+
+## Create symlink in the `versions` directory for backward compatibility
+# if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
+#   ln -fs "${VIRTUALENV_PATH}" "${COMPAT_VIRTUALENV_PATH}"
+# fi
+
+if [ ! -e "${VIRTUALENV_PATH}/bin/pydoc" ]; then
+  mkdir -p "${VIRTUALENV_PATH}/bin"
+  cat <<EOS > "${VIRTUALENV_PATH}/bin/pydoc"
+#!${VIRTUALENV_PATH}/bin/python
+import pydoc
+if __name__ == '__main__':
+      pydoc.cli()
+EOS
+  chmod +x "${VIRTUALENV_PATH}/bin/pydoc"
+fi
+
+# if [ -z "${NO_ENSUREPIP}" ]; then
+#   ## Install setuptools and pip.
+#   PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
+
+#   ## Migrate previously installed packages from requirements.txt.
+#   PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
+# fi
+
+# Execute `after_virtualenv` hooks.
+for hook in "${after_hooks[@]}"; do eval "$hook"; done
+
+# Run `pyenv-rehash` after a successful installation.
+if [ "$STATUS" == "0" ]; then
+  pyenv-rehash
+else
+  cleanup
+fi
+
+exit "$STATUS"

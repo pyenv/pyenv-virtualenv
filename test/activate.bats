@@ -36,6 +36,7 @@ export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv) \${PS1}";
+. ${TMP}/pyenv/versions/venv/bin/activate;
 EOS
 
   unstub pyenv-version-name
@@ -61,6 +62,7 @@ export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv) \${PS1}";
+. ${TMP}/pyenv/versions/venv/bin/activate;
 EOS
 
   unstub pyenv-version-name
@@ -89,6 +91,7 @@ export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv) \${PS1}";
+. ${TMP}/pyenv/versions/venv/bin/activate;
 EOS
 
   unstub pyenv-version-name
@@ -117,6 +120,7 @@ export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv) \${PS1}";
+. ${TMP}/pyenv/versions/venv/bin/activate;
 EOS
 
   unstub pyenv-version-name
@@ -141,6 +145,7 @@ deactivated
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not working for fish.
+. ${TMP}/pyenv/versions/venv/bin/activate.fish;
 EOS
 
   unstub pyenv-version-name
@@ -167,6 +172,7 @@ set -gx PYENV_ACTIVATE_SHELL 1;
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 pyenv-virtualenv: prompt changing not working for fish.
+. ${TMP}/pyenv/versions/venv/bin/activate.fish;
 EOS
 
   unstub pyenv-version-name
@@ -194,6 +200,7 @@ export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv27) \${PS1}";
+. ${TMP}/pyenv/versions/venv27/bin/activate;
 EOS
 
   unstub pyenv-virtualenv-prefix
@@ -220,6 +227,7 @@ export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv27) \${PS1}";
+. ${TMP}/pyenv/versions/venv27/bin/activate;
 EOS
 
   unstub pyenv-virtualenv-prefix
@@ -244,6 +252,7 @@ set -gx PYENV_ACTIVATE_SHELL 1;
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing not working for fish.
+. ${TMP}/pyenv/versions/venv27/bin/activate.fish;
 EOS
 
   unstub pyenv-virtualenv-prefix
@@ -268,6 +277,7 @@ set -gx PYENV_ACTIVATE_SHELL 1;
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing not working for fish.
+. ${TMP}/pyenv/versions/venv27/bin/activate.fish;
 EOS
 
   unstub pyenv-virtualenv-prefix
@@ -393,6 +403,7 @@ export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1}";
 export PS1="(venv27) \${PS1}";
+. ${TMP}/pyenv/versions/venv27/bin/activate;
 EOS
 
   unstub pyenv-sh-deactivate

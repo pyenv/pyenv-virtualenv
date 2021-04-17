@@ -9,22 +9,11 @@
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
 
-resolve_link() {
-  $(type -p greadlink readlink | head -1) "$1"
-}
-
 abs_dirname() {
-  local cwd="$(pwd)"
   local path="$1"
-
-  while [ -n "$path" ]; do
-    cd "${path%/*}"
-    local name="${path##*/}"
-    path="$(resolve_link "$name" || true)"
-  done
-
-  pwd
-  cd "$cwd"
+  path="$(realpath $path)"
+  local abs_dirname="${path%/*}"
+  echo "${abs_dirname}"
 }
 
 PYENV_VIRTUALENV_INSTALL_PREFIX="$(dirname "$(abs_dirname "$0")")"

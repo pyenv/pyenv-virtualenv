@@ -50,7 +50,7 @@ fi
 if [ -z "$print" ]; then
   case "$shell" in
   bash )
-    profile='~/.bash_profile'
+    profile='~/.bashrc'
     ;;
   zsh )
     profile='~/.zshrc'

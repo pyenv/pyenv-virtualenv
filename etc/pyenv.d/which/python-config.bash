@@ -35,7 +35,7 @@ if [ ! -x "${PYENV_COMMAND_PATH}" ] && [[ "${PYENV_COMMAND_PATH##*/}" == "python
         fi
       fi
       virtualenv_command_path="${virtualenv_prefix}/bin/${PYENV_COMMAND_PATH##*/}"
-      if [ -x "${virtualenv_command_path}" ]; then
+      if [[ -f "${virtualenv_command_path}" && -x "${virtualenv_command_path}" ]]; then
         PYENV_COMMAND_PATH="${virtualenv_command_path}"
       fi
     fi

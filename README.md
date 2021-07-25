@@ -75,12 +75,13 @@ Or, if you would like to install the latest development release:
 $ brew install --HEAD pyenv-virtualenv
 ```
 
-After installation, you'll still need to add 
+After installation, you'll still need to do
+[Pyenv shell setup steps](https://github.com/pyenv/pyenv#basic-github-checkout)
+then add 
 ```sh
-eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 ```
-to your profile (as stated in the caveats). You'll only ever have to do this once.
+to your shell's `.rc` file (as stated in the caveats). You'll only ever have to do this once.
 
 
 ## Usage

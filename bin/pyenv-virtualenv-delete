@@ -88,7 +88,7 @@ if [ -z "$FORCE" ]; then
     exit 1
   fi
 
-  read -p "pyenv-virtualenv: remove $PREFIX? "
+  read -p "pyenv-virtualenv: remove $PREFIX? (y/N) "
   case "$REPLY" in
   y* | Y* ) ;;
   * ) exit 1 ;;

@@ -18,5 +18,12 @@ Make sure you have checked all steps below.
 - [ ] pyenv-virtualenv version:
 - [ ] Python version:
 - [ ] virtualenv version (if installed):
-- [ ] Please attach debug log of a faulty Pyenv invocation as a gist
-  * You can turn on verbose debug logging using by setting `PYENV_DEBUG=1`, e.g. `env PYENV_DEBUG=1 pyenv install -v 3.6.4`
+- [ ] Please attach the debug log of a faulty Pyenv invocation as a gist
+  * If the problem happens in a Pyenv invocation, you can turn on debug logging by setting `PYENV_DEBUG=1`, e.g. `env PYENV_DEBUG=1 pyenv install -v 3.6.4`
+  * If the problem happens outside of a Pyenv invocation, get the debug log like this:
+     ```
+     export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+     set -x
+     <reproduce the problem>
+     set +x
+     ```

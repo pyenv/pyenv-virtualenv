@@ -126,13 +126,13 @@ esac
 
 if [[ "$shell" != "fish" ]]; then
   cat <<EOS
-  local ret=\$?
+  local ret=\$?;
   if [ -n "\$VIRTUAL_ENV" ]; then
-    eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
+    eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true;
   else
-    eval "\$(pyenv sh-activate --quiet || true)" || true
-  fi
-  return \$ret
+    eval "\$(pyenv sh-activate --quiet || true)" || true;
+  fi;
+  return \$ret;
 };
 EOS
 

@@ -34,15 +34,15 @@ unset CONDA_PREFIX
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
-if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+if [ -n "\${_OLD_VIRTUAL_PATH:-}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
   unset _OLD_VIRTUAL_PATH;
 fi;
-if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME:-}" ]; then
   export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
   unset _OLD_VIRTUAL_PYTHONHOME;
 fi;
-if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+if [ -n "\${_OLD_VIRTUAL_PS1:-}" ]; then
   export PS1="\${_OLD_VIRTUAL_PS1}";
   unset _OLD_VIRTUAL_PS1;
 fi;
@@ -102,15 +102,15 @@ unset CONDA_PREFIX
 unset PYENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 unset CONDA_DEFAULT_ENV;
-if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
+if [ -n "\${_OLD_VIRTUAL_PATH:-}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
   unset _OLD_VIRTUAL_PATH;
 fi;
-if [ -n "\${_OLD_VIRTUAL_PYTHONHOME}" ]; then
+if [ -n "\${_OLD_VIRTUAL_PYTHONHOME:-}" ]; then
   export PYTHONHOME="\${_OLD_VIRTUAL_PYTHONHOME}";
   unset _OLD_VIRTUAL_PYTHONHOME;
 fi;
-if [ -n "\${_OLD_VIRTUAL_PS1}" ]; then
+if [ -n "\${_OLD_VIRTUAL_PS1:-}" ]; then
   export PS1="\${_OLD_VIRTUAL_PS1}";
   unset _OLD_VIRTUAL_PS1;
 fi;

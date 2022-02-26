@@ -485,7 +485,7 @@ if [ -z "${GET_PIP_URL}" ]; then
       GET_PIP_URL="https://bootstrap.pypa.io/pip/2.7/get-pip.py"
       ;;
     3.2 | 3.2.* )
-      GET_PIP_URL="https://bootstrap.pypa.io/3.2/get-pip.py"
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/3.2/get-pip.py"
       ;;
     3.3 | 3.3.* )
       GET_PIP_URL="https://bootstrap.pypa.io/3.3/get-pip.py"

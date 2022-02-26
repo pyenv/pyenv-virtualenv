@@ -500,7 +500,7 @@ if [ -z "${GET_PIP_URL}" ]; then
       GET_PIP_URL="https://bootstrap.pypa.io/pip/3.6/get-pip.py"
       ;;
     * )
-      GET_PIP_URL="https://bootstrap.pypa.io/get-pip.py"
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/get-pip.py"
       ;;
     esac
   fi

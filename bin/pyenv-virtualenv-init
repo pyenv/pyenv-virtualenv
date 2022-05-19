@@ -86,6 +86,8 @@ fi
 case "$shell" in
 fish )
   cat <<EOS
+while set index (contains -i -- "${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims" \$PATH)
+set -eg PATH[\$index]; end; set -e index
 set -gx PATH '${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims' \$PATH;
 set -gx PYENV_VIRTUALENV_INIT 1;
 EOS

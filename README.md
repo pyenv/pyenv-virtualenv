@@ -43,6 +43,9 @@ From inside that directory you can:
     **Fish shell note**:  Add this to your `~/.config/fish/config.fish`
 
     ```sh
+    if which pyenv-virtualenv-init > /dev/null
+        eval "$(pyenv virtualenv-init -)"
+    end
     status --is-interactive; and pyenv virtualenv-init - | source
     ```
 

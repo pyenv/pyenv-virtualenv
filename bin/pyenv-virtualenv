@@ -145,7 +145,7 @@ detect_venv() {
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    # Prefer `python3.x` executable if avaialble (#206, #282)
+    # Prefer `python3.x` executable if available (#206, #282)
     local python
     for python in "python${PYENV_VERSION%.*}" "python${PYENV_VERSION%%.*}" "python"; do
       if pyenv-exec "${python}" -m venv --help 1>/dev/null 2>&1; then

@@ -1,3 +1,4 @@
+/bats/
 /libexec/pyenv-virtualenv/*/*.class
 /libexec/pyenv-virtualenv/*/*.pyc
 /libexec/pyenv-virtualenv/*/*.pyo

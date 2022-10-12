@@ -99,7 +99,9 @@ $ pyenv virtualenv 2.7.10 my-virtual-env-2.7.10
 will create a virtualenv based on Python 2.7.10 under `$(pyenv root)/versions` in a
 folder called `my-virtual-env-2.7.10`.
 
-`pyenv virtualenv` forwards any options to the underlying executable that creates the actual venv (`conda`, `virtualenv`, or `python -m venv`).
+`pyenv virtualenv` forwards any options to the underlying command that actually
+creates the virtual environment (`conda`, `virtualenv`, or `python -m venv`).
+See the output of `pyenv virtualenv --help` for details.
 
 ### Create virtualenv from current version
 

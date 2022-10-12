@@ -69,7 +69,6 @@ EOS
 
 @test "outputs fish-specific syntax" {
   export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
-  export PYENV_DEBUG=1
   run pyenv-virtualenv-init - fish
   assert_success
   assert_output <<EOS

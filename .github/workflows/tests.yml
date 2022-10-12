@@ -30,7 +30,7 @@ jobs:
       #    echo "$PYENV_ROOT/shims:$PYENV_ROOT/bin" >> $GITHUB_PATH
       # macos-11 Github Actions env has an old `readlink` and lacks `greadlink` which causes Bats to break
       - run: |
-          if [[ $RUNNER_OD == "macOS" ]] && [[ $(sw_vers -productVersion | awk -F. '{print $1}') -lt 12 ]]; then
+          if [[ $RUNNER_OS == "macOS" ]] && [[ $(sw_vers -productVersion | awk -F. '{print $1}') -lt 12 ]]; then
             brew install coreutils
           fi
       - run: git clone https://github.com/bats-core/bats-core.git --depth=1 -b v1.2.0 bats

@@ -7,9 +7,9 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          #- ubuntu-20.04
-          #- macos-12
-          #- macos-11
+          - ubuntu-20.04
+          - macos-12
+          - macos-11
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -28,5 +28,5 @@ jobs:
       #  run: |
       #    echo $PYENV_ROOT
       #    echo "$PYENV_ROOT/shims:$PYENV_ROOT/bin" >> $GITHUB_PATH
-      - run: git clone --depth=1 https://github.com/sstephenson/bats.git
+      - run: git clone https://github.com/bats-core/bats-core.git --depth=1 -b v1.2.0 bats
       - run: bats/bin/bats --tap test

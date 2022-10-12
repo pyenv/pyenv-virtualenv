@@ -75,7 +75,7 @@ else
     if pyenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
       PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
       unset COMPAT_PREFIX
-    else
+    elif [ -z "$FORCE" ]; then
       echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
       exit 1
     fi

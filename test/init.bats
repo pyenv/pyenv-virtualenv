@@ -6,7 +6,7 @@ load test_helper
   unset PYENV_SHELL
   SHELL=/bin/false run pyenv-virtualenv-init -
   assert_success
-  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
 }
 
 @test "detect parent shell from script (sh)" {
@@ -15,7 +15,7 @@ load test_helper
   chmod +x ${TMP}/script.sh
   run ${TMP}/script.sh
   assert_success
-  assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+  assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
   rm -f "${TMP}/script.sh"
 }
 
@@ -25,7 +25,7 @@ load test_helper
   chmod +x ${TMP}/script.sh
   run ${TMP}/script.sh
   assert_success
-  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;$PROMPT_COMMAND";'
+  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
   rm -f "${TMP}/script.sh"
 }
 
@@ -54,15 +54,15 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\${VIRTUAL_ENV-}" ]; then
     eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true
   fi
   return \$ret
 };
-if ! [[ "\$PROMPT_COMMAND" =~ _pyenv_virtualenv_hook ]]; then
-  PROMPT_COMMAND="_pyenv_virtualenv_hook;\$PROMPT_COMMAND";
+if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
+  PROMPT_COMMAND="_pyenv_virtualenv_hook;\${PROMPT_COMMAND-}"
 fi
 EOS
 }
@@ -72,6 +72,8 @@ EOS
   run pyenv-virtualenv-init - fish
   assert_success
   assert_output <<EOS
+while set index (contains -i -- "${TMP}/pyenv/plugins/pyenv-virtualenv/shims" \$PATH)
+set -eg PATH[\$index]; end; set -e index
 set -gx PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
 set -gx PYENV_VIRTUALENV_INIT 1;
 function _pyenv_virtualenv_hook --on-event fish_prompt;
@@ -95,7 +97,7 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\${VIRTUAL_ENV-}" ]; then
     eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true

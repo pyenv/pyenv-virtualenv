@@ -72,7 +72,7 @@ EOS
   run pyenv-virtualenv-init - fish
   assert_success
   assert_output <<EOS
-while set index (contains -i -- "${TMP}/pyenv/plugins/pyenv-virtualenv/shims" $PATH)
+while set index (contains -i -- "${TMP}/pyenv/plugins/pyenv-virtualenv/shims" \$PATH)
 set -eg PATH[\$index]; end; set -e index
 set -gx PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
 set -gx PYENV_VIRTUALENV_INIT 1;

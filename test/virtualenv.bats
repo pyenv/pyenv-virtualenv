@@ -38,7 +38,7 @@ unstub_pyenv() {
 
   assert_output <<OUT
 PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/venv
-Installing pip from https://bootstrap.pypa.io/get-pip.py...
+Installing pip from https://bootstrap.pypa.io/pip/2.7/get-pip.py...
 rehashed
 OUT
   assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/pydoc" ]

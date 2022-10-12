@@ -50,7 +50,7 @@ fi
 if [ -z "$print" ]; then
   case "$shell" in
   bash )
-    profile='~/.bash_profile'
+    profile='~/.bashrc'
     ;;
   zsh )
     profile='~/.zshrc'
@@ -86,6 +86,8 @@ fi
 case "$shell" in
 fish )
   cat <<EOS
+while set index (contains -i -- "${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims" \$PATH)
+set -eg PATH[\$index]; end; set -e index
 set -gx PATH '${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims' \$PATH;
 set -gx PYENV_VIRTUALENV_INIT 1;
 EOS
@@ -127,7 +129,7 @@ esac
 if [[ "$shell" != "fish" ]]; then
   cat <<EOS
   local ret=\$?
-  if [ -n "\$VIRTUAL_ENV" ]; then
+  if [ -n "\${VIRTUAL_ENV-}" ]; then
     eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true
@@ -139,8 +141,8 @@ EOS
   case "$shell" in
   bash )
     cat <<EOS
-if ! [[ "\$PROMPT_COMMAND" =~ _pyenv_virtualenv_hook ]]; then
-  PROMPT_COMMAND="_pyenv_virtualenv_hook;\$PROMPT_COMMAND";
+if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
+  PROMPT_COMMAND="_pyenv_virtualenv_hook;\${PROMPT_COMMAND-}"
 fi
 EOS
     ;;

@@ -76,6 +76,7 @@ print_version() {
   num_versions=$((num_versions + 1))
 }
 
+shopt -s dotglob
 shopt -s nullglob
 for path in "$versions_dir"/*; do
   if [ -d "$path" ]; then
@@ -96,6 +97,7 @@ for path in "$versions_dir"/*; do
     done
   fi
 done
+shopt -u dotglob
 shopt -u nullglob
 
 if [ "$num_versions" -eq 0 ] && [ -n "$include_system" ]; then

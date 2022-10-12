@@ -37,20 +37,17 @@ From inside that directory you can:
 2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenvs. This is entirely optional but pretty useful. See "Activate virtualenv" below.
 
     ```sh
-    $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
+    $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
     ```
 
     **Fish shell note**:  Add this to your `~/.config/fish/config.fish`
 
     ```sh
-    status --is-interactive; and pyenv init - | source
     status --is-interactive; and pyenv virtualenv-init - | source
     ```
 
-    **Zsh note**: Modify your `~/.zshenv` file instead of `~/.bash_profile`.
+    **Zsh note**: Modify your `~/.zshrc` file instead of `~/.bashrc`.
     
-    **Pyenv note**: You may also need to add `eval "$(pyenv init -)"` to your profile if you haven't done so already.
-
 3. **Restart your shell to enable pyenv-virtualenv**
 
     ```sh
@@ -78,12 +75,13 @@ Or, if you would like to install the latest development release:
 $ brew install --HEAD pyenv-virtualenv
 ```
 
-After installation, you'll still need to add 
+After installation, you'll still need to do
+[Pyenv shell setup steps](https://github.com/pyenv/pyenv#basic-github-checkout)
+then add 
 ```sh
-eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 ```
-to your profile (as stated in the caveats). You'll only ever have to do this once.
+to your shell's `.rc` file (as stated in the caveats). You'll only ever have to do this once.
 
 
 ## Usage

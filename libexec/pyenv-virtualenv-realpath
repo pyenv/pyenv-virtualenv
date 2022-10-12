@@ -3,7 +3,7 @@
 # Usage: . pyenv-virtualenv-realpath
 
 if ! {
-    enable -f "${BASH_SOURCE%/*}"/../libexec/pyenv-realpath.dylib realpath ||
+    enable -f "${BASH_SOURCE%/*}"/../../../libexec/pyenv-realpath.dylib realpath ||
       type realpath
   } >/dev/null 2>&1; then
   if [ -n "$PYENV_NATIVE_EXT" ]; then

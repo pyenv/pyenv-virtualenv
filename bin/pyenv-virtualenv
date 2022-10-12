@@ -6,7 +6,11 @@
 #        pyenv virtualenv --version
 #        pyenv virtualenv --help
 #
-#   -f/--force       Install even if the version appears to be installed already
+#   -f/--force       Install even if the version appears to be installed already. Skip
+#                    prompting for confirmation
+#
+# Notable VIRTUALENV_OPTIONS passed to venv-creating executable, if applicable:
+#   -u/--upgrade     Imply --force
 #
 
 PYENV_VIRTUALENV_VERSION="1.1.5"

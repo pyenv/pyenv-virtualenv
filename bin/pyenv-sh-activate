@@ -52,13 +52,18 @@ while [ $# -gt 0 ]; do
   shift 1
 done
 
+get_current_versions() {
+  local IFS=:
+  current_versions=($(pyenv-version-name 2>/dev/null))
+}
+
 no_shell=
 versions=("$@")
+current_versions=()
 if [ -z "${versions}" ]; then
   no_shell=1
-  OLDIFS="$IFS"
-  IFS=: versions=($(pyenv-version-name 2>/dev/null))
-  IFS="$OLDIFS"
+  get_current_versions
+  versions=("${current_versions[@]}")
 fi
 
 if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
@@ -84,9 +89,7 @@ fi
 
 if ! pyenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
   # fallback to virtualenv of current version
-  OLDIFS="$IFS"
-  IFS=: current_versions=($(pyenv-version-name))
-  IFS="$OLDIFS"
+  [ -n "${current_versions}" ] || get_current_versions
   new_venv="${current_versions%/envs/*}/envs/${venv}"
   if pyenv-virtualenv-prefix "${new_venv}" 1>/dev/null 2>&1; then
     venv="${new_venv}"
@@ -228,8 +231,8 @@ if [ -z "${PYENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
       echo "pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior." 1>&2
     fi
     cat <<EOS
-export _OLD_VIRTUAL_PS1="\${PS1}";
-export PS1="(${venv}) \${PS1}";
+export _OLD_VIRTUAL_PS1="\${PS1:-}";
+export PS1="(${venv}) \${PS1:-}";
 EOS
     ;;
   esac

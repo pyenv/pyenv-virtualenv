@@ -6,7 +6,11 @@
 #        pyenv virtualenv --version
 #        pyenv virtualenv --help
 #
-#   -f/--force       Install even if the version appears to be installed already
+#   -f/--force       Install even if the version appears to be installed already. Skip
+#                    prompting for confirmation
+#
+# Notable VIRTUALENV_OPTIONS passed to venv-creating executable, if applicable:
+#   -u/--upgrade     Imply --force
 #
 
 PYENV_VIRTUALENV_VERSION="1.1.5"
@@ -148,7 +152,7 @@ detect_venv() {
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    # Prefer `python3.x` executable if avaialble (#206, #282)
+    # Prefer `python3.x` executable if available (#206, #282)
     local python
     for python in "python${PYENV_VERSION%.*}" "python${PYENV_VERSION%%.*}" "python"; do
       if pyenv-exec "${python}" -m venv --help 1>/dev/null 2>&1; then
@@ -482,16 +486,28 @@ if [ -z "${GET_PIP_URL}" ]; then
     # Use custom get-pip URL based on the target version (#1127)
     case "${PYENV_VERSION}" in
     2.6 | 2.6.* )
-      GET_PIP_URL="https://bootstrap.pypa.io/2.6/get-pip.py"
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/2.6/get-pip.py"
+      ;;
+    2.7 | 2.7.* )
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/2.7/get-pip.py"
       ;;
     3.2 | 3.2.* )
-      GET_PIP_URL="https://bootstrap.pypa.io/3.2/get-pip.py"
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/3.2/get-pip.py"
       ;;
     3.3 | 3.3.* )
-      GET_PIP_URL="https://bootstrap.pypa.io/3.3/get-pip.py"
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/3.3/get-pip.py"
+      ;;
+    3.4 | 3.4.* )
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/3.4/get-pip.py"
+      ;;
+    3.5 | 3.5.* )
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/3.5/get-pip.py"
+      ;;
+    3.6 | 3.6.* )
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/3.6/get-pip.py"
       ;;
     * )
-      GET_PIP_URL="https://bootstrap.pypa.io/get-pip.py"
+      GET_PIP_URL="https://bootstrap.pypa.io/pip/get-pip.py"
       ;;
     esac
   fi

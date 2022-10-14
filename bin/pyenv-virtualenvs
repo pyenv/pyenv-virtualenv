@@ -7,7 +7,21 @@
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
-. "${BASH_SOURCE%/*}"/../libexec/pyenv-virtualenv-realpath
+if [ -L "${BASH_SOURCE}" ]; then
+    READLINK=$(type -p greadlink readlink | head -1)
+    if [ -z "$READLINK" ]; then
+        echo "pyenv: cannot find readlink - are you missing GNU coreutils?" >&2
+        exit 1
+    fi
+    resolve_link() {
+        $READLINK -f "$1"
+    }
+    script_path=$(resolve_link ${BASH_SOURCE})
+else
+    script_path=${BASH_SOURCE}
+fi
+
+. ${script_path%/*}/../libexec/pyenv-virtualenv-realpath
 
 if [ -z "$PYENV_ROOT" ]; then
   PYENV_ROOT="${HOME}/.pyenv"
@@ -76,6 +90,7 @@ print_version() {
   num_versions=$((num_versions + 1))
 }
 
+shopt -s dotglob
 shopt -s nullglob
 for path in "$versions_dir"/*; do
   if [ -d "$path" ]; then
@@ -96,6 +111,7 @@ for path in "$versions_dir"/*; do
     done
   fi
 done
+shopt -u dotglob
 shopt -u nullglob
 
 if [ "$num_versions" -eq 0 ] && [ -n "$include_system" ]; then

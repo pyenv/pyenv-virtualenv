@@ -50,6 +50,8 @@ for version in "${versions[@]}"; do
     exit 1
   fi
   PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"
+  #supplied $version may be a prefix to be resolved by pyenv-latest
+  version="$(basename "$PYENV_PREFIX_PATH")"
   if [ -x "${PYENV_PREFIX_PATH}/bin/python" ]; then
     if [ -f "${PYENV_PREFIX_PATH}/bin/activate" ]; then
       if [ -f "${PYENV_PREFIX_PATH}/bin/conda" ]; then

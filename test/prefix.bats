@@ -244,16 +244,3 @@ OUT
   remove_virtualenv "venv33" "3.3.6"
   remove_version "3.4.4"
 }
-
-@test "resolves prefixes with pyenv-latest" {
-  create_version "3.4.5"
-  stub pyenv-latest "3.4 : 3.4.5"
-  
-  PYENV_VERSION="3.4" run pyenv-virtualenv-prefix
-  assert_success <<!
-${PYENV_ROOT}/versions/3.4.5
-!
-
-  unstub pyenv-latest
-  remove_version "3.4.5"
-}

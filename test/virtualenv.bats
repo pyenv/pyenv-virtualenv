@@ -60,7 +60,7 @@ OUT
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
-  stub pyenv-latest "2.7 : 2.7.11"
+  stub pyenv-latest "-q 2.7 : echo 2.7.11"
 
   run pyenv-virtualenv "2.7" "venv"
 
@@ -70,7 +70,7 @@ Installing pip from https://bootstrap.pypa.io/pip/2.7/get-pip.py...
 rehashed
 OUT
   assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/pydoc" ]
-  assert ! [ -e "${PYENV_ROOT}/versions/2.7" ]
+  assert [ ! -e "${PYENV_ROOT}/versions/2.7" ]
   assert_success
 
   unstub_pyenv

@@ -50,6 +50,35 @@ OUT
   unstub curl
 }
 
+@test "create virtualenv from a given prefix" {
+  stub_pyenv "2.7.11"
+  stub pyenv-virtualenv-prefix " : false"
+  stub pyenv-exec "python2.7 -m venv --help : false"
+  stub pyenv-exec "python2 -m venv --help : false"
+  stub pyenv-exec "python -m venv --help : false"
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "python -s -m ensurepip : false"
+  stub pyenv-exec "python -s */get-pip.py : true"
+  stub curl true
+  stub pyenv-latest "2.7 : 2.7.11"
+
+  run pyenv-virtualenv "2.7" "venv"
+
+  assert_output <<OUT
+PYENV_VERSION=2.7.11 virtualenv ${PYENV_ROOT}/versions/2.7.11/envs/venv
+Installing pip from https://bootstrap.pypa.io/pip/2.7/get-pip.py...
+rehashed
+OUT
+  assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/pydoc" ]
+  assert ! [ -e "${PYENV_ROOT}/versions/2.7" ]
+  assert_success
+
+  unstub_pyenv
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-exec
+  unstub curl
+}
+
 @test "create virtualenv from current version" {
   export PYENV_VERSION="2.7.11"
   stub_pyenv "${PYENV_VERSION}"

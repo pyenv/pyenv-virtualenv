@@ -310,6 +310,10 @@ else
   VIRTUALENV_NAME="${ARGUMENTS[1]}"
 fi
 
+if [[ -n "${VERSION_NAME}" ]] && command -v pyenv-latest >/dev/null; then
+  VERSION_NAME="$(pyenv-latest -q "${VERSION_NAME}" || echo "${VERSION_NAME}")"
+fi
+
 if [ -z "${VERSION_NAME}" ] || [ -z "${VIRTUALENV_NAME}" ]; then
   usage 1
 fi

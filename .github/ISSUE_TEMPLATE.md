@@ -22,7 +22,11 @@ Make sure you have checked all steps below.
   * If the problem happens in a Pyenv invocation, you can turn on debug logging by setting `PYENV_DEBUG=1`, e.g. `env PYENV_DEBUG=1 pyenv install -v 3.6.4`
   * If the problem happens outside of a Pyenv invocation, get the debug log like this:
      ```
+     # for Bash
      export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+     # for Zsh
+     export PS4='+(%x:%I): %N(%i): '
+
      set -x
      <reproduce the problem>
      set +x

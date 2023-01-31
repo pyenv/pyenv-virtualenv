@@ -33,7 +33,6 @@ setup() {
 deactivated
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
-pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1:-}";
 export PS1="(venv) \${PS1:-}";
 EOS
@@ -86,7 +85,6 @@ deactivated
 pyenv-virtualenv: activate venv
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
-pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1:-}";
 export PS1="(venv) \${PS1:-}";
 EOS
@@ -114,7 +112,6 @@ export PYENV_VERSION="venv";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
-pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1:-}";
 export PS1="(venv) \${PS1:-}";
 EOS
@@ -191,7 +188,6 @@ export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
-pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1:-}";
 export PS1="(venv27) \${PS1:-}";
 EOS
@@ -217,7 +213,6 @@ export PYENV_VERSION="venv27";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
-pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1:-}";
 export PS1="(venv27) \${PS1:-}";
 EOS
@@ -390,7 +385,6 @@ export PYENV_VERSION="venv27:2.7.10";
 export PYENV_ACTIVATE_SHELL=1;
 export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
 export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv27";
-pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior.
 export _OLD_VIRTUAL_PS1="\${PS1:-}";
 export PS1="(venv27) \${PS1:-}";
 EOS

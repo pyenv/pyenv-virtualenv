@@ -76,15 +76,19 @@ while set index (contains -i -- "${TMP}/pyenv/plugins/pyenv-virtualenv/shims" \$
 set -eg PATH[\$index]; end; set -e index
 set -gx PATH '${TMP}/pyenv/plugins/pyenv-virtualenv/shims' \$PATH;
 set -gx PYENV_VIRTUALENV_INIT 1;
-function _pyenv_virtualenv_hook --on-event fish_prompt;
+function _pyenv_virtualenv_hook --on-variable PWD --on-variable PYENV_VERSION;
   set -l ret \$status
   if [ -n "\$VIRTUAL_ENV" ]
-    pyenv activate --quiet; or pyenv deactivate --quiet; or true
+    function _pyenv_activate_or_deactivate
+      pyenv activate --quiet || pyenv deactivate --quiet
+    end
+    _pyenv_activate_or_deactivate &
   else
-    pyenv activate --quiet; or true
+    pyenv activate --quiet &
   end
   return \$ret
 end
+_pyenv_virtualenv_hook
 EOS
 }
 

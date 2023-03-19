@@ -19,10 +19,6 @@ setup() {
   stub pyenv-hooks "activate : echo"
 }
 
-teardown() {
-  unstub pyenv-hooks
-}
-
 @test "activate virtualenv from current version" {
   export PYENV_VIRTUALENV_INIT=1
 

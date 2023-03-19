@@ -19,10 +19,6 @@ setup() {
   stub pyenv-hooks "deactivate : echo"
 }
 
-teardown() {
-  unstub pyenv-hooks
-}
-
 @test "deactivate virtualenv" {
   export PYENV_VIRTUALENV_INIT=1
   export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"

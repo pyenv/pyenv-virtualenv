@@ -16,6 +16,30 @@ fi
 unset FORCE
 unset QUIET
 
+# Define `before_deactivate` and `after_deactivate` functions that allow
+# plugin hooks to register a string of code for execution before or
+# after deactivating a virtualenv.
+declare -a before_hooks after_hooks
+
+before_deactivate() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_deactivate() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# Load plugin hooks.
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`pyenv-hooks deactivate`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
+# Execute `before_deactivate` hooks.
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
 while [ $# -gt 0 ]; do
   case "$1" in
   "-f" | "--force" )
@@ -191,3 +215,6 @@ fi;
 EOS
   ;;
 esac
+
+# Execute `after_deactivate` hooks.
+for hook in "${after_hooks[@]}"; do eval "$hook"; done

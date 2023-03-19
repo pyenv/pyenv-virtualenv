@@ -1,4 +1,4 @@
-  #!/usr/bin/env bats
+ #!/usr/bin/env bats
 
 load test_helper
 
@@ -16,6 +16,11 @@ setup() {
   unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
   unset _OLD_VIRTUAL_PS1
+  stub pyenv-hooks "deactivate : echo"
+}
+
+teardown() {
+  unstub pyenv-hooks
 }
 
 @test "deactivate virtualenv" {

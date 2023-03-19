@@ -16,7 +16,7 @@ setup() {
   unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
   unset _OLD_VIRTUAL_PS1
-  stub pyenv-hooks ""
+  stub pyenv-hooks "activate : echo"
 }
 
 teardown() {

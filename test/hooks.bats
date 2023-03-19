@@ -40,3 +40,35 @@ OUT
   unstub pyenv-rehash
   teardown_version "3.5.1"
 }
+
+@test "pyenv-sh-activate hooks" {
+  cat > "${HOOK_PATH}/activate.bash" <<OUT
+before_activate 'echo "before"'
+after_activate 'echo "after"'
+OUT
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix ""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-hooks "activate : echo '$HOOK_PATH'/activate.bash"
+  stub pyenv-sh-deactivate ""
+
+  PYENV_SHELL="bash" PYENV_VERSION="venv" run pyenv-sh-activate
+
+  assert_success
+  assert_output <<EOS
+before
+export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
+export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv";
+export _OLD_VIRTUAL_PS1="\${PS1:-}";
+export PS1="(venv) \${PS1:-}";
+after
+EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-hooks
+  unstub pyenv-sh-deactivate
+}

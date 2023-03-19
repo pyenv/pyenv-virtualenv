@@ -25,6 +25,30 @@ resolve_link() {
 unset FORCE
 unset QUIET
 
+# Define `before_activate` and `after_activate` functions that allow
+# plugin hooks to register a string of code for execution before or
+# after activating a virtualenv.
+declare -a before_hooks after_hooks
+
+before_activate() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_activate() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# Load plugin hooks.
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`pyenv-hooks activate`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
+# Execute `before_activate` hooks.
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
 while [ $# -gt 0 ]; do
   case "$1" in
   "--complete" )
@@ -258,3 +282,6 @@ if [ -d "${prefix}/conda-meta" ] ||
   esac
   shopt -u nullglob
 fi
+
+# Execute `after_activate` hooks.
+for hook in "${after_hooks[@]}"; do eval "$hook"; done

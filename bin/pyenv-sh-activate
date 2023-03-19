@@ -46,9 +46,6 @@ IFS=$'\n' scripts=(`pyenv-hooks activate`)
 IFS="$OLDIFS"
 for script in "${scripts[@]}"; do source "$script"; done
 
-# Execute `before_activate` hooks.
-for hook in "${before_hooks[@]}"; do eval "$hook"; done
-
 while [ $# -gt 0 ]; do
   case "$1" in
   "--complete" )
@@ -160,6 +157,9 @@ if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
 fi
 
 pyenv-sh-deactivate --force --quiet || true
+
+# Execute `before_activate` hooks.
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
 
 if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
   echo "pyenv-virtualenv: activate ${venv}" 1>&2

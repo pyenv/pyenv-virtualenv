@@ -37,9 +37,6 @@ IFS=$'\n' scripts=(`pyenv-hooks deactivate`)
 IFS="$OLDIFS"
 for script in "${scripts[@]}"; do source "$script"; done
 
-# Execute `before_deactivate` hooks.
-for hook in "${before_hooks[@]}"; do eval "$hook"; done
-
 while [ $# -gt 0 ]; do
   case "$1" in
   "-f" | "--force" )
@@ -77,6 +74,9 @@ if [[ "${prefix%/*/envs/*}" == "${PYENV_ROOT}/versions" ]]; then
 else
   venv="${prefix##*/}"
 fi
+
+# Execute `before_deactivate` hooks.
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
 
 if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
   echo "pyenv-virtualenv: deactivate ${venv}" 1>&2

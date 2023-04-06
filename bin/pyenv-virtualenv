@@ -340,6 +340,8 @@ export PYENV_VERSION="${VERSION_NAME}"
 PREFIX="$(pyenv-prefix 2>/dev/null || true)"
 if [ ! -d "${PREFIX}" ]; then
   echo "pyenv-virtualenv: \`${PYENV_VERSION}' is not installed in pyenv." 1>&2
+  echo
+  echo "See all available versions with \`pyenv install --list'."
   exit 1
 fi
 

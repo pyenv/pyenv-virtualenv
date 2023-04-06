@@ -336,12 +336,19 @@ fi
 # Set VERSION_NAME as default version in this script
 export PYENV_VERSION="${VERSION_NAME}"
 
+is_available() {
+  python-build --definitions | $(type -P ggrep grep | head -1) -F -x "$1" >/dev/null
+}
+
 # Source version must exist before creating virtualenv.
 PREFIX="$(pyenv-prefix 2>/dev/null || true)"
 if [ ! -d "${PREFIX}" ]; then
   echo "pyenv-virtualenv: \`${PYENV_VERSION}' is not installed in pyenv." 1>&2
-  echo
-  echo "See all available versions with \`pyenv install --list'."
+  if is_available "${PYENV_VERSION}"; then
+    echo "Run \`pyenv install ${PYENV_VERSION}' to install it." 1>&2
+  else
+    echo "It also does not look like a valid Python version. See \`pyenv install --list' for available versions." 1>&2
+  fi
   exit 1
 fi
 

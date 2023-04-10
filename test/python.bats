@@ -14,6 +14,7 @@ setup() {
   stub pyenv-rehash " : true"
   stub pyenv-version-name "echo \${PYENV_VERSION}"
   stub curl true
+  stub python-build "echo python2.7"
 }
 
 teardown() {
@@ -22,6 +23,7 @@ teardown() {
   unstub pyenv-prefix
   unstub pyenv-hooks
   unstub pyenv-rehash
+  unstub python-build
   teardown_version "2.7.8"
   rm -fr "$TMP"/*
 }
@@ -96,6 +98,7 @@ OUT
 
   assert_output <<OUT
 pyenv-virtualenv: \`python2.7' is not installed in pyenv.
+Run \`pyenv install python2.7' to install it.
 OUT
   assert_failure
 
@@ -105,4 +108,14 @@ OUT
   remove_executable "2.7.7" "python2.7"
   remove_executable "2.7.8" "python2.7"
   remove_executable "2.7.9" "python2.7"
+}
+
+@test "invalid python name" {
+  run pyenv-virtualenv --verbose --python=99.99.99 venv
+
+  assert_output <<OUT
+pyenv-virtualenv: \`99.99.99' is not installed in pyenv.
+It does not look like a valid Python version. See \`pyenv install --list' for available versions.
+OUT
+  assert_failure
 }

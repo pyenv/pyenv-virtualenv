@@ -336,19 +336,20 @@ fi
 # Set VERSION_NAME as default version in this script
 export PYENV_VERSION="${VERSION_NAME}"
 
-is_available() {
-  python-build --definitions | grep -F -x -q "$1"
+not_installed_message() {
+    local is_available=$(python-build --definitions | grep -F -x "$1")
+    echo "pyenv-virtualenv: \`${1}' is not installed in pyenv." 1>&2
+    if [[ $is_available ]]; then
+        echo "Run \`pyenv install ${1}' to install it." 1>&2
+    else
+        echo "It does not look like a valid Python version. See \`pyenv install --list' for available versions." 1>&2
+    fi
 }
 
 # Source version must exist before creating virtualenv.
 PREFIX="$(pyenv-prefix 2>/dev/null || true)"
 if [ ! -d "${PREFIX}" ]; then
-  echo "pyenv-virtualenv: \`${PYENV_VERSION}' is not installed in pyenv." 1>&2
-  if is_available "${PYENV_VERSION}"; then
-    echo "Run \`pyenv install ${PYENV_VERSION}' to install it." 1>&2
-  else
-    echo "It also does not look like a valid Python version. See \`pyenv install --list' for available versions." 1>&2
-  fi
+  not_installed_message "${PYENV_VERSION}"
   exit 1
 fi
 
@@ -450,7 +451,8 @@ else
           if [ -x "${python}" ]; then
             VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
           else
-            echo "pyenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in pyenv." 1>&2
+            # echo "pyenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in pyenv." 1>&2
+            not_installed_message "${VIRTUALENV_PYTHON##*/}"
             exit 1
           fi
         fi

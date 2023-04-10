@@ -337,7 +337,7 @@ fi
 export PYENV_VERSION="${VERSION_NAME}"
 
 is_available() {
-  python-build --definitions | $(type -P ggrep grep | head -1) -F -x "$1" >/dev/null
+  python-build --definitions | grep -F -x -q "$1"
 }
 
 # Source version must exist before creating virtualenv.

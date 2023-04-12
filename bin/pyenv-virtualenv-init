@@ -104,7 +104,7 @@ esac
 case "$shell" in
 fish )
   cat <<EOS
-function _pyenv_virtualenv_hook --on-variable PWD;
+function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l ret \$status
   if [ -n "\$VIRTUAL_ENV" ]
     pyenv activate --quiet; or pyenv deactivate --quiet; or true

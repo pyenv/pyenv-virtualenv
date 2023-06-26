@@ -601,9 +601,9 @@ else
 fi
 
 (
-  shopt -o nullglob
-  for extra_binary in "$PREFIX"/bin/python-config*; do
-    extra_binary_linkname="$VIRTUALENV_PREFIX/bin/$(basename $extra_binary)"
+  shopt -s nullglob
+  for extra_binary in "$PREFIX"/bin/python*-config; do
+    extra_binary_linkname="$VIRTUALENV_PATH/bin/$(basename $extra_binary)"
     [[ -e "$extra_binary_linkname" ]] || \
         ln -s "$extra_binary" "$extra_binary_linkname"
   done

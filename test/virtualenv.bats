@@ -29,7 +29,7 @@ unstub_pyenv() {
   stub pyenv-exec "python2.7 -m venv --help : false"
   stub pyenv-exec "python2 -m venv --help : false"
   stub pyenv-exec "python -m venv --help : false"
-  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\"; mkdir -p \"\$2/bin\""
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
@@ -46,7 +46,7 @@ rehashed
 OUT
   assert_success
   for x in pydoc python-config python2-config python2.7-config; do
-    assert [[ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/$x" ]]
+    assert [ -x "${PYENV_ROOT}/versions/2.7.11/envs/venv/bin/$x" ]
   done
 
   unstub_pyenv

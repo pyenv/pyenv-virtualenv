@@ -54,6 +54,12 @@ parse_options() {
   done
 }
 
+colorize() {
+  if [ -t 1 ]; then printf "\e[%sm%s\e[m" "$1" "$2"
+  else echo -n "$2"
+  fi
+}
+
 resolve_link() {
   $(type -p greadlink readlink | head -1) "$1"
 }
@@ -488,7 +494,8 @@ if [ -z "${EZ_SETUP_URL}" ]; then
 fi
 if [ -z "${GET_PIP_URL}" ]; then
   if [ -n "${PIP_VERSION}" ]; then
-    { echo "WARNING: Setting PIP_VERSION=${PIP_VERSION} is no longer supported and may cause failures during the install process."
+    { colorize 1 "WARNING"
+      echo ": Setting PIP_VERSION=${PIP_VERSION} is no longer supported and may cause failures during the install process."
     } 1>&2
     GET_PIP_URL="https://raw.githubusercontent.com/pypa/pip/${PIP_VERSION}/contrib/get-pip.py"
     # Unset `PIP_VERSION` from environment before invoking `get-pip.py` to deal with "ValueError: invalid truth value" (pypa/pip#4528)

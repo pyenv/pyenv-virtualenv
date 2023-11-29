@@ -54,6 +54,12 @@ parse_options() {
   done
 }
 
+colorize() {
+  if [ -t 1 ]; then printf "\e[%sm%s\e[m" "$1" "$2"
+  else echo -n "$2"
+  fi
+}
+
 resolve_link() {
   $(type -p greadlink readlink | head -1) "$1"
 }

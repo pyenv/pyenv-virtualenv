@@ -246,11 +246,17 @@ if [ -z "${PYENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
   fish )
     if [ -z "${QUIET}" ]; then
       cat <<EOS
-      functions -e _pyenv_old_prompt
-      functions -c fish_prompt _pyenv_old_prompt
+      functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                                  # since everything is in memory, it's safe to
+                                                  # remove it.
+      functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+      # from python-venv
       function fish_prompt
-          echo -n "(${venv}) "
-          _pyenv_old_prompt
+          set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                                  # read exit status
+          echo -n "(${venv}) "                    # add virtualenv to prompt
+          string join -- \n \$prompt              # handle multiline prompts
       end
 EOS
     fi

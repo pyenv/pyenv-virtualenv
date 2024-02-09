@@ -245,7 +245,14 @@ if [ -z "${PYENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
   case "${shell}" in
   fish )
     if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: prompt changing not working for fish." 1>&2
+      cat <<EOS
+      functions -e _pyenv_old_prompt
+      functions -c fish_prompt _pyenv_old_prompt
+      function fish_prompt
+          echo -n "(${venv}) "
+          _pyenv_old_prompt
+      end
+EOS
     fi
     ;;
   * )

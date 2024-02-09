@@ -187,7 +187,13 @@ esac
 
 case "${shell}" in
 fish )
-  :
+  cat <<EOS
+  if functions -q _pyenv_old_prompt
+    functions -e fish_prompt
+    functions -c _pyenv_old_prompt fish_prompt
+    functions -e _pyenv_old_prompt
+  end
+EOS
   ;;
 * )
   cat <<EOS

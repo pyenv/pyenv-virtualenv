@@ -138,7 +138,18 @@ EOS
 deactivated
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
-pyenv-virtualenv: prompt changing not working for fish.
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n "(venv) "                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
 EOS
 
   unstub pyenv-version-name
@@ -164,7 +175,18 @@ set -gx PYENV_VERSION "venv";
 set -gx PYENV_ACTIVATE_SHELL 1;
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
-pyenv-virtualenv: prompt changing not working for fish.
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n "(venv) "                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
 EOS
 
   unstub pyenv-version-name
@@ -239,7 +261,18 @@ set -gx PYENV_VERSION "venv27";
 set -gx PYENV_ACTIVATE_SHELL 1;
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
-pyenv-virtualenv: prompt changing not working for fish.
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n "(venv27) "                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
 EOS
 
   unstub pyenv-virtualenv-prefix
@@ -263,7 +296,18 @@ set -gx PYENV_VERSION "venv27";
 set -gx PYENV_ACTIVATE_SHELL 1;
 set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
 set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv27";
-pyenv-virtualenv: prompt changing not working for fish.
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n "(venv27) "                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
 EOS
 
   unstub pyenv-virtualenv-prefix

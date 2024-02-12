@@ -70,7 +70,18 @@ deactivated
 set -gx PYENV_VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 set -gx VIRTUAL_ENV "${TMP}/pyenv/versions/anaconda-2.3.0";
 set -gx CONDA_DEFAULT_ENV "root";
-pyenv-virtualenv: prompt changing not working for fish.
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n "(anaconda-2.3.0) "                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
 EOS
 
   unstub pyenv-version-name

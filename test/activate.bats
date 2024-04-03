@@ -439,6 +439,34 @@ EOS
   unstub pyenv-prefix
 }
 
+@test "do nothing if a 3rd-party virtualenv is active" {
+  export PYENV_VIRTUALENV_INIT=1
+  export VIRTUAL_ENV="${TMP}/venv-3rd-party"
+  unset PYENV_VIRTUAL_ENV
+
+  PYENV_SHELL="bash" run pyenv-sh-activate "venv"
+
+  assert_success
+  assert_output <<EOS
+pyenv-virtualenv: virtualenv \`${TMP}/venv-3rd-party' is already activated
+true
+EOS
+}
+
+@test "do nothing if a 3rd-party virtualenv is active over ours" {
+  export PYENV_VIRTUALENV_INIT=1
+  export VIRTUAL_ENV="${TMP}/venv-3rd-party"
+  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
+
+  PYENV_SHELL="bash" run pyenv-sh-activate "venv"
+
+  assert_success
+  assert_output <<EOS
+pyenv-virtualenv: virtualenv \`${TMP}/venv-3rd-party' is already activated
+true
+EOS
+}
+
 @test "should fail if activate is invoked as a command" {
   run pyenv-activate
 

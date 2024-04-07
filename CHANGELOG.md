@@ -1,5 +1,45 @@
 ## Version History
 
+#### 1.2.3
+* Fix: add `colorize` helper by @silverjam in https://github.com/pyenv/pyenv-virtualenv/pull/470
+* Bump pyenv-virtualenv reporting version to match release by @ushuz in https://github.com/pyenv/pyenv-virtualenv/pull/471
+* Add fish prompt changing by @romirk in https://github.com/pyenv/pyenv-virtualenv/pull/475
+* Don't activate if a 3rd-party venv is activated over ours by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/478
+
+#### 1.2.2
+* Prompt removal was never done and is not planned anymore by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/447
+* Update PYENV_VIRTUALENV_VERSION by @jack-mcivor in https://github.com/pyenv/pyenv-virtualenv/pull/449
+* Add activate/deactivate hooks by @joshfrench in https://github.com/pyenv/pyenv-virtualenv/pull/452
+* More helpful error message when requesting a nonexistent base version by @MarcinKonowalczyk in https://github.com/pyenv/pyenv-virtualenv/pull/454
+* Add fish install oneliner by @ElijahLynn in https://github.com/pyenv/pyenv-virtualenv/pull/322
+* Link python*-config into VE by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/460
+
+#### 1.2.1
+* Support prefixes resolved by pyenv-latest as base version names by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/446
+
+#### 1.2.0
+* ~/.*rc should be modified instead of ~/.*profile by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/384
+* Fixes #394 - update pyenv virtualenvs to list virtualenvs start with dot prefixes by @Gauravtalreja1 in https://github.com/pyenv/pyenv-virtualenv/pull/395
+* Fix installation steps to allow for Pyenv 2 by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/388
+* Fix get-pip.py URLs for older versions of Python by @jivanf in https://github.com/pyenv/pyenv-virtualenv/pull/403
+* Add (y/N) prompt help text by @sh-cho in https://github.com/pyenv/pyenv-virtualenv/pull/404
+* perf(sh-activate): avoid a pyenv-version-name call by @scop in https://github.com/pyenv/pyenv-virtualenv/pull/380
+* Fix unbound variable errors when running `pyenv activate` with `set -u` Use default empty value. This fixes #422. by @ackalker in https://github.com/pyenv/pyenv-virtualenv/pull/423
+* Fix another unbound variable error by @ackalker in https://github.com/pyenv/pyenv-virtualenv/pull/424
+* Update `get-pip.py` URLs in `pyenv-virtualenv` by @mcdonnnj in https://github.com/pyenv/pyenv-virtualenv/pull/426
+* Deduplicate shims in $PATH for the fish shell during initialization by @ericvw in https://github.com/pyenv/pyenv-virtualenv/pull/430
+* Upgrade uninstall hook after pyenv/pyenv#2432 by @laggardkernel in https://github.com/pyenv/pyenv-virtualenv/pull/438
+* Stop delete force failing when virtualenv does not exist by @eganjs in https://github.com/pyenv/pyenv-virtualenv/pull/330
+* fix: relative path to pyenv-realpath.dylib by @scop in https://github.com/pyenv/pyenv-virtualenv/pull/378
+* Spelling fixes by @scop in https://github.com/pyenv/pyenv-virtualenv/pull/352
+* Clone bats with --depth=1, gitignore it by @scop in https://github.com/pyenv/pyenv-virtualenv/pull/351
+* set -u fixes by @scop in https://github.com/pyenv/pyenv-virtualenv/pull/350
+* Set up Github Actions CI by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/440
+* Enhance documentation about options for `pyenv virtualenv` by @pylipp in https://github.com/pyenv/pyenv-virtualenv/pull/425
+* Return control to pyenv-uninstall in uninstall/envs.bash by @aiguofer in https://github.com/pyenv/pyenv-virtualenv/pull/321
+* Use realpath of scripts to determine relative locations by @andrew-christianson in https://github.com/pyenv/pyenv-virtualenv/pull/308
+* Shell detect improvements by @scop in https://github.com/pyenv/pyenv-virtualenv/pull/377
+
 #### 1.1.5
 
 * Fix install script (#290, #302)

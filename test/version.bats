@@ -10,8 +10,6 @@ setup() {
   setup_virtualenv "2.7.7"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/2.7.7'"
   stub pyenv-version-name "echo 2.7.7"
-  stub pyenv-exec "python2.7 -m venv --help : false"
-  stub pyenv-exec "python2 -m venv --help : false"
   stub pyenv-exec "python -m venv --help : false"
   stub pyenv-exec "virtualenv --version : echo \"1.11\""
 
@@ -29,12 +27,12 @@ setup() {
   setup_m_venv "3.4.1"
   stub pyenv-version-name "echo 3.4.1"
   stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
-  stub pyenv-exec "python3.4 -m venv --help : true"
+  stub pyenv-exec "python -m venv --help : true"
 
   run pyenv-virtualenv --version
 
   assert_success
-  [[ "$output" == "pyenv-virtualenv "?.?.?" (python3.4 -m venv)" ]]
+  [[ "$output" == "pyenv-virtualenv "?.?.?" (python -m venv)" ]]
 
   unstub pyenv-prefix
   teardown_m_venv "3.4.1"

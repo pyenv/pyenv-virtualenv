@@ -155,9 +155,17 @@ detect_venv() {
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    # Prefer `python3.x` executable if available (#206, #282)
     local python
-    for python in "python${PYENV_VERSION%.*}" "python${PYENV_VERSION%%.*}" "python"; do
+    local -a pythons
+    if [[ $PYENV_VERSION == "system" ]]; then
+      # Prefer `python3.x` executable if available (#206, #282)
+      pythons=("python3" "python" "python2")
+    else
+      # as per PEP 394, custom activated Python environments should provide the "python" command
+      # this includes Pyenv-provided installations
+      pythons=("python")
+    fi
+    for python in "${pythons[@]}"; do
       if pyenv-exec "${python}" -m venv --help 1>/dev/null 2>&1; then
         HAS_M_VENV=1
         M_VENV_PYTHON_BIN="${python}"

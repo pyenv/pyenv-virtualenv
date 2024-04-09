@@ -26,14 +26,14 @@ unstub_pyenv() {
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python3.5 -m venv --help : true"
-  stub pyenv-exec "python3.5 -m venv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "python -m venv --help : true"
+  stub pyenv-exec "python -m venv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   run pyenv-virtualenv venv
 
   assert_output <<OUT
-PYENV_VERSION=3.5.1 python3.5 -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
+PYENV_VERSION=3.5.1 python -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
 rehashed
 OUT
   assert [ -x "${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pydoc" ]
@@ -52,7 +52,7 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python3.5 -m venv --help : true"
+  stub pyenv-exec "python -m venv --help : true"
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
@@ -77,8 +77,6 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python3.2 -m venv --help : false"
-  stub pyenv-exec "python3 -m venv --help : false"
   stub pyenv-exec "python -m venv --help : false"
   stub pyenv-exec "pip install virtualenv* : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
@@ -105,7 +103,7 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python3.5 -m venv --help : true"
+  stub pyenv-exec "python -m venv --help : true"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
@@ -132,7 +130,7 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python3.5 -m venv --help : true"
+  stub pyenv-exec "python -m venv --help : true"
   stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
@@ -159,8 +157,6 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python3.2 -m venv --help : false"
-  stub pyenv-exec "python3 -m venv --help : false"
   stub pyenv-exec "python -m venv --help : false"
   stub pyenv-exec "pip install virtualenv* : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "virtualenv * : echo PIP_REQUIRE_VENV=\${PIP_REQUIRE_VENV} PYENV_VERSION=\${PYENV_VERSION} \"\$@\""

@@ -31,19 +31,19 @@ From inside that directory you can:
 1. **Check out pyenv-virtualenv into plugin directory**
 
     ```sh
-    $ git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+    git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
     ```
 
     For the Fish shell:
 
     ```sh
-    $ git clone https://github.com/pyenv/pyenv-virtualenv.git (pyenv root)/plugins/pyenv-virtualenv
+    git clone https://github.com/pyenv/pyenv-virtualenv.git (pyenv root)/plugins/pyenv-virtualenv
     ```
 
 2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenvs. This is entirely optional but pretty useful. See "Activate virtualenv" below.
 
     ```sh
-    $ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
     ```
 
     **Fish shell note**:  Add this to your `~/.config/fish/config.fish`
@@ -57,7 +57,7 @@ From inside that directory you can:
 3. **Restart your shell to enable pyenv-virtualenv**
 
     ```sh
-    $ exec "$SHELL"
+    exec "$SHELL"
     ```
 
 
@@ -72,13 +72,13 @@ installed, you will also be able to use the `pyenv virtualenv` command.
  with Homebrew.*
 
 ```sh
-$ brew install pyenv-virtualenv
+brew install pyenv-virtualenv
 ```
 
 Or, if you would like to install the latest development release:
 
 ```sh
-$ brew install --HEAD pyenv-virtualenv
+brew install --HEAD pyenv-virtualenv
 ```
 
 After installation, you'll still need to do
@@ -99,7 +99,7 @@ To create a virtualenv for the Python version used with pyenv, run
 of the virtualenv directory. For example,
 
 ```sh
-$ pyenv virtualenv 2.7.10 my-virtual-env-2.7.10
+pyenv virtualenv 2.7.10 my-virtual-env-2.7.10
 ```
 
 will create a virtualenv based on Python 2.7.10 under `$(pyenv root)/versions` in a

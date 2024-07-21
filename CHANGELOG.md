@@ -1,5 +1,10 @@
 ## Version History
 
+#### 1.2.4
+* Fix failing to detect `-m venv` when "python" is not provided by the distro by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/479
+* README: Remove dollar signs from commands that are meant to be copied by @galonsky in https://github.com/pyenv/pyenv-virtualenv/pull/481
+* Reflect pyenv-latest switch change in 2.4.8 by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/484
+
 #### 1.2.3
 * Fix: add `colorize` helper by @silverjam in https://github.com/pyenv/pyenv-virtualenv/pull/470
 * Bump pyenv-virtualenv reporting version to match release by @ushuz in https://github.com/pyenv/pyenv-virtualenv/pull/471

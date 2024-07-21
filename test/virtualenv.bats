@@ -61,7 +61,7 @@ OUT
   stub pyenv-exec "python -s -m ensurepip : false"
   stub pyenv-exec "python -s */get-pip.py : true"
   stub curl true
-  stub pyenv-latest "-q 2.7 : echo 2.7.11"
+  stub pyenv-latest "-f 2.7 : echo 2.7.11"
 
   run pyenv-virtualenv "2.7" "venv"
 

@@ -47,7 +47,6 @@ EOS
 
 @test "activate virtualenv from current version with custom prompt" {
   export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUALENV_PROMPT='venv:{venv}'
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""

@@ -15,6 +15,7 @@ setup() {
   unset PYENV_VIRTUALENV_DISABLE_PROMPT
   unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
+  unset PYENV_VIRTUALENV_PROMPT
   unset _OLD_VIRTUAL_PS1
   stub pyenv-hooks "activate : echo"
 }
@@ -46,6 +47,7 @@ EOS
 
 @test "activate virtualenv from current version with custom prompt" {
   export PYENV_VIRTUALENV_INIT=1
+  export PYENV_VIRTUALENV_PROMPT='venv:{venv}'
 
   stub pyenv-version-name "echo venv"
   stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""

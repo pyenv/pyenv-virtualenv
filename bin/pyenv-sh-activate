@@ -262,9 +262,14 @@ EOS
     fi
     ;;
   * )
+    if [ -z "${PYENV_VIRTUALENV_PROMPT}" ]; then
+      PYENV_VIRTUALENV_PROMPT="(${venv})"
+    else
+      PYENV_VIRTUALENV_PROMPT="${PYENV_VIRTUALENV_PROMPT/\{venv\}/${venv}}"
+    fi
     cat <<EOS
 export _OLD_VIRTUAL_PS1="\${PS1:-}";
-export PS1="(${venv}) \${PS1:-}";
+export PS1="${PYENV_VIRTUALENV_PROMPT} \${PS1:-}";
 EOS
     ;;
   esac

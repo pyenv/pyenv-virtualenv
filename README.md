@@ -243,6 +243,7 @@ You can set certain environment variables to control pyenv-virtualenv.
 * `PIP_VERSION`, if set and `venv` is preferred
   over `virtualenv`, install the specified version of pip.
 * `PYENV_VIRTUALENV_VERBOSE_ACTIVATE`, if set, shows some verbose outputs on activation and deactivation
+* `PYENV_VIRTUALENV_PROMPT`, if set, allows users to customize how `pyenv-virtualenv` modifies their shell prompt. The default prompt ("(venv)") is overwritten with any user-specified text. Specify the location of the virtual environment name with the string `{venv}`. For example, the default prompt string would be `({venv})`.
 
 ## Version History
 

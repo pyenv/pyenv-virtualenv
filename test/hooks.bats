@@ -6,6 +6,7 @@ setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   export HOOK_PATH="${TMP}/i has hooks"
   mkdir -p "$HOOK_PATH"
+  unset PYENV_VIRTUALENV_PROMPT
 }
 
 @test "pyenv-virtualenv hooks" {

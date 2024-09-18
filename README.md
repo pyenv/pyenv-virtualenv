@@ -30,25 +30,25 @@ From inside that directory you can:
 
 1. **Check out pyenv-virtualenv into plugin directory**
 
-    ```sh
+    ```bash
     git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
     ```
 
     For the Fish shell:
 
-    ```sh
+    ```fish
     git clone https://github.com/pyenv/pyenv-virtualenv.git (pyenv root)/plugins/pyenv-virtualenv
     ```
 
 2. (OPTIONAL) **Add `pyenv virtualenv-init` to your shell** to enable auto-activation of virtualenvs. This is entirely optional but pretty useful. See "Activate virtualenv" below.
 
-    ```sh
+    ```bash
     echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
     ```
 
     **Fish shell note**:  Add this to your `~/.config/fish/config.fish`
 
-    ```sh
+    ```fish
     status --is-interactive; and pyenv virtualenv-init - | source
     ```
 
@@ -56,7 +56,7 @@ From inside that directory you can:
     
 3. **Restart your shell to enable pyenv-virtualenv**
 
-    ```sh
+    ```bash
     exec "$SHELL"
     ```
 

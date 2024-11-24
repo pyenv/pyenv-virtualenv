@@ -1,4 +1,4 @@
- #!/usr/bin/env bats
+#!/usr/bin/env bats
 
 load test_helper
 

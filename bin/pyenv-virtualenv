@@ -605,7 +605,13 @@ STATUS=0
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 if [ -n "${USE_CONDA}" ]; then
-        pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" --file <(pyenv-exec conda list python --full-name --export) || STATUS="$?"
+  if [ -z "$VIRTUALENV_PYTHON" ]; then
+    #process substitution doesn't seem to work unless it's directly inserted to the command line
+    #if we add it to VIRTUALENV_OPTIONS instead, "broken pipe" happens
+    pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" --file <(pyenv-exec conda list python --full-name --export) || STATUS="$?"
+  else
+    pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" || STATUS="$?"
+  fi
 else
   if [ -n "${USE_M_VENV}" ]; then
     pyenv-exec "${M_VENV_PYTHON_BIN:-python}" -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"

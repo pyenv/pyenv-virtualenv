@@ -32,8 +32,8 @@ unstub_pyenv() {
   run pyenv-virtualenv venv
 
   assert_success
-  assert_output <<OUT
-PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python
+  assert_output_wildcards <<OUT
+PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes --file /dev/fd/*
 rehashed
 OUT
 
@@ -56,7 +56,7 @@ OUT
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5 python
+PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5
 rehashed
 OUT
 
@@ -79,7 +79,7 @@ OUT
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5 python
+PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5
 rehashed
 OUT
 

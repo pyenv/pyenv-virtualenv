@@ -83,12 +83,30 @@ assert_equal() {
   fi
 }
 
+assert_equal_wildcards() {
+  if [[ $1 != $2 ]]; then
+    { echo "expected:"
+      echo "$2"
+      echo "actual:"
+      echo "$1"
+    } | flunk
+  fi
+}
+
 assert_output() {
   local expected
   if [ $# -eq 0 ]; then expected="$(cat -)"
   else expected="$1"
   fi
   assert_equal "$expected" "$output"
+}
+
+assert_output_wildcards() {
+  local expected
+  if [ $# -eq 0 ]; then expected="$(cat -)"
+  else expected="$1"
+  fi
+  assert_equal_wildcards "$output" "$expected"
 }
 
 assert_output_contains() {

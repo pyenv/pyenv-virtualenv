@@ -605,7 +605,7 @@ STATUS=0
 mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
 cd "${PYENV_VIRTUALENV_CACHE_PATH}"
 if [ -n "${USE_CONDA}" ]; then
-  pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
+        pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" --file <(pyenv-exec conda list python --full-name --export) || STATUS="$?"
 else
   if [ -n "${USE_M_VENV}" ]; then
     pyenv-exec "${M_VENV_PYTHON_BIN:-python}" -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"

@@ -631,7 +631,8 @@ fi
 
 ## Create symlink in the `versions` directory for backward compatibility
 if [ -d "${VIRTUALENV_PATH}" ] && [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
-  ln -fs "${VIRTUALENV_PATH}" "${COMPAT_VIRTUALENV_PATH}"
+  # Overwrite an existing link, can happen if running with -f
+  ln -fsn "${VIRTUALENV_PATH}" "${COMPAT_VIRTUALENV_PATH}"
 fi
 
 if [ ! -e "${VIRTUALENV_PATH}/bin/pydoc" ]; then

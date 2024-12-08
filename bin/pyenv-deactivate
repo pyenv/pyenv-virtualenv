@@ -11,10 +11,8 @@ set -e
 
 { printf "\x1B[31;1m"
   echo
-  echo "Failed to deactivate virtualenv."
-  echo
-  echo "Perhaps pyenv-virtualenv has not been loaded into your shell properly."
-  echo "Please restart current shell and try again."
+  echo "\`pyenv deactivate' requires Pyenv and Pyenv-Virtualenv to be loaded into your shell."
+  echo "Check your shell configuration and Pyenv and Pyenv-Virtualenv installation instructions."
   echo
   printf "\x1B[0m"
 } 1>&2

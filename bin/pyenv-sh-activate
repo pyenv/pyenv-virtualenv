@@ -51,7 +51,7 @@ while [ $# -gt 0 ]; do
   "--complete" )
     # Provide pyenv completions
     echo --unset
-    exec pyenv-virtualenvs --bare
+    exec pyenv-virtualenvs --bare --only-aliases
     ;;
   "-f" | "--force" )
     FORCE=1

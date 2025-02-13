@@ -17,7 +17,7 @@ set -e
 # Provide pyenv completions
 if [ "$1" = "--complete" ]; then
   echo --unset
-  exec pyenv-virtualenvs --bare
+  exec pyenv-virtualenvs --bare --only-aliases
 fi
 
 { printf "\x1B[31;1m"

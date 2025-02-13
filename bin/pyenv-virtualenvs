@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Summary: List all Python virtualenvs found in `$PYENV_ROOT/versions/*'.
-# Usage: pyenv virtualenvs [--bare] [--skip-aliases]
+# Usage: pyenv virtualenvs [--bare] [--skip-aliases] [--only-aliases]
 #
 # List all virtualenvs found in `$PYENV_ROOT/versions/*' and its `$PYENV_ROOT/versions/envs/*'.
 
@@ -34,10 +34,11 @@ for arg; do
   case "$arg" in
   --complete )
     echo --bare
-    echo --skip-aliases
+    echo --only-aliases
     exit ;;
   --bare ) bare=1 ;;
   --skip-aliases ) skip_aliases=1 ;;
+  --only-aliases ) only_aliases=1 ;;
   * )
     pyenv-help --usage virtualenvs >&2
     exit 1

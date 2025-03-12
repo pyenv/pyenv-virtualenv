@@ -6,9 +6,9 @@
 # List all virtualenvs found in `$PYENV_ROOT/versions/*' and its `$PYENV_ROOT/versions/envs/*'.
 
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
+[[ -n $PYENV_DEBUG ]] && set -x
 
-if [ -z "$PYENV_ROOT" ]; then
+if [[ -z $PYENV_ROOT ]]; then
   PYENV_ROOT="${HOME}/.pyenv"
 fi
 
@@ -39,7 +39,7 @@ if [[ ${BASH_VERSINFO[0]} -gt 3 ]]; then
 else
   current_versions=()
 fi
-if [ -n "$bare" ]; then
+if [[ -n $bare ]]; then
   include_system=""
 else
   hit_prefix="* "
@@ -118,17 +118,17 @@ if sort --version-sort </dev/null >/dev/null 2>&1; then
     IFS="$OLDIFS"
 fi
 
-if [ -z "$only_aliases" ]; then
+if [[ -z $only_aliases ]]; then
   for env_path in "${venv_dir_entries[@]}"; do
-    if [ -d "${env_path}" ]; then
+    if [[ -d ${env_path} ]]; then
       print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
     fi
   done
 fi
 
-if [ -z "$skip_aliases" ]; then
+if [[ -z "$skip_aliases" ]]; then
   for env_path in "${version_dir_entries[@]}"; do
-    if [ -d "${env_path}" ] && [ -L "${env_path}" ]; then
+    if [[ -d ${env_path} ]] && [[ -L ${env_path} ]]; then
       print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
     fi
   done
@@ -137,7 +137,7 @@ fi
 shopt -u dotglob
 shopt -u nullglob
 
-if [ "$num_versions" -eq 0 ] && [ -n "$include_system" ]; then
+if [[ $num_versions -eq 0 ]] && [[ -n $include_system ]]; then
   echo "Warning: no Python virtualenv detected on the system" >&2
   exit 1
 fi

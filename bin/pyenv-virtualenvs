@@ -82,7 +82,7 @@ if ! enable -f "${BASH_SOURCE%/*}"/pyenv-realpath.dylib realpath 2>/dev/null; th
   }
 fi
 
-if ((BASH_VERSINFO[0] > 3)); then
+if [[ ${BASH_VERSINFO[0]} -gt 3 ]]; then
   declare -A current_versions
 else
   current_versions=()
@@ -94,7 +94,7 @@ else
   miss_prefix="  "
   OLDIFS="$IFS"
   IFS=:
-  if ((BASH_VERSINFO[0] > 3)); then
+  if [[ ${BASH_VERSINFO[0]} -gt 3 ]]; then
     for i in $(pyenv-version-name || true); do
       current_versions["$i"]="1"
     done
@@ -135,7 +135,7 @@ print_version() {
   fi
   if [[ ${BASH_VERSINFO[0]} -ge 4 && ${current_versions["$1"]} ]]; then
     echo "${hit_prefix}${version_repr} (set by $(pyenv-version-origin))"
-  elif (( BASH_VERSINFO[0] <= 3 )) && exists "$1" "${current_versions[@]}"; then
+  elif [[ ${BASH_VERSINFO[0]} -le 3 ]] && exists "$1" "${current_versions[@]}"; then
     echo "${hit_prefix}${version_repr} (set by $(pyenv-version-origin))"
   else
     echo "${miss_prefix}${version_repr}"

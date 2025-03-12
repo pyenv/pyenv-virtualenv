@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Summary: List all Python virtualenvs found in `$PYENV_ROOT/versions/*'.
-# Usage: pyenv virtualenvs [--bare] [--skip-aliases] [--only-aliases]
+# Usage: pyenv virtualenvs [--bare] [--skip-aliases]
 #
 # List all virtualenvs found in `$PYENV_ROOT/versions/*' and its `$PYENV_ROOT/versions/envs/*'.
 
@@ -20,11 +20,9 @@ for arg; do
   --complete )
     echo --bare
     echo --skip-aliases
-    echo --only-aliases
     exit ;;
   --bare ) bare=1 ;;
   --skip-aliases ) skip_aliases=1 ;;
-  --only-aliases ) only_aliases=1 ;;
   * )
     pyenv-help --usage virtualenvs >&2
     exit 1
@@ -118,13 +116,11 @@ if sort --version-sort </dev/null >/dev/null 2>&1; then
     IFS="$OLDIFS"
 fi
 
-if [[ -z $only_aliases ]]; then
-  for env_path in "${venv_dir_entries[@]}"; do
-    if [[ -d ${env_path} ]]; then
-      print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
-    fi
-  done
-fi
+for env_path in "${venv_dir_entries[@]}"; do
+  if [[ -d ${env_path} ]]; then
+    print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
+  fi
+done
 
 if [[ -z "$skip_aliases" ]]; then
   for env_path in "${version_dir_entries[@]}"; do

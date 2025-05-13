@@ -28,6 +28,12 @@ From inside that directory you can:
  - Get the latest development release by running `git pull` to download the
    latest changes.
 
+💡 **WSL note:** If you're using WSL, we recommend setting Git to use Unix-style line endings to prevent script execution errors:
+
+```sh
+git config --global core.autocrlf input
+```
+
 1. **Check out pyenv-virtualenv into plugin directory**
 
     ```bash

@@ -6,24 +6,9 @@
 # List all virtualenvs found in `$PYENV_ROOT/versions/*' and its `$PYENV_ROOT/versions/envs/*'.
 
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
-if [ -L "${BASH_SOURCE}" ]; then
-    READLINK=$(type -p greadlink readlink | head -1)
-    if [ -z "$READLINK" ]; then
-        echo "pyenv: cannot find readlink - are you missing GNU coreutils?" >&2
-        exit 1
-    fi
-    resolve_link() {
-        $READLINK -f "$1"
-    }
-    script_path=$(resolve_link ${BASH_SOURCE})
-else
-    script_path=${BASH_SOURCE}
-fi
+[[ -n $PYENV_DEBUG ]] && set -x
 
-. ${script_path%/*}/../libexec/pyenv-virtualenv-realpath
-
-if [ -z "$PYENV_ROOT" ]; then
+if [[ -z $PYENV_ROOT ]]; then
   PYENV_ROOT="${HOME}/.pyenv"
 fi
 
@@ -47,24 +32,27 @@ done
 
 versions_dir="${PYENV_ROOT}/versions"
 
-if [ -d "$versions_dir" ]; then
-  versions_dir="$(realpath "$versions_dir")"
-fi
-
-if [ -n "$bare" ]; then
-  hit_prefix=""
-  miss_prefix=""
+if [[ ${BASH_VERSINFO[0]} -gt 3 ]]; then
+  declare -A current_versions
+else
   current_versions=()
-  unset print_origin
+fi
+if [[ -n $bare ]]; then
   include_system=""
 else
   hit_prefix="* "
   miss_prefix="  "
   OLDIFS="$IFS"
-  IFS=: current_versions=($(pyenv-version-name || true))
+  IFS=:
+  if [[ ${BASH_VERSINFO[0]} -gt 3 ]]; then
+    for i in $(pyenv-version-name || true); do
+      current_versions["$i"]="1"
+    done
+  else
+    read -r -a current_versions <<< "$(pyenv-version-name || true)"
+  fi
   IFS="$OLDIFS"
-  print_origin="1"
-  include_system=""
+  include_system="1"
 fi
 
 num_versions=0
@@ -82,39 +70,71 @@ exists() {
 }
 
 print_version() {
-  if exists "$1" "${current_versions[@]}"; then
-    echo "${hit_prefix}${1}${print_origin+$2}"
+  local version="${1:?}"
+  if [[ -n $bare ]]; then
+    echo "$version"
+    return
+  fi
+  local path="${2:?}"
+  if [[ -L "$path" ]]; then
+    # Only resolve the link itself for printing, do not resolve further.
+    # Doing otherwise would misinform the user of what the link contains.
+    version_repr="$version --> $(readlink "$path")"
   else
-    echo "${miss_prefix}${1}${print_origin+$2}"
+    version_repr="$version"
+  fi
+  if [[ ${BASH_VERSINFO[0]} -ge 4 && ${current_versions["$1"]} ]]; then
+    echo "${hit_prefix}${version_repr} (set by $(pyenv-version-origin))"
+  elif [[ ${BASH_VERSINFO[0]} -le 3 ]] && exists "$1" "${current_versions[@]}"; then
+    echo "${hit_prefix}${version_repr} (set by $(pyenv-version-origin))"
+  else
+    echo "${miss_prefix}${version_repr}"
   fi
   num_versions=$((num_versions + 1))
 }
 
 shopt -s dotglob
 shopt -s nullglob
-for path in "$versions_dir"/*; do
-  if [ -d "$path" ]; then
-    if [ -n "$skip_aliases" ] && [ -L "$path" ]; then
-      target="$(realpath "$path")"
-      [ "${target%/*/envs/*}" != "$versions_dir" ] || continue
-    fi
-    virtualenv_prefix="$(pyenv-virtualenv-prefix "${path##*/}" 2>/dev/null || true)"
-    if [ -d "${virtualenv_prefix}" ]; then
-      print_version "${path##*/}" " (created from ${virtualenv_prefix})"
-    fi
-    for venv_path in "${path}/envs/"*; do
-      venv="${path##*/}/envs/${venv_path##*/}"
-      virtualenv_prefix="$(pyenv-virtualenv-prefix "${venv}" 2>/dev/null || true)"
-      if [ -d "${virtualenv_prefix}" ]; then
-        print_version "${venv}" " (created from ${virtualenv_prefix})"
-      fi
-    done
+version_dir_entries=("$versions_dir"/*)
+venv_dir_entries=("$versions_dir"/*/envs/*)
+
+if sort --version-sort </dev/null >/dev/null 2>&1; then
+    # system sort supports version sorting
+    OLDIFS="$IFS"
+    IFS='||'
+
+    read -r -a version_dir_entries <<< "$(
+        printf "%s||" "${version_dir_entries[@]}" |
+        sort --version-sort
+    )"
+
+    read -r -a venv_dir_entries <<< "$(
+        printf "%s||" "${venv_dir_entries[@]}" |
+        sort --version-sort
+    )"
+
+    IFS="$OLDIFS"
+fi
+
+for env_path in "${venv_dir_entries[@]}"; do
+  if [[ -d ${env_path} ]]; then
+    print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
   fi
 done
+
+if [[ -z "$skip_aliases" ]]; then
+  for env_path in "${version_dir_entries[@]}"; do
+    if [[ -d ${env_path} ]] && [[ -L ${env_path} ]]; then
+      print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
+    fi
+  done
+fi
+
 shopt -u dotglob
 shopt -u nullglob
 
-if [ "$num_versions" -eq 0 ] && [ -n "$include_system" ]; then
+if [[ $num_versions -eq 0 ]] && [[ -n $include_system ]]; then
   echo "Warning: no Python virtualenv detected on the system" >&2
   exit 1
 fi
+

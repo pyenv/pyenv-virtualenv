@@ -88,7 +88,7 @@ brew install --HEAD pyenv-virtualenv
 ```
 
 After installation, you'll still need to do
-[Pyenv shell setup steps](https://github.com/pyenv/pyenv#basic-github-checkout)
+[Pyenv shell setup steps](https://github.com/pyenv/pyenv#b-set-up-your-shell-environment-for-pyenv)
 then add 
 ```sh
 eval "$(pyenv virtualenv-init -)"

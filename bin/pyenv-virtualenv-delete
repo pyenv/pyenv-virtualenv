@@ -58,22 +58,22 @@ VERSION_NAME="${DEFINITION##*/}"
 COMPAT_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
 
 if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
-  PREFIX="${PYENV_ROOT}/versions/${DEFINITION}"
+  PYENV_VE_PREFIX="${PYENV_ROOT}/versions/${DEFINITION}"
   if [ -L "${COMPAT_PREFIX}" ]; then
-    if [[ "${PREFIX}" != "$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)" ]]; then
+    if [[ "${PYENV_VE_PREFIX}" != "$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)" ]]; then
       unset COMPAT_PREFIX
     fi
   fi
 else
   if [ -L "${COMPAT_PREFIX}" ]; then
-    PREFIX="$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)"
-    if [[ "${PREFIX%/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
+    PYENV_VE_PREFIX="$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)"
+    if [[ "${PYENV_VE_PREFIX%/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
       echo "pyenv-virtualenv: \`${COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
       exit 1
     fi
   else
     if pyenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
-      PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+      PYENV_VE_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
       unset COMPAT_PREFIX
     elif [ -z "$FORCE" ]; then
       echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
@@ -83,20 +83,20 @@ else
 fi
 
 if [ -z "$FORCE" ]; then
-  if [ ! -d "$PREFIX" ]; then
+  if [ ! -d "$PYENV_VE_PREFIX" ]; then
     echo "pyenv-virtualenv: virtualenv \`$VERSION_NAME' not installed" >&2
     exit 1
   fi
 
-  read -p "pyenv-virtualenv: remove $PREFIX? (y/N) "
+  read -p "pyenv-virtualenv: remove $PYENV_VE_PREFIX? (y/N) "
   case "$REPLY" in
   y* | Y* ) ;;
   * ) exit 1 ;;
   esac
 fi
 
-if [ -d "$PREFIX" ]; then
-  rm -rf "$PREFIX"
+if [ -d "$PYENV_VE_PREFIX" ]; then
+  rm -rf "$PYENV_VE_PREFIX"
   if [ -L "$COMPAT_PREFIX" ]; then
     rm -rf "$COMPAT_PREFIX"
   fi

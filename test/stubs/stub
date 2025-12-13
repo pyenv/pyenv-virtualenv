@@ -86,11 +86,8 @@ if [ -n "${!_STUB_END}" ]; then
   fi
   if [ "${!_STUB_RESULT}" -ne 0 ]; then
     {
-      echo "index: $index; stub index: ${!_STUB_INDEX}"
       echo "plan:"
       cat "${!_STUB_PLAN}" || true
-      echo "run:"
-      cat "${!_STUB_RUN}" || true
       echo "log:"
       cat "${!_STUB_LOG}" || true
     } >&2

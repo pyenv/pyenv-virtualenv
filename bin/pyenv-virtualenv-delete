@@ -55,26 +55,28 @@ case "$DEFINITION" in
 esac
 
 VERSION_NAME="${DEFINITION##*/}"
-COMPAT_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+# Must initialize because it might be set in the environment
+ENV_PREFIX=
+ENV_COMPAT_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
 
 if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
-  PREFIX="${PYENV_ROOT}/versions/${DEFINITION}"
-  if [ -L "${COMPAT_PREFIX}" ]; then
-    if [[ "${PREFIX}" != "$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)" ]]; then
-      unset COMPAT_PREFIX
+  ENV_PREFIX="${PYENV_ROOT}/versions/${DEFINITION}"
+  if [ -L "${ENV_COMPAT_PREFIX}" ]; then
+    if [[ "${ENV_PREFIX}" != "$(resolve_link "${ENV_COMPAT_PREFIX}" 2>/dev/null || true)" ]]; then
+      unset ENV_COMPAT_PREFIX
     fi
   fi
 else
-  if [ -L "${COMPAT_PREFIX}" ]; then
-    PREFIX="$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)"
-    if [[ "${PREFIX%/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
-      echo "pyenv-virtualenv: \`${COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
+  if [ -L "${ENV_COMPAT_PREFIX}" ]; then
+    ENV_PREFIX="$(resolve_link "${ENV_COMPAT_PREFIX}" 2>/dev/null || true)"
+    if [[ "${ENV_PREFIX%/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
+      echo "pyenv-virtualenv: \`${ENV_COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
       exit 1
     fi
   else
     if pyenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
-      PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
-      unset COMPAT_PREFIX
+      ENV_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+      unset ENV_COMPAT_PREFIX
     elif [ -z "$FORCE" ]; then
       echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
       exit 1
@@ -82,23 +84,25 @@ else
   fi
 fi
 
-if [ -z "$FORCE" ]; then
-  if [ ! -d "$PREFIX" ]; then
+if [ ! -d "$ENV_PREFIX" ]; then
+  if [ -z "$FORCE" ]; then
     echo "pyenv-virtualenv: virtualenv \`$VERSION_NAME' not installed" >&2
     exit 1
+  else
+    exit 0
   fi
+fi
 
-  read -p "pyenv-virtualenv: remove $PREFIX? (y/N) "
+if [ -z "$FORCE" ]; then
+  read -p "pyenv-virtualenv: remove $ENV_PREFIX? (y/N) "
   case "$REPLY" in
   y* | Y* ) ;;
   * ) exit 1 ;;
   esac
 fi
 
-if [ -d "$PREFIX" ]; then
-  rm -rf "$PREFIX"
-  if [ -L "$COMPAT_PREFIX" ]; then
-    rm -rf "$COMPAT_PREFIX"
-  fi
-  pyenv-rehash
+rm -rf "$ENV_PREFIX"
+if [ -L "$ENV_COMPAT_PREFIX" ]; then
+  rm -rf "$ENV_COMPAT_PREFIX"
 fi
+pyenv-rehash

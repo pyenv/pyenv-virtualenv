@@ -34,7 +34,7 @@ Please use a Markdown code block (three backticks on a line by themselves before
 - [ ] Please attach the debug log of a faulty Pyenv invocation as a gist
   * If the problem happens in a Pyenv invocation, you can turn on debug logging by setting `PYENV_DEBUG=1`, e.g. `env PYENV_DEBUG=1 pyenv install -v 3.6.4`
   * If the problem happens outside of a Pyenv invocation, get the debug log like this:
-     ```
+     ```bash
      # for Bash
      export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
      # for Zsh

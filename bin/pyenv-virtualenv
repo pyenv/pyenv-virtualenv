@@ -13,7 +13,7 @@
 #   -u/--upgrade     Imply --force
 #
 
-PYENV_VIRTUALENV_VERSION="1.2.4"
+PYENV_VIRTUALENV_VERSION="1.2.6"
 
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x

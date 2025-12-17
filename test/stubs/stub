@@ -7,12 +7,19 @@ program="${0##*/}"
 PROGRAM="$(echo "$program" | tr a-z- A-Z_)"
 [ -n "$TMPDIR" ] || TMPDIR="/tmp"
 
-_STUB_PLAN="${PROGRAM}_STUB_PLAN"
-_STUB_RUN="${PROGRAM}_STUB_RUN"
-_STUB_INDEX="${PROGRAM}_STUB_INDEX"
-_STUB_RESULT="${PROGRAM}_STUB_RESULT"
-_STUB_END="${PROGRAM}_STUB_END"
-_STUB_LOG="${PROGRAM}_STUB_LOG"
+STUB_PLAN="${PROGRAM}_STUB_PLAN"
+STUB_PLAN="${!STUB_PLAN}"
+
+STUB_RUN="${PROGRAM}_STUB_RUN"
+STUB_RUN="${!STUB_RUN:-${TMPDIR}/${program}-stub-run}"
+STUB_INDEX=
+STUB_RESULT=
+
+STUB_END="${PROGRAM}_STUB_END"
+STUB_END="${!STUB_END}"
+
+STUB_LOG="${PROGRAM}_STUB_LOG"
+STUB_LOG="${!STUB_LOG:-${TMPDIR}/${program}-stub-log}"
 
 
 STUB_LOCKFILE="${TMPDIR}/${program}-stub.lock"
@@ -46,31 +53,27 @@ acquire_lock() {
 
 acquire_lock
 
-[ -n "${!_STUB_LOG}" ] || eval "${_STUB_LOG}"="${TMPDIR}/${program}-stub-log"
+if [[ -z $STUB_END ]]; then echo "$program" "$@" >>"$STUB_LOG"; fi
 
-if test -z "${!_STUB_END}"; then echo "$program" "$@" >>"${!_STUB_LOG}"; fi
-
-[ -e "${!_STUB_PLAN}" ] || exit 1
-[ -n "${!_STUB_RUN}" ] || eval "${_STUB_RUN}"="${TMPDIR}/${program}-stub-run"
-
+[[ -e $STUB_PLAN ]] || exit 1
 
 # Initialize or load the stub run information.
 read_runfile() {
-  if test -e "${!_STUB_RUN}"; then source "${!_STUB_RUN}"; fi
+  if [[ -e $STUB_RUN ]]; then source "$STUB_RUN"; fi
 }
 write_runfile() {
   {
     local i
-    echo "${_STUB_INDEX}=${!_STUB_INDEX}"
-    echo "${_STUB_RESULT}=${!_STUB_RESULT}"
+    echo "STUB_INDEX=$STUB_INDEX"
+    echo "STUB_RESULT=$STUB_RESULT"
     echo "STUB_RUNCOUNTS=()"
     for i in ${!STUB_RUNCOUNTS[@]}; do
       echo "STUB_RUNCOUNTS[$i]=${STUB_RUNCOUNTS[$i]}"
     done
-  } > "${!_STUB_RUN}"
+  } > "$STUB_RUN"
 }
 update_runfile_index() {
-  ( eval "${_STUB_INDEX}=$((${!_STUB_INDEX} + 1))"
+  ( STUB_INDEX=$((STUB_INDEX + 1))
     write_runfile
   )
 }
@@ -78,15 +81,14 @@ update_runfile_result() {
   (
     # Another stubs may have run while we were running payload
     # So we need to merge possible state changes
-    local our_result="${!_STUB_RESULT}"
+    local our_result="$STUB_RESULT"
     local -a our_runcounts
     array_copy STUB_RUNCOUNTS our_runcounts
     
     read_runfile
     
     # merge our match_result and their match_result, with failure taking precedence
-    local new_result=$(( $our_result | ${!_STUB_RESULT} ))
-    eval "${_STUB_RESULT}=\$new_result"
+    STUB_RESULT=$(( our_result | STUB_RESULT ))
     
     # 3-way merge STUB_RUNCOUNTS (their changes),
     # our_runcounts (our changes) and initial_runcounts (base)
@@ -118,16 +120,16 @@ array_copy() {
   eval "$dest=$data"
 }
 
-eval "${_STUB_INDEX}"=1
-eval "${_STUB_RESULT}"=0
+STUB_INDEX=1
+STUB_RESULT=0
 declare -a STUB_RUNCOUNTS
 read_runfile
 declare -a initial_runcounts
 array_copy STUB_RUNCOUNTS initial_runcounts
 
-# !_STUB_END is set externally to trigger verification mode for `unstub'
+# ${PROGRAM}_STUB_END envvar is set externally to trigger verification mode for `unstub'
 # Execution mode
-if [ -z "${!_STUB_END}" ]; then
+if [[ -z $STUB_END ]]; then
   
   # Loop over each line in the plan.
   regular_command_index=0
@@ -146,7 +148,7 @@ if [ -z "${!_STUB_END}" ]; then
     # Also keep track of no-order commands for the purpose of run count tracking
     if [[ -n $line_flag_regular ]]; then
       regular_command_index=$(($regular_command_index + 1))
-      if [[ $regular_command_index -ne ${!_STUB_INDEX} ]]; then
+      if [[ $regular_command_index -ne $STUB_INDEX ]]; then
         continue;
       fi
     else
@@ -202,15 +204,18 @@ if [ -z "${!_STUB_END}" ]; then
       break
     fi
     
-  done < "${!_STUB_PLAN}"
+  done < "$STUB_PLAN"
 
   #If we never matched anything, we failed.
   if [[ $match_result -eq 1 ]]; then
-    eval "${_STUB_RESULT}"=1
+    STUB_RESULT=1
+    
+    #This also means that we never released the lock
+    # before running the payload
+  else 
+    acquire_lock
   fi
-
   # Write out the match_result information.
-  acquire_lock
   update_runfile_result
   release_lock
  
@@ -219,15 +224,15 @@ if [ -z "${!_STUB_END}" ]; then
 fi
 
 # Verification mode (`unstub')
-if [ -n "${!_STUB_END}" ]; then
+if [[ -n $STUB_END ]]; then
 
   # `unstub' is supposed to run after any stubs are finished
   release_lock
 
   # If the number of regular commands in the plan is larger than
   # the final regular_command_index, we failed.
-  if [ "$(grep -Ee '^-' "${!_STUB_PLAN}" | wc -l )" -ge "${!_STUB_INDEX}" ]; then
-    eval "${_STUB_RESULT}"=1
+  if [[ $(grep -Ee '^-' "$STUB_PLAN" | wc -l ) -ge $STUB_INDEX ]]; then
+    STUB_RESULT=1
   fi
   
   # If no-order commands weren't executed exactly once
@@ -253,25 +258,25 @@ if [ -n "${!_STUB_END}" ]; then
         ( -n $line_flag_multiple && \
         (( STUB_RUNCOUNTS[no_order_command_index] < 1 )) ) ]]
     then
-      eval "${_STUB_RESULT}"=1
+      STUB_RESULT=1
     fi
     
-  done < "${!_STUB_PLAN}"
+  done < "$STUB_PLAN"
   
-  if [ "${!_STUB_RESULT}" -ne 0 ]; then
+  if [[ $STUB_RESULT -ne 0 ]]; then
     {
       echo "plan:"
-      cat "${!_STUB_PLAN}" || true
+      cat "$STUB_PLAN" || true
       echo "log:"
-      cat "${!_STUB_LOG}" || true
+      cat "$STUB_LOG" || true
     } >&2
   fi
 
   # Clean up the run file.
-  rm -f "${!_STUB_RUN}"
-  rm -f "${!_STUB_LOG}"
+  rm -f "$STUB_RUN"
+  rm -f "$STUB_LOG"
 
   # Return the run result.
-  exit "${!_STUB_RESULT}"
+  exit "$STUB_RESULT"
 
 fi

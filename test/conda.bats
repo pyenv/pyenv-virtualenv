@@ -26,7 +26,8 @@ unstub_pyenv() {
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub -N pyenv-exec "conda list * : true"
+  stub -N pyenv-exec "conda create * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   run pyenv-virtualenv venv
@@ -49,11 +50,11 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "conda create * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   run pyenv-virtualenv -p python3.5 venv
-
+  
   assert_success
   assert_output <<OUT
 PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5
@@ -72,7 +73,7 @@ OUT
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
   stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "conda create * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
   stub pyenv-exec "python -s -m ensurepip : true"
 
   run pyenv-virtualenv --python=python3.5 venv

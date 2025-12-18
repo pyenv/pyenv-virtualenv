@@ -14,5 +14,5 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - run: git clone https://github.com/bats-core/bats-core.git --depth=1 -b v1.2.0 bats
+      - run: git clone https://github.com/bats-core/bats-core.git --depth=1 -b v1.10.0 bats
       - run: bats/bin/bats --tap test

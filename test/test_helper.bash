@@ -1,6 +1,7 @@
 export TMP="$BATS_TEST_DIRNAME/tmp"
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
-PATH=/usr/bin:/usr/sbin:/bin/:/sbin
+PATH=/usr/bin:/usr/sbin:/bin:/sbin
 PATH="$BATS_TEST_DIRNAME/../bin:$PATH"
 PATH="$TMP/bin:$PATH"
 export PATH
@@ -10,6 +11,35 @@ teardown() {
 }
 
 stub() {
+  local FLAG_NO_ORDER=
+  local FLAG_MULTIPLE=
+  while (($#)); do
+    case "$1" in
+      -N|--no-order)
+        FLAG_NO_ORDER=1
+        shift
+        ;;
+      -M|--multiple)
+        FLAG_MULTIPLE=1
+        shift
+        ;;
+      -*)
+        echo "stub: unrecognized switch: $arg" >$2
+        return 1
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+  
+  local FLAGS=-
+  if [[ -n $FLAG_MULTIPLE ]]; then
+    FLAGS=M
+  elif [[ -n $FLAG_NO_ORDER ]]; then
+    FLAGS=N
+  fi
+  
   local program="$1"
   local prefix="$(echo "$program" | tr a-z- A-Z_)"
   shift
@@ -23,7 +53,9 @@ stub() {
   ln -sf "${BATS_TEST_DIRNAME}/stubs/stub" "${TMP}/bin/${program}"
 
   touch "${TMP}/${program}-stub-plan"
-  for arg in "$@"; do printf "%s\n" "$arg" >> "${TMP}/${program}-stub-plan"; done
+  for arg in "$@"; do
+    echo "$FLAGS" "$arg" >> "${TMP}/${program}-stub-plan"
+  done
 }
 
 unstub() {

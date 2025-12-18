@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+export PS4='+($$:${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 set -e
 
 status=0
@@ -13,7 +14,40 @@ _STUB_RESULT="${PROGRAM}_STUB_RESULT"
 _STUB_END="${PROGRAM}_STUB_END"
 _STUB_LOG="${PROGRAM}_STUB_LOG"
 
+
+STUB_LOCKFILE="${TMPDIR}/${program}-stub.lock"
+
+release_lock() {
+  rm -f "$STUB_LOCKFILE"
+  trap - EXIT
+}
+
+acquire_lock() {
+  local start=$SECONDS
+  local acquire_timeout=10
+  local acquired=
+  while (( SECONDS <= start + $acquire_timeout )); do
+  
+    ( set -o noclobber; echo -n >"$STUB_LOCKFILE" ) 2>/dev/null && acquired=1
+
+    if [[ -n $acquired ]]; then
+      trap release_lock EXIT
+      break
+    else
+      # POSIX sleep(1) doesn't provide subsecond precision, but many others do
+      sleep 0.1 2>/dev/null || sleep 1
+    fi
+  done
+  if [[ -z $acquired ]]; then
+    echo "$0: error: could not acquire stub lock \`$STUB_LOCKFILE' in ${acquire_timeout} seconds" >&2
+    exit 2
+  fi
+}
+
+acquire_lock
+
 [ -n "${!_STUB_LOG}" ] || eval "${_STUB_LOG}"="${TMPDIR}/${program}-stub-log"
+
 if test -z "${!_STUB_END}"; then echo "$program" "$@" >>"${!_STUB_LOG}"; fi
 
 [ -e "${!_STUB_PLAN}" ] || exit 1
@@ -21,25 +55,108 @@ if test -z "${!_STUB_END}"; then echo "$program" "$@" >>"${!_STUB_LOG}"; fi
 
 
 # Initialize or load the stub run information.
+read_runfile() {
+  if test -e "${!_STUB_RUN}"; then source "${!_STUB_RUN}"; fi
+}
+write_runfile() {
+  {
+    local i
+    echo "${_STUB_INDEX}=${!_STUB_INDEX}"
+    echo "${_STUB_RESULT}=${!_STUB_RESULT}"
+    echo "STUB_RUNCOUNTS=()"
+    for i in ${!STUB_RUNCOUNTS[@]}; do
+      echo "STUB_RUNCOUNTS[$i]=${STUB_RUNCOUNTS[$i]}"
+    done
+  } > "${!_STUB_RUN}"
+}
+update_runfile_index() {
+  ( eval "${_STUB_INDEX}=$((${!_STUB_INDEX} + 1))"
+    write_runfile
+  )
+}
+update_runfile_result() {
+  (
+    # Another stubs may have run while we were running payload
+    # So we need to merge possible state changes
+    local our_result="${!_STUB_RESULT}"
+    local -a our_runcounts
+    array_copy STUB_RUNCOUNTS our_runcounts
+    
+    read_runfile
+    
+    # merge our match_result and their match_result, with failure taking precedence
+    local new_result=$(( $our_result | ${!_STUB_RESULT} ))
+    eval "${_STUB_RESULT}=\$new_result"
+    
+    # 3-way merge STUB_RUNCOUNTS (their changes),
+    # our_runcounts (our changes) and initial_runcounts (base)
+    local i
+    for i in $(printf '%s\n' ${!STUB_RUNCOUNTS[@]} ${!our_runcounts[@]} | sort -u); do
+      STUB_RUNCOUNTS[$i]=$((STUB_RUNCOUNTS[i] + our_runcounts[i] - initial_runcounts[i]))
+    done
+    
+    write_runfile
+  )
+}
+
+array_copy() {
+  #`declare -p' is supposed to produce "declare -a src=([index]="value" <etc>)"
+  local data="$(declare -p ${1:?})"
+  local dest="${2:?}"
+  # Bash 5 dumps empty arrays as "declare -a arr"
+  if [[ $data != *=* ]]; then
+    data="()";
+  else
+    data="${data#*=}"
+  fi
+  
+  # Bash 3 and MacPorts version of Bash 5 dump arrays in single quotes "declare -a arr='()'"
+  #  but arr='(<value>)' createss "([0]='<value>')" rather than duplicate the array
+  if [[ ${data:0:1} == "'" && ${data:${#data}-1:1} == "'" ]]; then
+    data="${data:1:${#data}-2}"
+  fi
+  eval "$dest=$data"
+}
+
 eval "${_STUB_INDEX}"=1
 eval "${_STUB_RESULT}"=0
-if test -e "${!_STUB_RUN}"; then source "${!_STUB_RUN}"; fi
+declare -a STUB_RUNCOUNTS
+read_runfile
+declare -a initial_runcounts
+array_copy STUB_RUNCOUNTS initial_runcounts
 
-
-# Loop over each line in the plan.
-index=0
-while IFS= read -r line; do
-  index=$(($index + 1))
-
-  if [ -z "${!_STUB_END}" ] && [ $index -eq "${!_STUB_INDEX}" ]; then
-    # We found the plan line we're interested in.
-    # Start off by assuming success.
-    result=0
-
+# !_STUB_END is set externally to trigger verification mode for `unstub'
+# Execution mode
+if [ -z "${!_STUB_END}" ]; then
+  
+  # Loop over each line in the plan.
+  regular_command_index=0
+  no_order_command_index=0
+  match_result=1
+  while IFS= read -r line; do
+    line_flags="${line%% *}"
+    line="${line#${line_flags} }"
+    line_flag_no_order="$(if [[ $line_flags == N ]]; then echo 1; fi)"
+    line_flag_multiple="$(if [[ $line_flags == M ]]; then echo 1; fi)"
+    line_flag_regular="$(if [[ $line_flags == - ]]; then echo 1; fi)"
+    unset line_flags
+    
+    # Go through the plan until a match is found.
+    # For regular commands, only check the next command by index.
+    # Also keep track of no-order commands for the purpose of run count tracking
+    if [[ -n $line_flag_regular ]]; then
+      regular_command_index=$(($regular_command_index + 1))
+      if [[ $regular_command_index -ne ${!_STUB_INDEX} ]]; then
+        continue;
+      fi
+    else
+      no_order_command_index=$(($no_order_command_index + 1))
+    fi
+    
     # Split the line into an array of arguments to
     # match and a command to run to produce output.
     command=" $line"
-    if [ "$command" != "${command/ : }" ]; then
+    if [[ $command == *" : "* ]]; then
       patterns="${command%% : *}"
       command="${command#* : }"
     fi
@@ -54,36 +171,93 @@ while IFS= read -r line; do
 
     # Match the expected argument patterns to actual
     # arguments.
+    match_result=0
     for (( i=0; i<${#patterns[@]}; i++ )); do
       pattern="${patterns[$i]}"
       argument="${arguments[$i]}"
 
       case "$argument" in
         $pattern ) ;;
-        * ) result=1 ;;
+        * ) match_result=1 ;;
       esac
     done
 
     # If the arguments matched, evaluate the command
     # in a subshell. Otherwise, log the failure.
-    if [ $result -eq 0 ] ; then
-      set +e
-      ( eval "$command" )
-      status="$?"
-      set -e
-    else
-      eval "${_STUB_RESULT}"=1
+    if [ $match_result -eq 0 ] ; then
+
+      # If this is a regular command, push the regular command index for the next stub invocation
+      if [[ -n $line_flag_regular ]]; then
+        update_runfile_index
+      else
+        STUB_RUNCOUNTS[$no_order_command_index]=$((STUB_RUNCOUNTS[no_order_command_index]+1))
+      fi
+      
+      # Release the lock while running the payload to allow another `stub'
+      # of the same program to run concurrently (e.g. in a pipeline).
+      release_lock
+      
+      ( eval "$command" ) && status="$?" || status="$?"
+
+      break
     fi
-  fi
-done < "${!_STUB_PLAN}"
+    
+  done < "${!_STUB_PLAN}"
 
-
-if [ -n "${!_STUB_END}" ]; then
-  # If the number of lines in the plan is larger than
-  # the requested index, we failed.
-  if [ $index -ge "${!_STUB_INDEX}" ]; then
+  #If we never matched anything, we failed.
+  if [[ $match_result -eq 1 ]]; then
     eval "${_STUB_RESULT}"=1
   fi
+
+  # Write out the match_result information.
+  acquire_lock
+  update_runfile_result
+  release_lock
+ 
+  exit "$status"
+
+fi
+
+# Verification mode (`unstub')
+if [ -n "${!_STUB_END}" ]; then
+
+  # `unstub' is supposed to run after any stubs are finished
+  release_lock
+
+  # If the number of regular commands in the plan is larger than
+  # the final regular_command_index, we failed.
+  if [ "$(grep -Ee '^-' "${!_STUB_PLAN}" | wc -l )" -ge "${!_STUB_INDEX}" ]; then
+    eval "${_STUB_RESULT}"=1
+  fi
+  
+  # If no-order commands weren't executed exactly once
+  # and multiple-times commands at least once, we failed.
+  no_order_command_index=0
+  while IFS= read -r line; do
+    line_flags="${line%% *}"
+    line="${line#${line_flags} }"
+    line_flag_no_order="$(if [[ $line_flags == N ]]; then echo 1; fi)"
+    line_flag_multiple="$(if [[ $line_flags == M ]]; then echo 1; fi)"
+    line_flag_regular="$(if [[ $line_flags == - ]]; then echo 1; fi)"
+    unset line_flags
+
+    if [[ -z $line_flag_regular ]]; then
+      continue
+    fi
+    
+    no_order_command_index=$((no_order_command_index + 1))
+    
+    if [[ ( -n $line_flag_no_order && \
+          (( STUB_RUNCOUNTS[no_order_command_index] != 1 )) ) \
+        || \
+        ( -n $line_flag_multiple && \
+        (( STUB_RUNCOUNTS[no_order_command_index] < 1 )) ) ]]
+    then
+      eval "${_STUB_RESULT}"=1
+    fi
+    
+  done < "${!_STUB_PLAN}"
+  
   if [ "${!_STUB_RESULT}" -ne 0 ]; then
     {
       echo "plan:"
@@ -97,21 +271,7 @@ if [ -n "${!_STUB_END}" ]; then
   rm -f "${!_STUB_RUN}"
   rm -f "${!_STUB_LOG}"
 
-  # Return the result.
+  # Return the run result.
   exit "${!_STUB_RESULT}"
-
-else
-  # If the requested index is larger than the number
-  # of lines in the plan file, we failed.
-  if [ "${!_STUB_INDEX}" -gt $index ]; then
-    eval "${_STUB_RESULT}"=1
-  fi
-
-  # Write out the run information.
-  { echo "${_STUB_INDEX}=$((${!_STUB_INDEX} + 1))"
-    echo "${_STUB_RESULT}=${!_STUB_RESULT}"
-  } > "${!_STUB_RUN}"
-
-  exit "$status"
 
 fi

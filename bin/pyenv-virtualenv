@@ -24,7 +24,7 @@ fi
 
 # Provide pyenv completions
 if [ "$1" = "--complete" ]; then
-  exec pyenv-versions --bare
+  exec pyenv-versions --bare --skip-envs --skip-aliases
 fi
 
 unset PIP_REQUIRE_VENV

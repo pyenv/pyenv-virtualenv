@@ -50,8 +50,10 @@ load test_helper
   run pyenv-virtualenv-init - bash
   assert_success
   assert_output <<EOS
-export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
-export PYENV_VIRTUALENV_INIT=1;
+if [[ ":$PATH:" != *"${TMP}/pyenv/plugins/pyenv-virtualenv/shims"* ]]; then
+  export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
+  export PYENV_VIRTUALENV_INIT=1;
+fi
 _pyenv_virtualenv_hook() {
   local ret=\$?
   if [ -n "\${VIRTUAL_ENV-}" ]; then
@@ -93,8 +95,10 @@ EOS
   run pyenv-virtualenv-init - zsh
   assert_success
   assert_output <<EOS
-export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
-export PYENV_VIRTUALENV_INIT=1;
+if [[ ":$PATH:" != *"${TMP}/pyenv/plugins/pyenv-virtualenv/shims"* ]]; then
+  export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
+  export PYENV_VIRTUALENV_INIT=1;
+fi
 _pyenv_virtualenv_hook() {
   local ret=\$?
   if [ -n "\${VIRTUAL_ENV-}" ]; then

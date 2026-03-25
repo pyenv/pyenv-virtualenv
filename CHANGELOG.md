@@ -1,5 +1,10 @@
 ## Version History
 
+## v1.3.0
+* CI: cleanup by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/521
+* CI: tests: use Bats 1.10; support concurrent, out-of-order and multiple-times execution of stub commands; fix race condition between concurrent stubs by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/520
+* Drastically speed up precommand hook by caching active version to skip redundant `activate` calls by @jakelodwick in https://github.com/pyenv/pyenv-virtualenv/pull/523
+
 ## v1.2.6
 * Fix changelog and version numbers
 

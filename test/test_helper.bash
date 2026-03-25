@@ -1,4 +1,12 @@
 export TMP="$BATS_TEST_DIRNAME/tmp"
+
+# Detect stat format for mtime: GNU uses -c %Y, BSD uses -f %m
+# Must match the detection in bin/pyenv-virtualenv-init
+if stat -L -c %Y / >/dev/null 2>&1; then
+  _stat_fmt="-L -c %Y"
+else
+  _stat_fmt="-L -f %m"
+fi
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 PATH=/usr/bin:/usr/sbin:/bin:/sbin

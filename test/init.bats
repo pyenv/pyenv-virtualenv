@@ -76,12 +76,15 @@ _pyenv_virtualenv_hook() {
   local _pvh_d="\${PWD}" _pvh_found_local=0
   _PYENV_VH_PATHS=()
   while :; do
-    if [ -e "\${_pvh_d}/.python-version" ] || [ -L "\${_pvh_d}/.python-version" ]; then
+    if [ -f "\${_pvh_d}/.python-version" ] || [ -L "\${_pvh_d}/.python-version" ]; then
       _PYENV_VH_PATHS+=("\${_pvh_d}/.python-version")
-      _pvh_found_local=1
-      break
+      if [ -f "\${_pvh_d}/.python-version" ]; then 
+        _pvh_found_local=1
+        break
+      fi
+    else
+      _PYENV_VH_PATHS+=("\${_pvh_d}")
     fi
-    _PYENV_VH_PATHS+=("\${_pvh_d}")
     [ "\${_pvh_d}" = "/" ] && break
     _pvh_d="\${_pvh_d%/*}"
     [ -z "\${_pvh_d}" ] && _pvh_d="/"
@@ -131,12 +134,15 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l _pvh_found_local 0
   set -g _PYENV_VH_PATHS
   while true
-    if test -e "\$d/.python-version"; or test -L "\$d/.python-version"
+    if test -f "\$d/.python-version"; or test -L "\$d/.python-version"
       set -g _PYENV_VH_PATHS \$_PYENV_VH_PATHS "\$d/.python-version"
-      set _pvh_found_local 1
-      break
+      if test -f "\$d/.python-version" 
+        set _pvh_found_local 1
+        break
+      end
+    else
+      set -g _PYENV_VH_PATHS \$_PYENV_VH_PATHS "\$d"
     end
-    set -g _PYENV_VH_PATHS \$_PYENV_VH_PATHS "\$d"
     test "\$d" = "/"; and break
     set d (string replace -r '/[^/]*\$' '' -- "\$d")
     test -z "\$d"; and set d "/"
@@ -181,12 +187,15 @@ _pyenv_virtualenv_hook() {
   local _pvh_d="\${PWD}" _pvh_found_local=0
   _PYENV_VH_PATHS=()
   while :; do
-    if [ -e "\${_pvh_d}/.python-version" ] || [ -L "\${_pvh_d}/.python-version" ]; then
+    if [ -f "\${_pvh_d}/.python-version" ] || [ -L "\${_pvh_d}/.python-version" ]; then
       _PYENV_VH_PATHS+=("\${_pvh_d}/.python-version")
-      _pvh_found_local=1
-      break
+      if [ -f "\${_pvh_d}/.python-version" ]; then 
+        _pvh_found_local=1
+        break
+      fi
+    else
+      _PYENV_VH_PATHS+=("\${_pvh_d}")
     fi
-    _PYENV_VH_PATHS+=("\${_pvh_d}")
     [ "\${_pvh_d}" = "/" ] && break
     _pvh_d="\${_pvh_d%/*}"
     [ -z "\${_pvh_d}" ] && _pvh_d="/"

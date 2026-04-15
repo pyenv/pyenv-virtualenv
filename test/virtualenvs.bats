@@ -6,13 +6,8 @@ setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   mkdir -p "${PYENV_ROOT}/versions/2.7.6/envs/venv27"
   mkdir -p "${PYENV_ROOT}/versions/3.3.3/envs/venv33"
-  ln -s "venv27" "${PYENV_ROOT}/versions/venv27"
-  ln -s "venv33" "${PYENV_ROOT}/versions/venv33"
-}
-
-create_alias() {
-  mkdir -p "${PYENV_ROOT}/versions"
-  ln -s "$2" "${PYENV_ROOT}/versions/$1"
+  ln -s "${PYENV_ROOT}/versions/2.7.6/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+  ln -s "${PYENV_ROOT}/versions/3.3.3/envs/venv33" "${PYENV_ROOT}/versions/venv33"
 }
 
 @test "list virtual environments only" {

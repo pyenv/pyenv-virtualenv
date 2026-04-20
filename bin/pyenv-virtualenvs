@@ -37,9 +37,7 @@ if [[ ${BASH_VERSINFO[0]} -gt 3 ]]; then
 else
   current_versions=()
 fi
-if [[ -n $bare ]]; then
-  include_system=""
-else
+if [[ -z $bare ]]; then
   hit_prefix="* "
   miss_prefix="  "
   OLDIFS="$IFS"
@@ -131,9 +129,3 @@ fi
 
 shopt -u dotglob
 shopt -u nullglob
-
-if [[ $num_versions -eq 0 ]] && [[ -n $include_system ]]; then
-  echo "Warning: no Python virtualenv detected on the system" >&2
-  exit 1
-fi
-

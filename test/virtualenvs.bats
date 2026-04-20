@@ -98,19 +98,6 @@ OUT
   unstub pyenv-version-origin
 }
 
-@test "no virtualenvs warning" {
-  rm -rf "${PYENV_ROOT}/versions"
-  mkdir -p "${PYENV_ROOT}/versions"
-  stub pyenv-version-name ": echo system"
-
-  run pyenv-virtualenvs
-
-  assert_failure
-  assert_output "Warning: no Python virtualenv detected on the system"
-
-  unstub pyenv-version-name
-}
-
 @test "no warning with --bare and no virtualenvs" {
   rm -rf "${PYENV_ROOT}/versions"
   mkdir -p "${PYENV_ROOT}/versions"

@@ -39,6 +39,16 @@ load test_helper
   assert_output_contains 'eval "$(pyenv virtualenv-init -)"'
 }
 
+@test "generated hook code is valid POSIX sh" {
+  # Get output directly to avoid bats env affecting shell detection
+  # The bash output should be POSIX sh-compatible (no bash arrays, etc.)
+  output=$(bash bin/pyenv-virtualenv-init - bash 2>/dev/null)
+  # Validate syntax with dash (POSIX sh)
+  result=$(echo "$output" | dash -n - 2>&1)
+  status=$?
+  [ $status -eq 0 ] || echo "dash failed: $result" >&2
+}
+
 @test "fish instructions" {
   run pyenv-virtualenv-init fish
   assert [ "$status" -eq 1 ]
@@ -61,7 +71,7 @@ _pyenv_virtualenv_hook() {
       return \$ret
     fi
     if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ] \\
-      && [ "\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)" = "\${_PYENV_VH_MTIMES-}" ]; then
+      && [ "\$(stat ${_stat_fmt} \${_PYENV_VH_PATHS} 2>/dev/null)" = "\${_PYENV_VH_MTIMES-}" ]; then
       return \$ret
     fi
   fi
@@ -74,25 +84,25 @@ _pyenv_virtualenv_hook() {
   _PYENV_VH_VERSION="\${PYENV_VERSION-}"
   _PYENV_VH_VENV="\${VIRTUAL_ENV-}"
   local _pvh_d="\${PWD}" _pvh_found_local=0
-  _PYENV_VH_PATHS=()
+  _PYENV_VH_PATHS=""
   while :; do
     if [ -f "\${_pvh_d}/.python-version" ] || [ -L "\${_pvh_d}/.python-version" ]; then
-      _PYENV_VH_PATHS+=("\${_pvh_d}/.python-version")
+      _PYENV_VH_PATHS="\${_PYENV_VH_PATHS} \${_pvh_d}/.python-version"
       if [ -f "\${_pvh_d}/.python-version" ]; then 
         _pvh_found_local=1
         break
       fi
     else
-      _PYENV_VH_PATHS+=("\${_pvh_d}")
+      _PYENV_VH_PATHS="\${_PYENV_VH_PATHS} \${_pvh_d}"
     fi
     [ "\${_pvh_d}" = "/" ] && break
     _pvh_d="\${_pvh_d%/*}"
     [ -z "\${_pvh_d}" ] && _pvh_d="/"
   done
   if [ "\${_pvh_found_local}" = "0" ]; then
-    _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
+    _PYENV_VH_PATHS="\${_PYENV_VH_PATHS} \${PYENV_ROOT}/version"
   fi
-  _PYENV_VH_MTIMES="\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+  _PYENV_VH_MTIMES="\$(stat ${_stat_fmt} \${_PYENV_VH_PATHS} 2>/dev/null)"
   return \$ret
 };
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
@@ -172,7 +182,7 @@ _pyenv_virtualenv_hook() {
       return \$ret
     fi
     if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ] \\
-      && [ "\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)" = "\${_PYENV_VH_MTIMES-}" ]; then
+      && [ "\$(stat ${_stat_fmt} \${_PYENV_VH_PATHS} 2>/dev/null)" = "\${_PYENV_VH_MTIMES-}" ]; then
       return \$ret
     fi
   fi
@@ -185,25 +195,25 @@ _pyenv_virtualenv_hook() {
   _PYENV_VH_VERSION="\${PYENV_VERSION-}"
   _PYENV_VH_VENV="\${VIRTUAL_ENV-}"
   local _pvh_d="\${PWD}" _pvh_found_local=0
-  _PYENV_VH_PATHS=()
+  _PYENV_VH_PATHS=""
   while :; do
     if [ -f "\${_pvh_d}/.python-version" ] || [ -L "\${_pvh_d}/.python-version" ]; then
-      _PYENV_VH_PATHS+=("\${_pvh_d}/.python-version")
+      _PYENV_VH_PATHS="\${_PYENV_VH_PATHS} \${_pvh_d}/.python-version"
       if [ -f "\${_pvh_d}/.python-version" ]; then 
         _pvh_found_local=1
         break
       fi
     else
-      _PYENV_VH_PATHS+=("\${_pvh_d}")
+      _PYENV_VH_PATHS="\${_PYENV_VH_PATHS} \${_pvh_d}"
     fi
     [ "\${_pvh_d}" = "/" ] && break
     _pvh_d="\${_pvh_d%/*}"
     [ -z "\${_pvh_d}" ] && _pvh_d="/"
   done
   if [ "\${_pvh_found_local}" = "0" ]; then
-    _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
+    _PYENV_VH_PATHS="\${_PYENV_VH_PATHS} \${PYENV_ROOT}/version"
   fi
-  _PYENV_VH_MTIMES="\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+  _PYENV_VH_MTIMES="\$(stat ${_stat_fmt} \${_PYENV_VH_PATHS} 2>/dev/null)"
   return \$ret
 };
 typeset -g -a precmd_functions

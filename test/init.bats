@@ -29,20 +29,16 @@ load test_helper
   rm -f "${TMP}/script.sh"
 }
 
-@test "sh-compatible instructions" {
-  run pyenv-virtualenv-init bash
-  assert [ "$status" -eq 1 ]
-  assert_output_contains 'eval "$(pyenv virtualenv-init -)"'
-
-  run pyenv-virtualenv-init zsh
-  assert [ "$status" -eq 1 ]
-  assert_output_contains 'eval "$(pyenv virtualenv-init -)"'
-}
-
 @test "fish instructions" {
   run pyenv-virtualenv-init fish
   assert [ "$status" -eq 1 ]
   assert_output_contains 'status --is-interactive; and source (pyenv virtualenv-init -|psub)'
+}
+
+@test "other shells instructions" {
+    run pyenv-virtualenv-init some_other_sh
+    assert [ "$status" -eq 1 ]
+    assert_output_contains 'eval "$(pyenv virtualenv-init -)"'
 }
 
 @test "outputs bash-specific syntax" {
@@ -210,5 +206,15 @@ typeset -g -a precmd_functions
 if [[ -z \$precmd_functions[(r)_pyenv_virtualenv_hook] ]]; then
   precmd_functions=(_pyenv_virtualenv_hook \$precmd_functions);
 fi
+EOS
+}
+
+@test "outputs other shells syntax" {
+  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
+  run pyenv-virtualenv-init - some_other_sh
+  assert_success
+  assert_output <<EOS
+export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
+export PYENV_VIRTUALENV_INIT=1;
 EOS
 }

@@ -120,22 +120,13 @@ esac
 
 case "$shell" in
 fish )
-  if [ -n "$_has_version_hooks" ]; then
-    cat <<EOS
+  cat <<EOS
 function _pyenv_virtualenv_hook --on-event fish_prompt;
   set -l ret \$status
-  if [ -n "\$VIRTUAL_ENV" ]
-    pyenv activate --quiet; or pyenv deactivate --quiet; or true
-  else
-    pyenv activate --quiet; or true
-  end
-  return \$ret
-end
 EOS
-  else
+
+  if [ -z "$_has_version_hooks" ]; then
     cat <<EOS
-function _pyenv_virtualenv_hook --on-event fish_prompt;
-  set -l ret \$status
   if test "\$PYENV_VERSION" = "\$_PYENV_VH_VERSION" \\
     -a "\$VIRTUAL_ENV" = "\$_PYENV_VH_VENV"
     if test -n "\$PYENV_VERSION"
@@ -146,11 +137,19 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
       return \$ret
     end
   end
+EOS
+  fi
+  
+  cat <<EOS
   if [ -n "\$VIRTUAL_ENV" ]
     pyenv activate --quiet; or pyenv deactivate --quiet; or true
   else
     pyenv activate --quiet; or true
   end
+EOS
+
+  if [ -z "$_has_version_hooks" ]; then
+    cat <<EOS
   set -g _PYENV_VH_PWD "\$PWD"
   set -g _PYENV_VH_VERSION "\$PYENV_VERSION"
   set -g _PYENV_VH_VENV "\$VIRTUAL_ENV"
@@ -175,39 +174,23 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
     set -g _PYENV_VH_PATHS \$_PYENV_VH_PATHS "\$PYENV_ROOT/version"
   end
   set -g _PYENV_VH_MTIMES (stat ${_stat_fmt} \$_PYENV_VH_PATHS 2>/dev/null)
+EOS
+  fi
+  
+  cat <<EOS
   return \$ret
 end
 EOS
-  fi
- ;;
-ksh )
-  cat <<EOS
-function _pyenv_virtualenv_hook() {
-EOS
   ;;
-* )
+
+bash|zsh )
   cat <<EOS
 _pyenv_virtualenv_hook() {
+  local ret=\$?
 EOS
-  ;;
-esac
 
-if [[ "$shell" != "fish" ]]; then
-  if [ -n "$_has_version_hooks" ]; then
+  if [ -z "$_has_version_hooks" ]; then
     cat <<EOS
-  local ret=\$?
-  if [ -n "\${VIRTUAL_ENV-}" ]; then
-    eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
-  else
-    eval "\$(pyenv sh-activate --quiet || true)" || true
-  fi
-  return \$ret
-};
-EOS
-  else
-    cat <<EOS
-  local ret=\$?
-  # Cache: env vars checked once, path list and stat rebuilt on miss only
   if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\
     && [ "\${VIRTUAL_ENV-}" = "\${_PYENV_VH_VENV-}" ]; then
     if [ -n "\${PYENV_VERSION-}" ]; then
@@ -218,11 +201,19 @@ EOS
       return \$ret
     fi
   fi
+EOS
+  fi
+
+  cat <<EOS
   if [ -n "\${VIRTUAL_ENV-}" ]; then
     eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
     eval "\$(pyenv sh-activate --quiet || true)" || true
   fi
+EOS
+
+  if [ -z "$_has_version_hooks" ]; then
+    cat <<EOS
   _PYENV_VH_PWD="\${PWD}"
   _PYENV_VH_VERSION="\${PYENV_VERSION-}"
   _PYENV_VH_VENV="\${VIRTUAL_ENV-}"
@@ -246,29 +237,33 @@ EOS
     _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
   fi
   _PYENV_VH_MTIMES="\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
-  return \$ret
-};
 EOS
   fi
 
-  case "$shell" in
-  bash )
-    cat <<EOS
+  cat <<EOS
+  return \$ret
+};
+EOS
+  ;;
+esac
+
+case "$shell" in
+bash )
+  cat <<EOS
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
   PROMPT_COMMAND="_pyenv_virtualenv_hook;\${PROMPT_COMMAND-}"
 fi
 EOS
-    ;;
-  zsh )
-    cat <<EOS
+  ;;
+zsh )
+  cat <<EOS
 typeset -g -a precmd_functions
 if [[ -z \$precmd_functions[(r)_pyenv_virtualenv_hook] ]]; then
   precmd_functions=(_pyenv_virtualenv_hook \$precmd_functions);
 fi
 EOS
-    ;;
-  * )
-    # FIXME: what should i do here??
-    ;;
-  esac
-fi
+  ;;
+* )
+  # No prompt command support or it's installed elsewhere
+  ;;
+esac

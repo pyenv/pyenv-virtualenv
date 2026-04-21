@@ -50,7 +50,6 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  # Cache: env vars checked once, path list and stat rebuilt on miss only
   if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\
     && [ "\${VIRTUAL_ENV-}" = "\${_PYENV_VH_VENV-}" ]; then
     if [ -n "\${PYENV_VERSION-}" ]; then
@@ -161,7 +160,6 @@ export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {
   local ret=\$?
-  # Cache: env vars checked once, path list and stat rebuilt on miss only
   if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\
     && [ "\${VIRTUAL_ENV-}" = "\${_PYENV_VH_VENV-}" ]; then
     if [ -n "\${PYENV_VERSION-}" ]; then

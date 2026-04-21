@@ -247,24 +247,23 @@ EOS
   ;;
 esac
 
-  case "$shell" in
-  bash )
-    cat <<EOS
+case "$shell" in
+bash )
+  cat <<EOS
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
   PROMPT_COMMAND="_pyenv_virtualenv_hook;\${PROMPT_COMMAND-}"
 fi
 EOS
-    ;;
-  zsh )
-    cat <<EOS
+  ;;
+zsh )
+  cat <<EOS
 typeset -g -a precmd_functions
 if [[ -z \$precmd_functions[(r)_pyenv_virtualenv_hook] ]]; then
   precmd_functions=(_pyenv_virtualenv_hook \$precmd_functions);
 fi
 EOS
-    ;;
-  * )
-    # No prompt command support or it's installed elsewhere
-    ;;
-  esac
-fi
+  ;;
+* )
+  # No prompt command support or it's installed elsewhere
+  ;;
+esac

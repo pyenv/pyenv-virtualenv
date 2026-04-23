@@ -75,11 +75,9 @@ print_version() {
   fi
   local path="${2:?}"
   if [[ -L "$path" ]]; then
-    # Only resolve the link itself for printing, do not resolve further.
-    # Doing otherwise would misinform the user of what the link contains.
     version_repr="$version --> $(readlink "$path")"
   else
-    version_repr="$version"
+    version_repr="$version (created from $(pyenv-virtualenv-prefix "$version" 2>/dev/null))"
   fi
   if [[ ${BASH_VERSINFO[0]} -gt 3 && ${current_versions["$1"]} ]] || \
      { [[ ${BASH_VERSINFO[0]} -le 3 ]] && exists "$1" "${current_versions[@]}"; }; then

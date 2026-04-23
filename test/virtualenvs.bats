@@ -4,9 +4,12 @@ load test_helper
 
 setup() {
   export PYENV_ROOT="${TMP}/pyenv"
-  mkdir -p "${PYENV_ROOT}/versions/2.7.6/envs/venv27"
-  mkdir -p "${PYENV_ROOT}/versions/3.3.3/envs/venv33"
+  setup_m_venv "2.7.6/envs/venv27"
+  echo "home = ${PYENV_ROOT}/versions/2.7.6/bin" > "${PYENV_ROOT}/versions/2.7.6/envs/venv27/pyvenv.cfg"
   ln -s "${PYENV_ROOT}/versions/2.7.6/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+
+  setup_m_venv "3.3.3/envs/venv33"
+  echo "home = ${PYENV_ROOT}/versions/3.3.3/bin" > "${PYENV_ROOT}/versions/3.3.3/envs/venv33/pyvenv.cfg"
   ln -s "${PYENV_ROOT}/versions/3.3.3/envs/venv33" "${PYENV_ROOT}/versions/venv33"
 }
 
@@ -17,8 +20,8 @@ setup() {
 
   assert_success
   assert_output <<OUT
-  2.7.6/envs/venv27
-  3.3.3/envs/venv33
+  2.7.6/envs/venv27 (created from ${PYENV_ROOT}/versions/2.7.6)
+  3.3.3/envs/venv33 (created from ${PYENV_ROOT}/versions/3.3.3)
   venv27 --> ${PYENV_ROOT}/versions/2.7.6/envs/venv27
   venv33 --> ${PYENV_ROOT}/versions/3.3.3/envs/venv33
 OUT
@@ -34,8 +37,8 @@ OUT
 
   assert_success
   assert_output <<OUT
-  2.7.6/envs/venv27
-* 3.3.3/envs/venv33 (set by PYENV_VERSION)
+  2.7.6/envs/venv27 (created from ${PYENV_ROOT}/versions/2.7.6)
+* 3.3.3/envs/venv33 (created from ${PYENV_ROOT}/versions/3.3.3) (set by PYENV_VERSION)
   venv27 --> ${PYENV_ROOT}/versions/2.7.6/envs/venv27
   venv33 --> ${PYENV_ROOT}/versions/3.3.3/envs/venv33
 OUT
@@ -73,8 +76,8 @@ OUT
 
   assert_success
   assert_output <<OUT
-  2.7.6/envs/venv27
-  3.3.3/envs/venv33
+  2.7.6/envs/venv27 (created from ${PYENV_ROOT}/versions/2.7.6)
+  3.3.3/envs/venv33 (created from ${PYENV_ROOT}/versions/3.3.3)
 OUT
 
   unstub pyenv-version-name
@@ -88,8 +91,8 @@ OUT
 
   assert_success
   assert_output <<OUT
-  2.7.6/envs/venv27
-  3.3.3/envs/venv33
+  2.7.6/envs/venv27 (created from ${PYENV_ROOT}/versions/2.7.6)
+  3.3.3/envs/venv33 (created from ${PYENV_ROOT}/versions/3.3.3)
 * venv27 --> ${PYENV_ROOT}/versions/2.7.6/envs/venv27 (set by PYENV_VERSION)
   venv33 --> ${PYENV_ROOT}/versions/3.3.3/envs/venv33
 OUT
@@ -98,7 +101,7 @@ OUT
   unstub pyenv-version-origin
 }
 
-@test "no warning with --bare and no virtualenvs" {
+@test "no output with --bare and no virtualenvs" {
   rm -rf "${PYENV_ROOT}/versions"
   mkdir -p "${PYENV_ROOT}/versions"
 

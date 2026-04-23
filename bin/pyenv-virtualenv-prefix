@@ -49,7 +49,14 @@ for version in "${versions[@]}"; do
     echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
     exit 1
   fi
-  PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"
+
+  # Calling pyenv-prefix is expensive. Only do so if the path doesn't exist.
+  # See https://github.com/pyenv/pyenv-virtualenv/pull/502
+  PYENV_PREFIX_PATH="${PYENV_ROOT}/versions/${version}"
+  if [[ ! -d "$PYENV_PREFIX_PATH" ]]; then
+    PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"
+  fi
+
   if [ -x "${PYENV_PREFIX_PATH}/bin/python" ]; then
     if [ -f "${PYENV_PREFIX_PATH}/bin/activate" ]; then
       if [ -f "${PYENV_PREFIX_PATH}/bin/conda" ]; then

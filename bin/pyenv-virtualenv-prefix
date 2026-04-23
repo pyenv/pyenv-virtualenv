@@ -26,13 +26,17 @@ if [ -z "$PYENV_ROOT" ]; then
   PYENV_ROOT="${HOME}/.pyenv"
 fi
 
+OLDIFS="$IFS"
+IFS=:
 if [ -n "$1" ]; then
-  versions=($@)
-  IFS=: PYENV_VERSION="${versions[*]}"
+  # $@ is not affected by IFS
+  versions=("$@")
+  PYENV_VERSION="${versions[*]}"
   export PYENV_VERSION
 else
-  IFS=: versions=($(pyenv-version-name))
+  versions=($(pyenv-version-name))
 fi
+IFS="$OLDIFS"
 
 append_virtualenv_prefix() {
   if [ -d "${VIRTUALENV_PREFIX_PATH}" ]; then
@@ -101,4 +105,7 @@ for version in "${versions[@]}"; do
   fi
 done
 
-IFS=: echo "${VIRTUALENV_PREFIX_PATHS[*]}"
+OLDIFS="$IFS"
+IFS=:
+echo "${VIRTUALENV_PREFIX_PATHS[*]}"
+IFS="$OLDIFS"

@@ -116,13 +116,17 @@ for env_path in "${venv_dir_entries[@]}"; do
   fi
 done
 
-if [[ -z "$skip_aliases" ]]; then
-  for env_path in "${version_dir_entries[@]}"; do
-    if [[ -d ${env_path} ]] && [[ -L ${env_path} ]]; then
+for env_path in "${version_dir_entries[@]}"; do
+  if [[ -d ${env_path} ]]; then
+    if [[ -L ${env_path} ]]; then
+      if [[ -z $skip_aliases ]]; then
+        print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
+      fi
+    elif [[ -f "${env_path}/bin/activate" ]]; then
       print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
     fi
-  done
-fi
+  fi
+done
 
 shopt -u dotglob
 shopt -u nullglob

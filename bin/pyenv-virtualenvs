@@ -52,8 +52,6 @@ if [[ -z $bare ]]; then
   IFS="$OLDIFS"
 fi
 
-num_versions=0
-
 exists() {
   local car="$1"
   local cdar
@@ -84,7 +82,6 @@ print_version() {
   else
     echo "${miss_prefix}${version_repr}"
   fi
-  num_versions=$((num_versions + 1))
 }
 
 shopt -s dotglob

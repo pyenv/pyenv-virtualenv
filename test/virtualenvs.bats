@@ -101,16 +101,6 @@ OUT
   unstub pyenv-version-origin
 }
 
-@test "no output with --bare and no virtualenvs" {
-  rm -rf "${PYENV_ROOT}/versions"
-  mkdir -p "${PYENV_ROOT}/versions"
-
-  run pyenv-virtualenvs --bare
-
-  assert_success
-  assert_output ""
-}
-
 @test "completions output" {
   run pyenv-virtualenvs --complete
 

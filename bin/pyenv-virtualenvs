@@ -50,7 +50,6 @@ if [[ -z $bare ]]; then
     read -r -a current_versions <<< "$(pyenv-version-name || true)"
   fi
   IFS="$OLDIFS"
-  include_system="1"
 fi
 
 num_versions=0

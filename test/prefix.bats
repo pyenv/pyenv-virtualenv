@@ -228,7 +228,7 @@ OUT
   stub pyenv-version-name "echo 3"
   create_version "3.4.4"
   
-  stub pyenv-prefix "3 : echo $PYENV_ROOT/versions/3.4.4"
+  stub pyenv-prefix "3 : echo \"$PYENV_ROOT/versions/3.4.4\""
 
   run pyenv-virtualenv-prefix
 

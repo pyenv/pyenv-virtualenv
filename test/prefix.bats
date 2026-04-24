@@ -223,3 +223,22 @@ OUT
   remove_virtualenv "venv33" "3.3.6"
   remove_version "3.4.4"
 }
+
+@test "resolves a version that is not an exact match" {
+  stub pyenv-version-name "echo 3"
+  create_version "3.4.4"
+  
+  stub pyenv-prefix "3 : echo $PYENV_ROOT/versions/3.4.4"
+
+  run pyenv-virtualenv-prefix
+
+  assert_failure
+  assert_output <<OUT
+pyenv-virtualenv: version \`3' is not a virtualenv
+OUT
+
+  unstub pyenv-version-name
+  unstub pyenv-prefix
+  remove_version "3.4.4"
+}
+

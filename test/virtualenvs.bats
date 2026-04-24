@@ -2,15 +2,22 @@
 
 load test_helper
 
+create_m_venv() {
+  local version="$1"
+  local venv="$2"
+  local version_dir="${PYENV_ROOT}/versions/${version}"
+  local env_dir="${version_dir}/envs/${venv}"
+  echo "home = ${version_dir}/bin" > "${env_dir}/pyvenv.cfg"
+  ln -s "${env_dir}" "${PYENV_ROOT}/versions/${venv}"
+}
+
 setup() {
   export PYENV_ROOT="${TMP}/pyenv"
   setup_m_venv "2.7.6/envs/venv27"
-  echo "home = ${PYENV_ROOT}/versions/2.7.6/bin" > "${PYENV_ROOT}/versions/2.7.6/envs/venv27/pyvenv.cfg"
-  ln -s "${PYENV_ROOT}/versions/2.7.6/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+  create_m_venv "2.7.6" "venv27"
 
   setup_m_venv "3.3.3/envs/venv33"
-  echo "home = ${PYENV_ROOT}/versions/3.3.3/bin" > "${PYENV_ROOT}/versions/3.3.3/envs/venv33/pyvenv.cfg"
-  ln -s "${PYENV_ROOT}/versions/3.3.3/envs/venv33" "${PYENV_ROOT}/versions/venv33"
+  create_m_venv "3.3.3" "venv33"
 }
 
 @test "list virtual environments" {

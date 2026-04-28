@@ -12,10 +12,6 @@ create_version() {
   chmod +x "${PYENV_ROOT}/versions/$1/bin/python"
 }
 
-remove_version() {
-  rm -fr "${PYENV_ROOT}/versions/$1"
-}
-
 create_virtualenv() {
   create_version "$1"
   create_version "${2:-$1}"
@@ -40,20 +36,11 @@ create_virtualenv_pypy() {
   touch "${PYENV_ROOT}/versions/$1/bin/activate"
 }
 
-remove_virtualenv() {
-  remove_version "$1"
-  remove_version "${2:-$1}"
-}
-
 create_m_venv() {
   create_version "$1"
   create_version "${2:-$1}"
   echo "home = ${PYENV_ROOT}/versions/${2:-$1}/bin" > "${PYENV_ROOT}/versions/$1/pyvenv.cfg"
   touch "${PYENV_ROOT}/versions/$1/bin/activate"
-}
-
-remove_m_venv() {
-  remove_version "${2:-$1}"
 }
 
 create_conda() {
@@ -64,10 +51,6 @@ create_conda() {
   mkdir -p "${PYENV_ROOT}/versions/${2:-$1}/bin"
   touch "${PYENV_ROOT}/versions/${2:-$1}/bin/conda"
   touch "${PYENV_ROOT}/versions/${2:-$1}/bin/activate"
-}
-
-remove_conda() {
-  remove_version "${2:-$1}"
 }
 
 @test "display prefix of virtualenv created by virtualenv" {
@@ -82,7 +65,6 @@ ${PYENV_ROOT}/versions/2.7.11
 OUT
 
   unstub pyenv-version-name
-  remove_virtualenv "foo" "2.7.11"
 }
 
 @test "display prefix of virtualenv created by virtualenv (pypy)" {
@@ -97,7 +79,6 @@ ${PYENV_ROOT}/versions/pypy-4.0.1
 OUT
 
   unstub pyenv-version-name
-  remove_virtualenv "foo" "pypy-4.0.1"
 }
 
 @test "display prefix of virtualenv created by virtualenv (jython)" {
@@ -112,7 +93,6 @@ ${PYENV_ROOT}/versions/jython-2.7.0
 OUT
 
   unstub pyenv-version-name
-  remove_virtualenv "foo" "jython-2.7.0"
 }
 
 @test "display prefixes of virtualenv created by virtualenv" {
@@ -128,8 +108,6 @@ ${PYENV_ROOT}/versions/2.7.11:${PYENV_ROOT}/versions/3.5.1
 OUT
 
   unstub pyenv-version-name
-  remove_virtualenv "foo" "2.7.11"
-  remove_virtualenv "bar" "3.5.1"
 }
 
 @test "display prefix of virtualenv created by venv" {
@@ -144,7 +122,6 @@ ${PYENV_ROOT}/versions/3.3.6
 OUT
 
   unstub pyenv-version-name
-  remove_m_venv "foo" "3.3.6"
 }
 
 @test "display prefixes of virtualenv created by venv" {
@@ -160,8 +137,6 @@ ${PYENV_ROOT}/versions/3.3.6:${PYENV_ROOT}/versions/3.4.4
 OUT
 
   unstub pyenv-version-name
-  remove_m_venv "foo" "3.3.6"
-  remove_m_venv "bar" "3.4.4"
 }
 
 @test "display prefix of virtualenv created by conda" {
@@ -176,7 +151,6 @@ ${PYENV_ROOT}/versions/miniconda3-3.16.0/envs/foo
 OUT
 
   unstub pyenv-version-name
-  remove_conda "miniconda3-3.16.0/envs/foo" "miniconda3-3.16.0"
 }
 
 @test "should fail if the version is the system" {
@@ -204,7 +178,6 @@ pyenv-virtualenv: version \`3.4.4' is not a virtualenv
 OUT
 
   unstub pyenv-version-name
-  remove_version "3.4.4"
 }
 
 @test "should fail if one of the versions is not a virtualenv" {
@@ -220,8 +193,6 @@ pyenv-virtualenv: version \`3.4.4' is not a virtualenv
 OUT
 
   unstub pyenv-version-name
-  remove_virtualenv "venv33" "3.3.6"
-  remove_version "3.4.4"
 }
 
 @test "resolves a version that is not an exact match" {
@@ -239,6 +210,5 @@ OUT
 
   unstub pyenv-version-name
   unstub pyenv-prefix
-  remove_version "3.4.4"
 }
 

@@ -32,7 +32,7 @@ create_m_venv() {
   local venv_dir="${PYENV_ROOT}/versions/${version}/envs/${venv}"
 
   echo "home = ${PYENV_ROOT}/versions/${version}/bin" > "${venv_dir}/pyvenv.cfg"
-  ln -s "${venv_dir}" "${PYENV_ROOT}/versions/${venv}"
+  ln -sf "${venv_dir}" "${PYENV_ROOT}/versions/${venv}"
 }
 
 setup() {

@@ -56,11 +56,13 @@ setup() {
 OUT
 
   unstub pyenv-version-name
-
+  unstub pyenv-version-origin
 }
 
 @test "list virtual environments" {
   stub pyenv-version-name ": echo system"
+  stub pyenv-virtualenv-prefix "2.7.6/envs/venv27 : echo \"${PYENV_ROOT}/versions/2.7.6\""
+  stub pyenv-virtualenv-prefix "3.3.3/envs/venv33 : echo \"${PYENV_ROOT}/versions/3.3.3\""
 
   create_m_venv "2.7.6" "venv27"
   create_m_venv "3.3.3" "venv33"
@@ -76,6 +78,7 @@ OUT
 OUT
 
   unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
 }
 
 @test "list virtual environments performance" {

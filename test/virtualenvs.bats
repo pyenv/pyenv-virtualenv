@@ -78,6 +78,31 @@ OUT
   unstub pyenv-version-name
 }
 
+@test "list virtual environments performance" {
+  local count index start end elapsed max
+
+  count=180
+  max_duration=2
+
+  # Create venvs
+  for i in $(seq 1 $count); do
+    create_m_venv "3.14.3" "venv-${i}"
+  done
+
+  # List virtual environments and record the execution time.
+  # Run pyenv-virtualenvs without any flags because this is the most
+  # expensive operation.
+  start=$(date +%s)
+  run pyenv-virtualenvs
+  end=$(date +%s)
+  elapsed=$((end - start))
+
+  echo "# Listed $count venvs in ${elapsed}s." >&3
+
+  assert_success
+  assert [ "$elapsed" -le "$max_duration" ]
+}
+
 @test "list virtual environments with hit prefix" {
   stub pyenv-version-name ": echo 3.3.3/envs/venv33"
   stub pyenv-version-origin ": echo PYENV_VERSION"

@@ -54,8 +54,12 @@ for version in "${versions[@]}"; do
     exit 1
   fi
 
-  # Calling pyenv-prefix is expensive. Only do so if the path doesn't exist.
-  # See https://github.com/pyenv/pyenv-virtualenv/pull/502
+  # In the vast majority of cases, there's a direct match and 
+  # not spawning `pyenv-prefix' saves about half the invocation time
+  # with a signle argument which accumulates when called repeatedly
+  # (e.g. from `pyenv-virtualenvs').
+  # `pyenv-prefix' also does not have hooks to worry about.
+  # XXX: refactor the test into a shared module?
   PYENV_PREFIX_PATH="${PYENV_ROOT}/versions/${version}"
   if [[ ! -d "$PYENV_PREFIX_PATH" ]]; then
     PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"

@@ -119,6 +119,8 @@ for env_path in "${version_dir_entries[@]}"; do
       if [[ -z $skip_aliases ]]; then
         print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
       fi
+    # Mimics the test from pyenv-virtualenv-prefix
+    # XXX: refactor itto a shared module ?
     elif [[ -f "${env_path}/bin/activate" ]]; then
       print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
     fi

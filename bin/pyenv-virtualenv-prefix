@@ -26,13 +26,17 @@ if [ -z "$PYENV_ROOT" ]; then
   PYENV_ROOT="${HOME}/.pyenv"
 fi
 
+OLDIFS="$IFS"
+IFS=:
 if [ -n "$1" ]; then
-  versions=($@)
-  IFS=: PYENV_VERSION="${versions[*]}"
+  # $@ is not affected by IFS
+  versions=("$@")
+  PYENV_VERSION="${versions[*]}"
   export PYENV_VERSION
 else
-  IFS=: versions=($(pyenv-version-name))
+  versions=($(pyenv-version-name))
 fi
+IFS="$OLDIFS"
 
 append_virtualenv_prefix() {
   if [ -d "${VIRTUALENV_PREFIX_PATH}" ]; then
@@ -49,7 +53,18 @@ for version in "${versions[@]}"; do
     echo "pyenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
     exit 1
   fi
-  PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"
+
+  # In the vast majority of cases, there's a direct match and 
+  # not spawning `pyenv-prefix' saves about half the invocation time
+  # with a signle argument which accumulates when called repeatedly
+  # (e.g. from `pyenv-virtualenvs').
+  # `pyenv-prefix' also does not have hooks to worry about.
+  # XXX: refactor the test into a shared module?
+  PYENV_PREFIX_PATH="${PYENV_ROOT}/versions/${version}"
+  if [[ ! -d "$PYENV_PREFIX_PATH" ]]; then
+    PYENV_PREFIX_PATH="$(pyenv-prefix "${version}")"
+  fi
+
   if [ -x "${PYENV_PREFIX_PATH}/bin/python" ]; then
     if [ -f "${PYENV_PREFIX_PATH}/bin/activate" ]; then
       if [ -f "${PYENV_PREFIX_PATH}/bin/conda" ]; then
@@ -94,4 +109,7 @@ for version in "${versions[@]}"; do
   fi
 done
 
-IFS=: echo "${VIRTUALENV_PREFIX_PATHS[*]}"
+OLDIFS="$IFS"
+IFS=:
+echo "${VIRTUALENV_PREFIX_PATHS[*]}"
+IFS="$OLDIFS"

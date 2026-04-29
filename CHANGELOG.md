@@ -1,5 +1,9 @@
 ## Version History
 
+## v1.4.0
+* Fix POSIX sh (dash) compatibility in pyenv-virtualenv-init by @chrisolof in https://github.com/pyenv/pyenv-virtualenv/pull/526
+* Improve performance and output of `pyenv virtualenvs` by @samdoran in https://github.com/pyenv/pyenv-virtualenv/pull/502
+
 ## v1.3.0
 * CI: cleanup by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/521
 * CI: tests: use Bats 1.10; support concurrent, out-of-order and multiple-times execution of stub commands; fix race condition between concurrent stubs by @native-api in https://github.com/pyenv/pyenv-virtualenv/pull/520

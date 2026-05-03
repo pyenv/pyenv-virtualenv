@@ -214,9 +214,11 @@ if [ -d "${prefix}/conda-meta" ] ||
   case "${shell}" in
   fish )
     echo "set -gx CONDA_DEFAULT_ENV \"${CONDA_DEFAULT_ENV}\";"
+    echo "set -gx CONDA_PREFIX \"${prefix}\";"
     ;;
   * )
     echo "export CONDA_DEFAULT_ENV=\"${CONDA_DEFAULT_ENV}\";"
+    echo "export CONDA_PREFIX=\"${prefix}\";"
     ;;
   esac
 fi

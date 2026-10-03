@@ -498,3 +498,33 @@ EOS
 
   assert_failure
 }
+
+@test "activate keeps VIRTUAL_ENV in agreement with PATH (issue 494)" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  # Layout matches a pyenv-virtualenv install: versions/<name> -> versions/<base>/envs/<name>
+  mkdir -p "${PYENV_ROOT}/versions/3.12.7/envs/myenv/bin"
+  ln -s "${PYENV_ROOT}/versions/3.12.7/envs/myenv" "${PYENV_ROOT}/versions/myenv"
+  # Shim-facing path that ends up yielding this env's python on PATH (#494).
+  create_executable "myenv" "python"
+  export PATH="${PYENV_ROOT}/versions/myenv/bin:${PATH}"
+
+  stub pyenv-version-name "echo myenv"
+  stub pyenv-virtualenv-prefix "myenv : echo \"${PYENV_ROOT}/versions/myenv\""
+  stub pyenv-prefix "myenv : echo \"${PYENV_ROOT}/versions/myenv\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
+
+  PYENV_SHELL="bash" PYENV_VERSION="myenv" run pyenv-sh-activate
+
+  assert_success
+  # Keep equality only (#494): VIRTUAL_ENV must agree with the python PATH yields.
+  # Specific-value assert_output for VIRTUAL_ENV is redundant with the equality check.
+  eval "$(printf '%s\n' "$output" | grep '^export ')"
+  path_python="$(command -v python)"
+  assert_equal "${VIRTUAL_ENV}/bin/python" "${path_python}"
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
+}

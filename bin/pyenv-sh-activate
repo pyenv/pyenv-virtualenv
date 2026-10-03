@@ -18,10 +18,6 @@ if [ -z "${PYENV_ROOT}" ]; then
   PYENV_ROOT="$(pyenv-root)"
 fi
 
-resolve_link() {
-  $(type -p greadlink readlink | head -1) "$1"
-}
-
 unset FORCE
 unset QUIET
 
@@ -141,10 +137,11 @@ done
 shell="${PYENV_SHELL:-${SHELL##*/}}"
 prefix="$(pyenv-prefix "${venv}")"
 
-if [ -L "${prefix}" ]; then
-  prefix="$(resolve_link "${prefix}" 2>/dev/null)"
-fi
-
+# Keep the pyenv version path as-is for VIRTUAL_ENV. pyenv-virtualenv installs a
+# symlink at $PYENV_ROOT/versions/<name> pointing at .../envs/<name>; shims put
+# that symlink path on PATH. Resolving it here made VIRTUAL_ENV disagree with
+# PATH (Neovim and other tools warn). See #494.
+#
 # exit as success if the virtualenv is already activated
 if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
   if [ -z "${FORCE}" ]; then

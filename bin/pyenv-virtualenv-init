@@ -110,6 +110,18 @@ set -gx PATH '${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims
 set -gx PYENV_VIRTUALENV_INIT 1;
 EOS
   ;;
+bash )
+  # The code is taken from pyenv-init, see comments there
+  cat <<EOS
+PATH="\$(bash --norc -ec 'IFS=:; paths=(\$PATH);
+for i in \${!paths[@]}; do
+if [[ \${paths[i]} == "''${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims''" ]]; then unset '\''paths[i]'\'';
+fi; done;
+echo "\${paths[*]}"')";
+export PATH="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims:\${PATH}";
+export PYENV_VIRTUALENV_INIT=1;
+EOS
+  ;;
 * )
   cat <<EOS
 export PATH="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims:\${PATH}";

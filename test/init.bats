@@ -46,6 +46,11 @@ load test_helper
   run pyenv-virtualenv-init - bash
   assert_success
   assert_output <<EOS
+PATH="\$(bash --norc -ec 'IFS=:; paths=(\$PATH);
+for i in \${!paths[@]}; do
+if [[ \${paths[i]} == "''${TMP}/pyenv/plugins/pyenv-virtualenv/shims''" ]]; then unset '\''paths[i]'\'';
+fi; done;
+echo "\${paths[*]}"')";
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 _pyenv_virtualenv_hook() {

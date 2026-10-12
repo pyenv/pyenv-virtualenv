@@ -1,5 +1,10 @@
 ## Version History
 
+## v1.4.1
+* Reuse the bash init code from pyenv-init by @ig0rmin in https://github.com/pyenv/pyenv-virtualenv/pull/530
+* Fix VIRTUAL_ENV to be in agreement with executable paths by @r3wretrhy in https://github.com/pyenv/pyenv-virtualenv/pull/529
+* Fix fish prompt hook never skipping redundant activate calls by @ethanleifer in https://github.com/pyenv/pyenv-virtualenv/pull/528
+
 ## v1.4.0
 * Fix POSIX sh (dash) compatibility in pyenv-virtualenv-init by @chrisolof in https://github.com/pyenv/pyenv-virtualenv/pull/526
 * Improve performance and output of `pyenv virtualenvs` by @samdoran in https://github.com/pyenv/pyenv-virtualenv/pull/502

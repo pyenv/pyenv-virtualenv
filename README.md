@@ -187,13 +187,13 @@ for CPython 3.3 and newer.
 It provides an executable module `venv` which is the successor of `virtualenv`
 and distributed by default.
 
-`pyenv-virtualenv` uses `python -m venv` if it is available and the `virtualenv`
-command is not available.
+`pyenv-virtualenv` prefers `virtualenv` if it's available in the source Python
+installation and falls back to `python -m venv` if it's not --
+unless the `-p` option is given (that `venv` doesn't support), in which case
+`virtualenv` is installed and used.
 
-To use `virtualenv` even if `venv` is available (e.g. to benefit from the seed
-packages that `virtualenv` bundles), set `PYENV_VIRTUALENV_INSTALL_VIRTUALENV`.
-If `virtualenv` is not installed in the source version, `pyenv-virtualenv`
-installs it there with `pip` first.
+If the `PYENV_VIRTUALENV_INSTALL_VIRTUALENV` envvar is set, `virtualenv` is
+installed and used in any case rather than falling back to `venv`.
 
 
 ### Anaconda and Miniconda
@@ -259,8 +259,7 @@ You can set certain environment variables to control pyenv-virtualenv.
 * `PIP_VERSION`, if set and `venv` is preferred
   over `virtualenv`, install the specified version of pip.
 * `PYENV_VIRTUALENV_INSTALL_VIRTUALENV`, if set, installs `virtualenv` into the
-  source version if it's not there yet and uses it instead of `python -m venv`,
-  even if `venv` is available.
+  source Python version if it's not present and uses it even without the `-p` option.
 * `PYENV_VIRTUALENV_VERBOSE_ACTIVATE`, if set, shows some verbose outputs on activation and deactivation
 * `PYENV_VIRTUALENV_PROMPT`, if set, allows users to customize how `pyenv-virtualenv` modifies their shell prompt. The default prompt ("(venv)") is overwritten with any user-specified text. Specify the location of the virtual environment name with the string `{venv}`. For example, the default prompt string would be `({venv})`.
 

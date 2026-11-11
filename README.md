@@ -174,6 +174,11 @@ pyenv virtualenv-delete my-virtual-env
 ```
 This will delete virtualenv called `my-virtual-env`.
 
+Plugins can hook into this command by registering `before_virtualenv_delete` and
+`after_virtualenv_delete` code in a `virtualenv-delete` Pyenv hook script.
+The hooks can read the `VIRTUALENV_NAME` and `VIRTUALENV_PATH` variables;
+the `before` hooks run before the virtualenv is removed and the `after` hooks run once it is gone.
+
 
 ### virtualenv and venv
 

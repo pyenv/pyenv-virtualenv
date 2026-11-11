@@ -93,6 +93,31 @@ if [ ! -d "$ENV_PREFIX" ]; then
   fi
 fi
 
+# Define `before_virtualenv_delete` and `after_virtualenv_delete` functions
+# that allow plugin hooks to register a string of code for execution
+# before or after the virtualenv is deleted.
+declare -a before_hooks after_hooks
+
+before_virtualenv_delete() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_virtualenv_delete() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# Hooks can refer to these variables to find out what is being deleted.
+VIRTUALENV_NAME="$VERSION_NAME"
+VIRTUALENV_PATH="$ENV_PREFIX"
+
+# Load plugin hooks.
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`pyenv-hooks virtualenv-delete`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
 if [ -z "$FORCE" ]; then
   read -p "pyenv-virtualenv: remove $ENV_PREFIX? (y/N) "
   case "$REPLY" in
@@ -101,8 +126,15 @@ if [ -z "$FORCE" ]; then
   esac
 fi
 
+# Execute `before_virtualenv_delete` hooks.
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
 rm -rf "$ENV_PREFIX"
 if [ -L "$ENV_COMPAT_PREFIX" ]; then
   rm -rf "$ENV_COMPAT_PREFIX"
 fi
+
+# Execute `after_virtualenv_delete` hooks.
+for hook in "${after_hooks[@]}"; do eval "$hook"; done
+
 pyenv-rehash

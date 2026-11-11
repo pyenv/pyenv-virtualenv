@@ -191,7 +191,7 @@ and distributed by default.
 command is not available.
 
 To use `virtualenv` even if `venv` is available (e.g. to benefit from the seed
-packages that `virtualenv` bundles), set `PYENV_VIRTUALENV_PREFER_VIRTUALENV`.
+packages that `virtualenv` bundles), set `PYENV_VIRTUALENV_INSTALL_VIRTUALENV`.
 If `virtualenv` is not installed in the source version, `pyenv-virtualenv`
 installs it there with `pip` first.
 
@@ -258,9 +258,9 @@ You can set certain environment variables to control pyenv-virtualenv.
   `virtualenv`, download `get_pip.py` from the specified URL.
 * `PIP_VERSION`, if set and `venv` is preferred
   over `virtualenv`, install the specified version of pip.
-* `PYENV_VIRTUALENV_PREFER_VIRTUALENV`, if set, makes pyenv-virtualenv use
-  `virtualenv` instead of `python -m venv` even if `venv` is available.
-  `virtualenv` is installed into the source version if it's not there yet.
+* `PYENV_VIRTUALENV_INSTALL_VIRTUALENV`, if set, installs `virtualenv` into the
+  source version if it's not there yet and uses it instead of `python -m venv`,
+  even if `venv` is available.
 * `PYENV_VIRTUALENV_VERBOSE_ACTIVATE`, if set, shows some verbose outputs on activation and deactivation
 * `PYENV_VIRTUALENV_PROMPT`, if set, allows users to customize how `pyenv-virtualenv` modifies their shell prompt. The default prompt ("(venv)") is overwritten with any user-specified text. Specify the location of the virtual environment name with the string `{venv}`. For example, the default prompt string would be `({venv})`.
 

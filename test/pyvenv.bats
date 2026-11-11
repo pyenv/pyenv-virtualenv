@@ -71,9 +71,9 @@ OUT
   teardown_m_venv "3.5.1"
 }
 
-@test "use virtualenv if PYENV_VIRTUALENV_PREFER_VIRTUALENV is set" {
+@test "install and use virtualenv if PYENV_VIRTUALENV_INSTALL_VIRTUALENV is set" {
   export PYENV_VERSION="3.5.1"
-  export PYENV_VIRTUALENV_PREFER_VIRTUALENV=1
+  export PYENV_VIRTUALENV_INSTALL_VIRTUALENV=1
   setup_m_venv "3.5.1"
   stub_pyenv "${PYENV_VERSION}"
   stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"

@@ -37,3 +37,20 @@ setup() {
   unstub pyenv-prefix
   teardown_m_venv "3.4.1"
 }
+
+@test "display virtualenv version even if it's absent if PYENV_VIRTUALENV_INSTALL_VIRTUALENV is set" {
+  setup_m_venv "3.4.1"
+  stub pyenv-version-name "echo 3.4.1"
+  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
+  stub pyenv-exec "python -m venv --help : true"
+  stub pyenv-exec "virtualenv --version : exit 127"
+
+  PYENV_VIRTUALENV_INSTALL_VIRTUALENV=1 run pyenv-virtualenv --version
+
+  assert_success
+  [[ "$output" == "pyenv-virtualenv "?.?.?" (virtualenv unknown)" ]]
+
+  unstub pyenv-prefix
+  unstub pyenv-exec
+  teardown_m_venv "3.4.1"
+}

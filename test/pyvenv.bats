@@ -71,6 +71,34 @@ OUT
   teardown_m_venv "3.5.1"
 }
 
+@test "install and use virtualenv if PYENV_VIRTUALENV_INSTALL_VIRTUALENV is set" {
+  export PYENV_VERSION="3.5.1"
+  export PYENV_VIRTUALENV_INSTALL_VIRTUALENV=1
+  setup_m_venv "3.5.1"
+  stub_pyenv "${PYENV_VERSION}"
+  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
+  stub pyenv-virtualenv-prefix " : false"
+  stub pyenv-exec "python -m venv --help : true"
+  stub pyenv-exec "pip install virtualenv : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "virtualenv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
+  stub pyenv-exec "python -s -m ensurepip : true"
+
+  run pyenv-virtualenv venv
+
+  assert_output <<OUT
+PYENV_VERSION=3.5.1 pip install virtualenv
+PYENV_VERSION=3.5.1 virtualenv ${PYENV_ROOT}/versions/3.5.1/envs/venv
+rehashed
+OUT
+  assert [ -x "${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pydoc" ]
+  assert_success
+
+  unstub_pyenv
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-exec
+  teardown_m_venv "3.5.1"
+}
+
 @test "install virtualenv if venv is not available" {
   export PYENV_VERSION="3.2.1"
   setup_version "3.2.1"

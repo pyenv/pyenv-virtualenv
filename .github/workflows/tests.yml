@@ -7,11 +7,13 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
+          - ubuntu-22.04-arm
           - ubuntu-24.04
-          - macos-14
+          - ubuntu-24.04-arm
           - macos-15
           - macos-15-intel
           - macos-26
+          - macos-26-intel
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2

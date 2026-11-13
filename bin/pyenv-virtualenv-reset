@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+#
+# Summary: Reset a Python virtualenv to its initial state
+#
+# Usage: pyenv virtualenv-reset [-f|--force] [<virtualenv>]
+#
+#    -f  Attempt to reset the specified virtualenv without prompting
+#        for confirmation.
+#
+# Deletes the virtualenv and creates it anew from the same Python
+# version, discarding all packages that were installed into it.
+# If <virtualenv> is omitted, the current version is reset if it is
+# a virtualenv.
+#
+# See `pyenv virtualenvs` for a complete list of installed versions.
+#
+set -e
+[ -n "$PYENV_DEBUG" ] && set -x
+
+if [ -z "${PYENV_ROOT}" ]; then
+  PYENV_ROOT="$(pyenv-root)"
+fi
+
+# Provide pyenv completions
+if [ "$1" = "--complete" ]; then
+  exec pyenv virtualenvs --bare
+fi
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+usage() {
+  pyenv-help virtualenv-reset 2>/dev/null
+  [ -z "$1" ] || exit "$1"
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage 0
+fi
+
+unset FORCE
+if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+  FORCE=true
+  shift
+fi
+
+[ "$#" -le 1 ] || usage 1 >&2
+
+if [ "$#" -eq 1 ]; then
+  DEFINITION="$1"
+else
+  # If no virtualenv is given, use the current version
+  OLDIFS="$IFS"
+  IFS=:
+  VERSION_NAMES=($(pyenv-version-name))
+  IFS="$OLDIFS"
+  DEFINITION="${VERSION_NAMES}"
+fi
+
+case "$DEFINITION" in
+"" | -* )
+  usage 1 >&2
+  ;;
+system )
+  echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
+  exit 1
+  ;;
+esac
+
+VERSION_NAME="${DEFINITION##*/}"
+ENV_COMPAT_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+
+# Find out the actual location of the virtualenv
+if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
+  ENV_DEFINITION="${DEFINITION}"
+elif [ -L "${ENV_COMPAT_PREFIX}" ]; then
+  ENV_PREFIX="$(resolve_link "${ENV_COMPAT_PREFIX}" 2>/dev/null || true)"
+  if [[ "${ENV_PREFIX%/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
+    echo "pyenv-virtualenv: \`${ENV_COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
+    exit 1
+  fi
+  ENV_DEFINITION="${ENV_PREFIX#${PYENV_ROOT}/versions/}"
+else
+  ENV_DEFINITION="${VERSION_NAME}"
+fi
+ENV_PREFIX="${PYENV_ROOT}/versions/${ENV_DEFINITION}"
+
+if [ ! -d "${ENV_PREFIX}" ]; then
+  echo "pyenv-virtualenv: virtualenv \`${DEFINITION}' not installed" 1>&2
+  exit 1
+fi
+
+if ! BASE_PREFIX="$(pyenv-virtualenv-prefix "${ENV_DEFINITION}" 2>/dev/null)"; then
+  echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
+  exit 1
+fi
+
+# Find out the version the virtualenv has been created from
+if [[ "${ENV_DEFINITION}" != "${ENV_DEFINITION%/envs/*}" ]]; then
+  BASE_VERSION="${ENV_DEFINITION%/envs/*}"
+  # The virtualenv will be recreated with its short name, so the compat symlink
+  # must either be missing or refer to this virtualenv.
+  if [ -L "${ENV_COMPAT_PREFIX}" ]; then
+    if [[ "$(resolve_link "${ENV_COMPAT_PREFIX}" 2>/dev/null || true)" != "${ENV_PREFIX}" ]]; then
+      echo "pyenv-virtualenv: cannot reset \`${DEFINITION}': \`${ENV_COMPAT_PREFIX}' refers to another location." 1>&2
+      exit 1
+    fi
+  elif [ -e "${ENV_COMPAT_PREFIX}" ]; then
+    echo "pyenv-virtualenv: cannot reset \`${DEFINITION}': \`${ENV_COMPAT_PREFIX}' already exists." 1>&2
+    exit 1
+  fi
+elif [[ "${BASE_PREFIX}" == "${PYENV_ROOT}/versions/"* ]]; then
+  BASE_VERSION="${BASE_PREFIX#${PYENV_ROOT}/versions/}"
+  if [[ "${BASE_VERSION}" == "${ENV_DEFINITION}" ]]; then
+    # e.g. the root environment of a conda installation
+    echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
+    exit 1
+  fi
+else
+  BASE_VERSION="system"
+fi
+
+# Do not delete the virtualenv if it cannot be created again
+if [ "${BASE_VERSION}" != "system" ] && [ ! -d "${PYENV_ROOT}/versions/${BASE_VERSION}" ]; then
+  echo "pyenv-virtualenv: cannot reset \`${DEFINITION}': \`${BASE_VERSION}' is not installed in pyenv." 1>&2
+  exit 1
+fi
+
+# Preserve the options that affect the behavior of the virtualenv
+VIRTUALENV_OPTIONS=()
+if [ -f "${ENV_PREFIX}/pyvenv.cfg" ] &&
+   grep -qiE '^[[:space:]]*include-system-site-packages[[:space:]]*=[[:space:]]*true[[:space:]]*$' "${ENV_PREFIX}/pyvenv.cfg"; then
+  VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--system-site-packages"
+fi
+
+if [ -z "$FORCE" ]; then
+  read -p "pyenv-virtualenv: reset ${ENV_PREFIX}? All packages installed into it will be removed. (y/N) "
+  case "$REPLY" in
+  y* | Y* ) ;;
+  * ) exit 1 ;;
+  esac
+fi
+
+pyenv-virtualenv-delete -f "${ENV_DEFINITION}"
+exec pyenv-virtualenv "${VIRTUALENV_OPTIONS[@]}" "${BASE_VERSION}" "${VERSION_NAME}"

@@ -180,6 +180,23 @@ The hooks can read the `VIRTUALENV_NAME` and `VIRTUALENV_PATH` variables;
 the `before` hooks run before the virtualenv is removed and the `after` hooks run once it is gone.
 
 
+### Reset existing virtualenv
+
+To get rid of all packages installed into a virtualenv and start over from scratch, run:
+```sh
+pyenv virtualenv-reset my-virtual-env
+```
+This deletes the virtualenv called `my-virtual-env` and creates it anew with the same name
+from the same Python version
+(`system` if it was created from an interpreter outside of Pyenv). If no name is given, the current version is reset if it is a virtualenv.
+An activated virtualenv stays activated since it remains available at the same path.
+Pass `-f` to skip the confirmation prompt.
+
+The `--system-site-packages` setting of the virtualenv is preserved if it is recorded in `pyvenv.cfg`
+(legacy `virtualenv` before 20 doesn't do that).
+`virtualenv-delete` and `virtualenv` Pyenv hooks are run as when deleting and creating virtualenvs separately.
+
+
 ### virtualenv and venv
 
 There is a [venv](http://docs.python.org/3/library/venv.html) module available

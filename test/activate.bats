@@ -173,7 +173,112 @@ functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
 function fish_prompt
     set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
                                             # read exit status
-    echo -n "(venv) "                    # add virtualenv to prompt
+    echo -n '(venv) '                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
+EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
+}
+
+@test "activate virtualenv from current version (fish) (quiet)" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
+
+  PYENV_SHELL="fish" PYENV_VERSION="venv" run pyenv-sh-activate --quiet
+
+  assert_success
+  assert_output <<EOS
+deactivated
+set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n '(venv) '                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
+EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
+}
+
+@test "activate virtualenv from current version (fish) with custom prompt" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
+
+  PYENV_SHELL="fish" PYENV_VERSION="venv" PYENV_VIRTUALENV_PROMPT='venv:{venv}' run pyenv-sh-activate
+
+  assert_success
+  assert_output <<EOS
+deactivated
+set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n 'venv:venv '                    # add virtualenv to prompt
+    string join -- \n \$prompt              # handle multiline prompts
+end
+EOS
+
+  unstub pyenv-version-name
+  unstub pyenv-virtualenv-prefix
+  unstub pyenv-prefix
+  unstub pyenv-sh-deactivate
+}
+
+@test "activate virtualenv from current version (fish) with custom prompt containing quotes" {
+  export PYENV_VIRTUALENV_INIT=1
+
+  stub pyenv-version-name "echo venv"
+  stub pyenv-virtualenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-prefix "venv : echo \"${PYENV_ROOT}/versions/venv\""
+  stub pyenv-sh-deactivate "--force --quiet : echo deactivated"
+
+  PYENV_SHELL="fish" PYENV_VERSION="venv" PYENV_VIRTUALENV_PROMPT="it's \\ \"{venv}\" \$HOME" run pyenv-sh-activate
+
+  assert_success
+  assert_output <<EOS
+deactivated
+set -gx PYENV_VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+set -gx VIRTUAL_ENV "${PYENV_ROOT}/versions/venv";
+functions -e _pyenv_old_prompt              # remove old prompt function if exists. 
+                                            # since everything is in memory, it's safe to
+                                            # remove it.
+functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
+
+# from python-venv
+function fish_prompt
+    set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
+                                            # read exit status
+    echo -n 'it\\'s \\\\ "venv" \$HOME '                    # add virtualenv to prompt
     string join -- \n \$prompt              # handle multiline prompts
 end
 EOS
@@ -210,7 +315,7 @@ functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
 function fish_prompt
     set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
                                             # read exit status
-    echo -n "(venv) "                    # add virtualenv to prompt
+    echo -n '(venv) '                    # add virtualenv to prompt
     string join -- \n \$prompt              # handle multiline prompts
 end
 EOS
@@ -296,7 +401,7 @@ functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
 function fish_prompt
     set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
                                             # read exit status
-    echo -n "(venv27) "                    # add virtualenv to prompt
+    echo -n '(venv27) '                    # add virtualenv to prompt
     string join -- \n \$prompt              # handle multiline prompts
 end
 EOS
@@ -331,7 +436,7 @@ functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
 function fish_prompt
     set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
                                             # read exit status
-    echo -n "(venv27) "                    # add virtualenv to prompt
+    echo -n '(venv27) '                    # add virtualenv to prompt
     string join -- \n \$prompt              # handle multiline prompts
 end
 EOS

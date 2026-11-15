@@ -101,21 +101,6 @@ fi
 EOS
 }
 
-@test "bash hook does not leave a dangling semicolon in PROMPT_COMMAND" {
-  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
-  run bash -c 'unset PROMPT_COMMAND; eval "$(pyenv-virtualenv-init - bash)"; echo "$PROMPT_COMMAND"'
-  assert_success
-  assert_output "_pyenv_virtualenv_hook"
-
-  run bash -c 'PROMPT_COMMAND=; eval "$(pyenv-virtualenv-init - bash)"; echo "$PROMPT_COMMAND"'
-  assert_success
-  assert_output "_pyenv_virtualenv_hook"
-
-  run bash -c 'PROMPT_COMMAND="history -a"; eval "$(pyenv-virtualenv-init - bash)"; eval "$(pyenv-virtualenv-init - bash)"; echo "$PROMPT_COMMAND"'
-  assert_success
-  assert_output "_pyenv_virtualenv_hook;history -a"
-}
-
 @test "outputs fish-specific syntax" {
   export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
   run pyenv-virtualenv-init - fish

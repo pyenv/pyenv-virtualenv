@@ -6,7 +6,7 @@ load test_helper
   unset PYENV_SHELL
   SHELL=/bin/false run pyenv-virtualenv-init -
   assert_success
-  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
+  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"'
 }
 
 @test "detect parent shell from script (sh)" {
@@ -15,7 +15,7 @@ load test_helper
   chmod +x ${TMP}/script.sh
   run ${TMP}/script.sh
   assert_success
-  assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
+  assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"'
   rm -f "${TMP}/script.sh"
 }
 
@@ -25,7 +25,7 @@ load test_helper
   chmod +x ${TMP}/script.sh
   run ${TMP}/script.sh
   assert_success
-  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
+  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"'
   rm -f "${TMP}/script.sh"
 }
 
@@ -96,9 +96,24 @@ _pyenv_virtualenv_hook() {
   return \$ret
 };
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
-  PROMPT_COMMAND="_pyenv_virtualenv_hook;\${PROMPT_COMMAND-}"
+  PROMPT_COMMAND="_pyenv_virtualenv_hook\${PROMPT_COMMAND:+;\${PROMPT_COMMAND}}"
 fi
 EOS
+}
+
+@test "bash hook does not leave a dangling semicolon in PROMPT_COMMAND" {
+  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
+  run bash -c 'unset PROMPT_COMMAND; eval "$(pyenv-virtualenv-init - bash)"; echo "$PROMPT_COMMAND"'
+  assert_success
+  assert_output "_pyenv_virtualenv_hook"
+
+  run bash -c 'PROMPT_COMMAND=; eval "$(pyenv-virtualenv-init - bash)"; echo "$PROMPT_COMMAND"'
+  assert_success
+  assert_output "_pyenv_virtualenv_hook"
+
+  run bash -c 'PROMPT_COMMAND="history -a"; eval "$(pyenv-virtualenv-init - bash)"; eval "$(pyenv-virtualenv-init - bash)"; echo "$PROMPT_COMMAND"'
+  assert_success
+  assert_output "_pyenv_virtualenv_hook;history -a"
 }
 
 @test "outputs fish-specific syntax" {

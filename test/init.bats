@@ -53,9 +53,9 @@ fi; done;
 echo "\${paths[*]}"')";
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
-_pyenv_vh_mtimes() {
-  _PYENV_VH_MTIMES="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
-}
+  _pyenv_vh_mtimes() {
+    _PYENV_VH_MTIMES="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+  }
 _pyenv_virtualenv_hook() {
   local ret=\$?
   if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\

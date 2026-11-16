@@ -279,6 +279,9 @@ You can set certain environment variables to control pyenv-virtualenv.
   source Python version if it's not present and uses it even without the `-p` option.
 * `PYENV_VIRTUALENV_VERBOSE_ACTIVATE`, if set, shows some verbose outputs on activation and deactivation
 * `PYENV_VIRTUALENV_PROMPT`, if set, allows users to customize how `pyenv-virtualenv` modifies their shell prompt. The default prompt ("(venv)") is overwritten with any user-specified text. Specify the location of the virtual environment name with the string `{venv}`. For example, the default prompt string would be `({venv})`.
+  This works in Bash, Zsh and Fish. In Fish, the text is shown without further shell expansion.
+* `PYENV_VIRTUALENV_DISABLE_PROMPT` (or `VIRTUAL_ENV_DISABLE_PROMPT`), if set, keeps `pyenv-virtualenv` from modifying the shell prompt
+  when a virtualenv is activated, either with `pyenv activate` or automatically. Use this if your prompt already shows the active virtualenv.
 
 ## Version History
 

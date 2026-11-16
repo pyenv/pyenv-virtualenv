@@ -109,7 +109,7 @@ functions -c fish_prompt _pyenv_old_prompt  # backup old prompt function
 function fish_prompt
     set -l prompt (_pyenv_old_prompt)       # call old prompt function first since it might 
                                             # read exit status
-    echo -n "(anaconda-2.3.0) "                    # add virtualenv to prompt
+    echo -n '(anaconda-2.3.0) '                    # add virtualenv to prompt
     string join -- \n \$prompt              # handle multiline prompts
 end
 EOS

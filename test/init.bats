@@ -53,6 +53,9 @@ fi; done;
 echo "\${paths[*]}"')";
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
+_pyenv_vh_mtimes() {
+  _PYENV_VH_MTIMES="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+}
 _pyenv_virtualenv_hook() {
   local ret=\$?
   if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\
@@ -60,9 +63,11 @@ _pyenv_virtualenv_hook() {
     if [ -n "\${PYENV_VERSION-}" ]; then
       return \$ret
     fi
-    if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ] \\
-      && [ "\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)" = "\${_PYENV_VH_MTIMES-}" ]; then
-      return \$ret
+    if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ]; then
+      _pyenv_vh_mtimes
+      if [ "\${_PYENV_VH_MTIMES-}" = "\${_PYENV_VH_MTIMES_PREV-}" ]; then
+        return \$ret
+      fi
     fi
   fi
   if [ -n "\${VIRTUAL_ENV-}" ]; then
@@ -92,7 +97,8 @@ _pyenv_virtualenv_hook() {
   if [ "\${_pvh_found_local}" = "0" ]; then
     _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
   fi
-  _PYENV_VH_MTIMES="\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+  _pyenv_vh_mtimes
+  _PYENV_VH_MTIMES_PREV="\${_PYENV_VH_MTIMES-}"
   return \$ret
 };
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then

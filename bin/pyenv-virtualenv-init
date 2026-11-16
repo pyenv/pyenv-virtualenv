@@ -153,7 +153,7 @@ EOS
   end
 EOS
   fi
-  
+
   cat <<EOS
   if [ -n "\$VIRTUAL_ENV" ]
     pyenv activate --quiet; or pyenv deactivate --quiet; or true
@@ -173,7 +173,7 @@ EOS
   while true
     if test -f "\$d/.python-version"; or test -L "\$d/.python-version"
       set -g _PYENV_VH_PATHS \$_PYENV_VH_PATHS "\$d/.python-version"
-      if test -f "\$d/.python-version" 
+      if test -f "\$d/.python-version"
         set _pvh_found_local 1
         break
       end
@@ -190,7 +190,7 @@ EOS
   set -g _PYENV_VH_MTIMES (stat ${_stat_fmt} \$_PYENV_VH_PATHS 2>/dev/null)
 EOS
   fi
-  
+
   cat <<EOS
   return \$ret
 end
@@ -198,64 +198,95 @@ EOS
   ;;
 
 bash|zsh )
+  if [ -z "$_has_version_hooks" ]; then
+    if [[ $shell == "zsh" ]]; then
+    # Pass output via a variable to avoid using command substitution
+    # which would fork a subshell (a test showed ~2ms overhead (~4ms on cache update),
+    # and this code runs on every shell prompt).
+    # No need to pass variable name because it's the same in all calls
+      cat <<EOS
+if zmodload -F zsh/stat b:zstat 2>/dev/null; then
+  _pyenv_vh_mtimes() {
+    local -a _m
+    builtin zstat -A _m +mtime -- \${^_PYENV_VH_PATHS}(N) 2>/dev/null
+    _mtimes="\${(j: :)_m}"
+  }
+else
+EOS
+    fi
   cat <<EOS
+  _pyenv_vh_mtimes() {
+    _mtimes="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+  }
+EOS
+    if [[ $shell == "zsh" ]]; then
+      cat <<EOS
+fi
+EOS
+    fi
+  fi
+
+  cat <<'EOS'
 _pyenv_virtualenv_hook() {
-  local ret=\$?
+  local ret=$?
+  local _mtimes
 EOS
-
   if [ -z "$_has_version_hooks" ]; then
-    cat <<EOS
-  if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\
-    && [ "\${VIRTUAL_ENV-}" = "\${_PYENV_VH_VENV-}" ]; then
-    if [ -n "\${PYENV_VERSION-}" ]; then
-      return \$ret
+    cat <<'EOS'
+  if [ "${PYENV_VERSION-}" = "${_PYENV_VH_VERSION-}" ] \
+    && [ "${VIRTUAL_ENV-}" = "${_PYENV_VH_VENV-}" ]; then
+    if [ -n "${PYENV_VERSION-}" ]; then
+      return $ret
     fi
-    if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ] \\
-      && [ "\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)" = "\${_PYENV_VH_MTIMES-}" ]; then
-      return \$ret
+    if [ "${PWD}" = "${_PYENV_VH_PWD-}" ]; then
+      _pyenv_vh_mtimes
+      if [ "${_mtimes}" = "${_PYENV_VH_MTIMES-}" ]; then
+        return $ret
+      fi
     fi
   fi
 EOS
   fi
 
-  cat <<EOS
-  if [ -n "\${VIRTUAL_ENV-}" ]; then
-    eval "\$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
+  cat <<'EOS'
+  if [ -n "${VIRTUAL_ENV-}" ]; then
+    eval "$(pyenv sh-activate --quiet || pyenv sh-deactivate --quiet || true)" || true
   else
-    eval "\$(pyenv sh-activate --quiet || true)" || true
+    eval "$(pyenv sh-activate --quiet || true)" || true
   fi
 EOS
 
   if [ -z "$_has_version_hooks" ]; then
-    cat <<EOS
-  _PYENV_VH_PWD="\${PWD}"
-  _PYENV_VH_VERSION="\${PYENV_VERSION-}"
-  _PYENV_VH_VENV="\${VIRTUAL_ENV-}"
-  local _pvh_d="\${PWD}" _pvh_found_local=0
+    cat <<'EOS'
+  _PYENV_VH_PWD="${PWD}"
+  _PYENV_VH_VERSION="${PYENV_VERSION-}"
+  _PYENV_VH_VENV="${VIRTUAL_ENV-}"
+  local _pvh_d="${PWD}" _pvh_found_local=0
   _PYENV_VH_PATHS=()
   while :; do
-    if [ -f "\${_pvh_d}/.python-version" ] || [ -L "\${_pvh_d}/.python-version" ]; then
-      _PYENV_VH_PATHS+=("\${_pvh_d}/.python-version")
-      if [ -f "\${_pvh_d}/.python-version" ]; then 
+    if [ -f "${_pvh_d}/.python-version" ] || [ -L "${_pvh_d}/.python-version" ]; then
+      _PYENV_VH_PATHS+=("${_pvh_d}/.python-version")
+      if [ -f "${_pvh_d}/.python-version" ]; then
         _pvh_found_local=1
         break
       fi
     else
-      _PYENV_VH_PATHS+=("\${_pvh_d}")
+      _PYENV_VH_PATHS+=("${_pvh_d}")
     fi
-    [ "\${_pvh_d}" = "/" ] && break
-    _pvh_d="\${_pvh_d%/*}"
-    [ -z "\${_pvh_d}" ] && _pvh_d="/"
+    [ "${_pvh_d}" = "/" ] && break
+    _pvh_d="${_pvh_d%/*}"
+    [ -z "${_pvh_d}" ] && _pvh_d="/"
   done
-  if [ "\${_pvh_found_local}" = "0" ]; then
-    _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
+  if [ "${_pvh_found_local}" = "0" ]; then
+    _PYENV_VH_PATHS+=("${PYENV_ROOT}/version")
   fi
-  _PYENV_VH_MTIMES="\$(stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+  _pyenv_vh_mtimes
+  _PYENV_VH_MTIMES="${_mtimes}"
 EOS
   fi
 
-  cat <<EOS
-  return \$ret
+  cat <<'EOS'
+  return $ret
 };
 EOS
   ;;

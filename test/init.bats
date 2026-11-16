@@ -54,10 +54,11 @@ echo "\${paths[*]}"')";
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
   _pyenv_vh_mtimes() {
-    REPLY="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+    _mtimes="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
   }
 _pyenv_virtualenv_hook() {
   local ret=\$?
+  local _mtimes
   if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\
     && [ "\${VIRTUAL_ENV-}" = "\${_PYENV_VH_VENV-}" ]; then
     if [ -n "\${PYENV_VERSION-}" ]; then
@@ -65,7 +66,7 @@ _pyenv_virtualenv_hook() {
     fi
     if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ]; then
       _pyenv_vh_mtimes
-      if [ "\${REPLY-}" = "\${_PYENV_VH_MTIMES-}" ]; then
+      if [ "\${_mtimes}" = "\${_PYENV_VH_MTIMES-}" ]; then
         return \$ret
       fi
     fi
@@ -98,7 +99,7 @@ _pyenv_virtualenv_hook() {
     _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
   fi
   _pyenv_vh_mtimes
-  _PYENV_VH_MTIMES="\${REPLY-}"
+  _PYENV_VH_MTIMES="\${_mtimes}"
   return \$ret
 };
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
@@ -175,15 +176,16 @@ if zmodload -F zsh/stat b:zstat 2>/dev/null; then
   _pyenv_vh_mtimes() {
     local -a _m
     builtin zstat -A _m +mtime -- \${^_PYENV_VH_PATHS}(N) 2>/dev/null
-    REPLY="\${(j: :)_m}"
+    _mtimes="\${(j: :)_m}"
   }
 else
   _pyenv_vh_mtimes() {
-    REPLY="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+    _mtimes="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
   }
 fi
 _pyenv_virtualenv_hook() {
   local ret=\$?
+  local _mtimes
   if [ "\${PYENV_VERSION-}" = "\${_PYENV_VH_VERSION-}" ] \\
     && [ "\${VIRTUAL_ENV-}" = "\${_PYENV_VH_VENV-}" ]; then
     if [ -n "\${PYENV_VERSION-}" ]; then
@@ -191,7 +193,7 @@ _pyenv_virtualenv_hook() {
     fi
     if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ]; then
       _pyenv_vh_mtimes
-      if [ "\${REPLY-}" = "\${_PYENV_VH_MTIMES-}" ]; then
+      if [ "\${_mtimes}" = "\${_PYENV_VH_MTIMES-}" ]; then
         return \$ret
       fi
     fi
@@ -224,7 +226,7 @@ _pyenv_virtualenv_hook() {
     _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
   fi
   _pyenv_vh_mtimes
-  _PYENV_VH_MTIMES="\${REPLY-}"
+  _PYENV_VH_MTIMES="\${_mtimes}"
   return \$ret
 };
 typeset -g -a precmd_functions

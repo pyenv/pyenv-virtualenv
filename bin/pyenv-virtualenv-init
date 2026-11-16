@@ -200,19 +200,23 @@ EOS
 bash|zsh )
   if [ -z "$_has_version_hooks" ]; then
     if [[ $shell == "zsh" ]]; then
+    # Pass output via a variable to avoid using command substitution
+    # which would fork a subshell (a test showed ~2ms overhead (~4ms on cache update),
+    # and this code runs on every shell prompt).
+    # No need to pass variable name because it's the same in all calls
       cat <<EOS
 if zmodload -F zsh/stat b:zstat 2>/dev/null; then
   _pyenv_vh_mtimes() {
     local -a _m
     builtin zstat -A _m +mtime -- \${^_PYENV_VH_PATHS}(N) 2>/dev/null
-    REPLY="\${(j: :)_m}"
+    _mtimes="\${(j: :)_m}"
   }
 else
 EOS
     fi
   cat <<EOS
   _pyenv_vh_mtimes() {
-    REPLY="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+    _mtimes="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
   }
 EOS
     if [[ $shell == "zsh" ]]; then
@@ -225,6 +229,7 @@ EOS
   cat <<'EOS'
 _pyenv_virtualenv_hook() {
   local ret=$?
+  local _mtimes
 EOS
   if [ -z "$_has_version_hooks" ]; then
     cat <<'EOS'
@@ -235,7 +240,7 @@ EOS
     fi
     if [ "${PWD}" = "${_PYENV_VH_PWD-}" ]; then
       _pyenv_vh_mtimes
-      if [ "${REPLY-}" = "${_PYENV_VH_MTIMES-}" ]; then
+      if [ "${_mtimes}" = "${_PYENV_VH_MTIMES-}" ]; then
         return $ret
       fi
     fi
@@ -276,7 +281,7 @@ EOS
     _PYENV_VH_PATHS+=("${PYENV_ROOT}/version")
   fi
   _pyenv_vh_mtimes
-  _PYENV_VH_MTIMES="${REPLY-}"
+  _PYENV_VH_MTIMES="${_mtimes}"
 EOS
   fi
 

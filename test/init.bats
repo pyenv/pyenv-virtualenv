@@ -6,7 +6,7 @@ load test_helper
   unset PYENV_SHELL
   SHELL=/bin/false run pyenv-virtualenv-init -
   assert_success
-  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
+  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"'
 }
 
 @test "detect parent shell from script (sh)" {
@@ -15,7 +15,7 @@ load test_helper
   chmod +x ${TMP}/script.sh
   run ${TMP}/script.sh
   assert_success
-  assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
+  assert_output_contains_not '  PROMPT_COMMAND="_pyenv_virtualenv_hook${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"'
   rm -f "${TMP}/script.sh"
 }
 
@@ -25,7 +25,7 @@ load test_helper
   chmod +x ${TMP}/script.sh
   run ${TMP}/script.sh
   assert_success
-  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook;${PROMPT_COMMAND-}"'
+  assert_output_contains '  PROMPT_COMMAND="_pyenv_virtualenv_hook${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"'
   rm -f "${TMP}/script.sh"
 }
 
@@ -96,7 +96,7 @@ _pyenv_virtualenv_hook() {
   return \$ret
 };
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
-  PROMPT_COMMAND="_pyenv_virtualenv_hook;\${PROMPT_COMMAND-}"
+  PROMPT_COMMAND="_pyenv_virtualenv_hook\${PROMPT_COMMAND:+;\${PROMPT_COMMAND}}"
 fi
 EOS
 }

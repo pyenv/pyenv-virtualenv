@@ -54,7 +54,7 @@ echo "\${paths[*]}"')";
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
   _pyenv_vh_mtimes() {
-    stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null
+    REPLY="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
   }
 _pyenv_virtualenv_hook() {
   local ret=\$?
@@ -64,7 +64,8 @@ _pyenv_virtualenv_hook() {
       return \$ret
     fi
     if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ]; then
-      if [ "\$(_pyenv_vh_mtimes)" = "\${_PYENV_VH_MTIMES-}" ]; then
+      _pyenv_vh_mtimes
+      if [ "\${REPLY-}" = "\${_PYENV_VH_MTIMES-}" ]; then
         return \$ret
       fi
     fi
@@ -96,7 +97,8 @@ _pyenv_virtualenv_hook() {
   if [ "\${_pvh_found_local}" = "0" ]; then
     _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
   fi
-  _PYENV_VH_MTIMES="\$(_pyenv_vh_mtimes)"
+  _pyenv_vh_mtimes
+  _PYENV_VH_MTIMES="\${REPLY-}"
   return \$ret
 };
 if ! [[ "\${PROMPT_COMMAND-}" =~ _pyenv_virtualenv_hook ]]; then
@@ -173,11 +175,11 @@ if zmodload -F zsh/stat b:zstat 2>/dev/null; then
   _pyenv_vh_mtimes() {
     local -a _m
     builtin zstat -A _m +mtime -- \${^_PYENV_VH_PATHS}(N) 2>/dev/null
-    echo "\${(j: :)_m}"
+    REPLY="\${(j: :)_m}"
   }
 else
   _pyenv_vh_mtimes() {
-    stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null
+    REPLY="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
   }
 fi
 _pyenv_virtualenv_hook() {
@@ -188,7 +190,8 @@ _pyenv_virtualenv_hook() {
       return \$ret
     fi
     if [ "\${PWD}" = "\${_PYENV_VH_PWD-}" ]; then
-      if [ "\$(_pyenv_vh_mtimes)" = "\${_PYENV_VH_MTIMES-}" ]; then
+      _pyenv_vh_mtimes
+      if [ "\${REPLY-}" = "\${_PYENV_VH_MTIMES-}" ]; then
         return \$ret
       fi
     fi
@@ -220,7 +223,8 @@ _pyenv_virtualenv_hook() {
   if [ "\${_pvh_found_local}" = "0" ]; then
     _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
   fi
-  _PYENV_VH_MTIMES="\$(_pyenv_vh_mtimes)"
+  _pyenv_vh_mtimes
+  _PYENV_VH_MTIMES="\${REPLY-}"
   return \$ret
 };
 typeset -g -a precmd_functions

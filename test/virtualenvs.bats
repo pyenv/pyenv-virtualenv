@@ -117,6 +117,24 @@ venv33
 OUT
 }
 
+@test "list virtual environments in version order" {
+  create_m_venv "3.10.13" "venv3.10"
+  create_m_venv "3.9.18" "venv3.9"
+  create_m_venv "3.10.2" "venv3.10.2"
+
+  run pyenv-virtualenvs --bare
+
+  assert_success
+  assert_output <<OUT
+3.9.18/envs/venv3.9
+3.10.2/envs/venv3.10.2
+3.10.13/envs/venv3.10
+venv3.9
+venv3.10
+venv3.10.2
+OUT
+}
+
 @test "list bare virtual environments without aliases" {
   create_m_venv "2.7.6" "venv27"
   create_m_venv "3.3.3" "venv33"

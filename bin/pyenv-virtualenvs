@@ -71,10 +71,16 @@ print_version() {
     return
   fi
   local path="${2:?}"
+  local prefix
   if [[ -L "$path" ]]; then
     version_repr="$version --> $(readlink "$path")"
+  elif prefix="$(pyenv-virtualenv-prefix "$version" 2>/dev/null)"; then
+    version_repr="$version (created from ${prefix})"
   else
-    version_repr="$version (created from $(pyenv-virtualenv-prefix "$version" 2>/dev/null))"
+    # The base installation cannot be determined, e.g. the env's `python'
+    # is a dangling symlink or it's a conda env without Python.
+    # Still list the env so that it can be found and deleted.
+    version_repr="$version"
   fi
   if [[ ${BASH_VERSINFO[0]} -gt 3 && ${current_versions["$1"]} ]] || \
      { [[ ${BASH_VERSINFO[0]} -le 3 ]] && exists "$1" "${current_versions[@]}"; }; then
@@ -116,7 +122,10 @@ done
 for env_path in "${version_dir_entries[@]}"; do
   if [[ -d ${env_path} ]]; then
     if [[ -L ${env_path} ]]; then
-      if [[ -z $skip_aliases ]]; then
+      # Skip links to things other than virtualenvs, e.g. aliases for Python installations.
+      # Conda envs don't have `bin/activate'.
+      if [[ -z $skip_aliases ]] && \
+         [[ -f "${env_path}/bin/activate" || -d "${env_path}/conda-meta" ]]; then
         print_version "${env_path#"${PYENV_ROOT}"/versions/}" "${env_path}"
       fi
     # Mimics the test from pyenv-virtualenv-prefix

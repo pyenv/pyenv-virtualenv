@@ -168,6 +168,98 @@ OUT
   unstub pyenv-version-origin
 }
 
+@test "skip aliases for versions that are not virtual environments" {
+  stub pyenv-version-name ": echo system"
+
+  create_m_venv "3.12.1" "venv312"
+  # an alias for a Pyenv-installed version
+  setup_version "3.11.9"
+  ln -s "3.11.9" "${PYENV_ROOT}/versions/3.11"
+  # a link to an outside Python installation, like those created by `brew pyenv-sync`
+  mkdir -p "${TMP}/external/bin"
+  touch "${TMP}/external/bin/python"
+  ln -s "${TMP}/external" "${PYENV_ROOT}/versions/3.13"
+
+  run pyenv-virtualenvs
+
+  assert_success
+  assert_output <<OUT
+  3.12.1/envs/venv312 (created from ${PYENV_ROOT}/versions/3.12.1)
+  venv312 --> ${PYENV_ROOT}/versions/3.12.1/envs/venv312
+OUT
+
+  run pyenv-virtualenvs --bare
+
+  assert_success
+  assert_output <<OUT
+3.12.1/envs/venv312
+venv312
+OUT
+
+  unstub pyenv-version-name
+}
+
+@test "list aliases for virtual environments outside the versions directory" {
+  stub pyenv-version-name ": echo system" ": echo system"
+
+  mkdir -p "${TMP}/external/bin"
+  touch "${TMP}/external/bin/activate"
+  mkdir -p "${PYENV_ROOT}/versions"
+  ln -s "${TMP}/external" "${PYENV_ROOT}/versions/external"
+
+  run pyenv-virtualenvs
+
+  assert_success
+  assert_output <<OUT
+  external --> ${TMP}/external
+OUT
+
+  run pyenv-virtualenvs --skip-aliases
+
+  assert_success
+  assert_output ""
+
+  unstub pyenv-version-name
+}
+
+@test "list conda environments linked from the versions directory" {
+  setup_conda "miniconda3-latest"
+  # Conda 4.4+ doesn't put the `activate' script into environments
+  create_executable "miniconda3-latest/envs/foo" "python"
+  mkdir -p "${PYENV_ROOT}/versions/miniconda3-latest/envs/foo/conda-meta"
+  ln -s "${PYENV_ROOT}/versions/miniconda3-latest/envs/foo" "${PYENV_ROOT}/versions/foo"
+
+  run pyenv-virtualenvs --bare
+
+  assert_success
+  assert_output <<OUT
+miniconda3-latest/envs/foo
+foo
+miniconda3-latest
+OUT
+}
+
+@test "list virtual environments whose base installation cannot be determined" {
+  stub pyenv-version-name ": echo system"
+
+  create_m_venv "3.12.1" "venv312"
+  # `python' is gone, e.g. its symlink target was removed
+  create_m_venv "3.12.1" "broken"
+  remove_executable "3.12.1/envs/broken" "python"
+
+  run pyenv-virtualenvs
+
+  assert_success
+  assert_output <<OUT
+  3.12.1/envs/broken
+  3.12.1/envs/venv312 (created from ${PYENV_ROOT}/versions/3.12.1)
+  broken --> ${PYENV_ROOT}/versions/3.12.1/envs/broken
+  venv312 --> ${PYENV_ROOT}/versions/3.12.1/envs/venv312
+OUT
+
+  unstub pyenv-version-name
+}
+
 @test "completions output" {
   create_m_venv "2.7.6" "venv27"
   create_m_venv "3.3.3" "venv33"

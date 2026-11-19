@@ -91,19 +91,24 @@ venv_dir_entries=("$versions_dir"/*/envs/*)
 
 if sort --version-sort </dev/null >/dev/null 2>&1; then
     # system sort supports version sorting
+    # `sort` sorts lines, so pass it one entry per line
     OLDIFS="$IFS"
-    IFS='||'
+    # VAR=() of unquoted value does glob expansion (against the current dir's contents) after IFS-splitting
+    # which is undesired
+    set -f
+    IFS=$'\n'
 
-    read -r -a version_dir_entries <<< "$(
-        printf "%s||" "${version_dir_entries[@]}" |
+    version_dir_entries=($(
+        printf "%s\n" "${version_dir_entries[@]}" |
         sort --version-sort
-    )"
+    ))
 
-    read -r -a venv_dir_entries <<< "$(
-        printf "%s||" "${venv_dir_entries[@]}" |
+    venv_dir_entries=($(
+        printf "%s\n" "${venv_dir_entries[@]}" |
         sort --version-sort
-    )"
+    ))
 
+    set +f
     IFS="$OLDIFS"
 fi
 

@@ -77,9 +77,10 @@ print_version() {
   elif prefix="$(pyenv-virtualenv-prefix "$version" 2>/dev/null)"; then
     version_repr="$version (created from ${prefix})"
   else
-    # The base installation cannot be determined, e.g. the env's `python'
+    # `pyenv-virtualenv-prefix` may fail silently if it cannot
+    # determine the base installation. E.g. the env's `python'
     # is a dangling symlink or it's a conda env without Python.
-    # Still list the env so that it can be found and deleted.
+    # Still list the env without specifying the base.
     version_repr="$version"
   fi
   if [[ ${BASH_VERSINFO[0]} -gt 3 && ${current_versions["$1"]} ]] || \

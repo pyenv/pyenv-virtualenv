@@ -296,3 +296,19 @@ EOS
   assert_success
   assert_output "${shims}:${TMP}/first:${shims}-extra:${old_path}"
 }
+
+@test "removes existing shims from PATH with special characters (zsh)" {
+  command -v zsh >/dev/null || skip "-- zsh not installed"
+  export PYENV_VIRTUALENV_ROOT="${TMP}/root's \"\$x\" *?[dir]"
+  local shims="${PYENV_VIRTUALENV_ROOT}/shims"
+  local old_path="$PATH"
+  export PATH="${TMP}/first:${shims}:${shims}-extra:${old_path}"
+  run zsh -df - <<'EOS'
+init_code="$(pyenv-virtualenv-init - zsh)"
+unset PYENV_VIRTUALENV_ROOT
+eval "$init_code"
+printf '%s\n' "$PATH"
+EOS
+  assert_success
+  assert_output "${shims}:${TMP}/first:${shims}-extra:${old_path}"
+}

@@ -46,11 +46,14 @@ load test_helper
   run pyenv-virtualenv-init - bash
   assert_success
   assert_output <<EOS
-PATH="\$(bash --norc -ec 'IFS=:; paths=(\$PATH);
-for i in \${!paths[@]}; do
-if [[ \${paths[i]} == "''${TMP}/pyenv/plugins/pyenv-virtualenv/shims''" ]]; then unset '\''paths[i]'\'';
-fi; done;
-echo "\${paths[*]}"')";
+if [[ ":\${PATH:-}:" == *':${TMP}/pyenv/plugins/pyenv-virtualenv/shims:'* ]]; then
+  PATH=":\${PATH}:"
+  while [[ \$PATH == *':${TMP}/pyenv/plugins/pyenv-virtualenv/shims:'* ]]; do
+    PATH=\${PATH//':${TMP}/pyenv/plugins/pyenv-virtualenv/shims:'/:}
+  done
+  PATH="\${PATH#:}"
+  PATH="\${PATH%:}"
+fi
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
   _pyenv_vh_mtimes() {
@@ -170,6 +173,7 @@ EOS
   run pyenv-virtualenv-init - zsh
   assert_success
   assert_output <<EOS
+path=("\${(@)path:#"${TMP}/pyenv/plugins/pyenv-virtualenv/shims"}")
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 if zmodload -F zsh/stat b:zstat 2>/dev/null; then
@@ -244,4 +248,51 @@ EOS
 export PATH="${TMP}/pyenv/plugins/pyenv-virtualenv/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 EOS
+}
+
+@test "removes existing shims from PATH without spawning bash (bash)" {
+  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv/plugins/pyenv-virtualenv"
+  local shims="${PYENV_VIRTUALENV_ROOT}/shims"
+  local old_path="$PATH"
+  export PATH="${shims}:${TMP}/first:${shims}:${shims}:${shims}-extra:${old_path}:${shims}"
+  run bash -eu <<EOS
+init_code="\$(pyenv-virtualenv-init - bash)"
+bash() {
+  echo "unexpected bash subprocess" >&2
+  return 1
+}
+eval "\$init_code"
+printf '%s\n' "\$PATH"
+EOS
+  assert_success
+  assert_output "${shims}:${TMP}/first:${shims}-extra:${old_path}"
+}
+
+@test "removes existing shims from PATH with special characters (bash)" {
+  export PYENV_VIRTUALENV_ROOT="${TMP}/root's \"\$x\" *?[dir]"
+  local shims="${PYENV_VIRTUALENV_ROOT}/shims"
+  local old_path="$PATH"
+  export PATH="${TMP}/first:${shims}:${shims}-extra:${old_path}"
+  run bash -eu <<'EOS'
+init_code="$(pyenv-virtualenv-init - bash)"
+unset PYENV_VIRTUALENV_ROOT
+eval "$init_code"
+printf '%s\n' "$PATH"
+EOS
+  assert_success
+  assert_output "${shims}:${TMP}/first:${shims}-extra:${old_path}"
+}
+
+@test "removes existing shims from PATH (zsh)" {
+  command -v zsh >/dev/null || skip "-- zsh not installed"
+  export PYENV_VIRTUALENV_ROOT="${TMP}/pyenv plugins/pyenv-virtualenv"
+  local shims="${PYENV_VIRTUALENV_ROOT}/shims"
+  local old_path="$PATH"
+  export PATH="${TMP}/first:${shims}:${shims}:${shims}-extra:${old_path}"
+  run zsh -df - <<'EOS'
+eval "$(pyenv-virtualenv-init - zsh)"
+printf '%s\n' "$PATH"
+EOS
+  assert_success
+  assert_output "${shims}:${TMP}/first:${shims}-extra:${old_path}"
 }

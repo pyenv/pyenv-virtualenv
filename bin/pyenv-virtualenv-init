@@ -57,9 +57,14 @@ done
 
 shell="${1:-$PYENV_SHELL}"
 if [ -z "$shell" ]; then
-  shell="$(ps -p "$PPID" -o 'args=' 2>/dev/null || true)"
+  if [ -r "/proc/${PPID}/cmdline" ]; then
+    { IFS= read -r -d '' shell < "/proc/${PPID}/cmdline"; } 2>/dev/null || true
+  fi
+  if [ -z "$shell" ]; then
+    shell="$(ps -p "$PPID" -o 'args=' 2>/dev/null || true)"
+    shell="${shell%% *}"
+  fi
   shell="${shell##-}"
-  shell="${shell%% *}"
   shell="${shell:-$SHELL}"
   shell="${shell##*/}"
   shell="${shell%%-*}"
@@ -101,30 +106,48 @@ if [ -z "$print" ]; then
   exit 1
 fi
 
+_shims="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims"
+_shims_dq="${_shims//\\/\\\\}"
+_shims_dq="${_shims_dq//\"/\\\"}"
+_shims_dq="${_shims_dq//\$/\\\$}"
+_shims_dq="${_shims_dq//\`/\\\`}"
+
 case "$shell" in
 fish )
   cat <<EOS
-while set index (contains -i -- "${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims" \$PATH)
+while set index (contains -i -- "${_shims}" \$PATH)
 set -eg PATH[\$index]; end; set -e index
-set -gx PATH '${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims' \$PATH;
+set -gx PATH '${_shims}' \$PATH;
 set -gx PYENV_VIRTUALENV_INIT 1;
 EOS
   ;;
-bash )
-  # The code is taken from pyenv-init, see comments there
+zsh )
   cat <<EOS
-PATH="\$(bash --norc -ec 'IFS=:; paths=(\$PATH);
-for i in \${!paths[@]}; do
-if [[ \${paths[i]} == "''${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims''" ]]; then unset '\''paths[i]'\'';
-fi; done;
-echo "\${paths[*]}"')";
-export PATH="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims:\${PATH}";
+path=("\${(@)path:#"${_shims_dq}"}")
+export PATH="${_shims_dq}:\${PATH}";
+export PYENV_VIRTUALENV_INIT=1;
+EOS
+  ;;
+bash )
+  _q="'"
+  _rep="${_q}\\${_q}${_q}"
+  _shims_pat="':${_shims//${_q}/${_rep}}:'"
+  cat <<EOS
+if [[ ":\${PATH:-}:" == *${_shims_pat}* ]]; then
+  PATH=":\${PATH}:"
+  while [[ \$PATH == *${_shims_pat}* ]]; do
+    PATH=\${PATH//${_shims_pat}/:}
+  done
+  PATH="\${PATH#:}"
+  PATH="\${PATH%:}"
+fi
+export PATH="${_shims_dq}:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 EOS
   ;;
 * )
   cat <<EOS
-export PATH="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims:\${PATH}";
+export PATH="${_shims_dq}:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 EOS
   ;;

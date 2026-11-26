@@ -47,7 +47,7 @@ fi
 
 [ "$#" -eq 1 ] || usage 1 >&2
 
-DEFINITION="$1"
+DEFINITION="${1#"${PYENV_ROOT}/versions/"}"
 case "$DEFINITION" in
 "" | -* )
   usage 1 >&2

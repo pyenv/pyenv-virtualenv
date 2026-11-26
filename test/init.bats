@@ -96,7 +96,7 @@ _pyenv_virtualenv_hook() {
     [ -z "\${_pvh_d}" ] && _pvh_d="/"
   done
   if [ "\${_pvh_found_local}" = "0" ]; then
-    _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
+    _PYENV_VH_PATHS+=("\${PYENV_ROOT:-\${HOME}/.pyenv}/version")
   fi
   _pyenv_vh_mtimes
   _PYENV_VH_MTIMES="\${_mtimes}"
@@ -157,7 +157,9 @@ function _pyenv_virtualenv_hook --on-event fish_prompt;
     test -z "\$d"; and set d "/"
   end
   if test "\$_pvh_found_local" = "0"
-    set -g _PYENV_VH_PATHS \$_PYENV_VH_PATHS "\$PYENV_ROOT/version"
+    set -l _pvh_root "\$PYENV_ROOT"
+    test -n "\$_pvh_root"; or set _pvh_root "\$HOME/.pyenv"
+    set -g _PYENV_VH_PATHS \$_PYENV_VH_PATHS "\$_pvh_root/version"
   end
   set -g _PYENV_VH_MTIMES (stat ${_stat_fmt} \$_PYENV_VH_PATHS 2>/dev/null)
   return \$ret
@@ -223,7 +225,7 @@ _pyenv_virtualenv_hook() {
     [ -z "\${_pvh_d}" ] && _pvh_d="/"
   done
   if [ "\${_pvh_found_local}" = "0" ]; then
-    _PYENV_VH_PATHS+=("\${PYENV_ROOT}/version")
+    _PYENV_VH_PATHS+=("\${PYENV_ROOT:-\${HOME}/.pyenv}/version")
   fi
   _pyenv_vh_mtimes
   _PYENV_VH_MTIMES="\${_mtimes}"

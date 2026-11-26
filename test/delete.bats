@@ -148,3 +148,39 @@ OUT
 
   [ -d "${PYENV_ROOT}/versions/venv27" ]
 }
+
+@test "delete virtualenv by full path" {
+  mkdir -p "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
+  ln -fs "${PYENV_ROOT}/versions/2.7.11/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+
+  stub pyenv-hooks "virtualenv-delete : true"
+  stub pyenv-rehash "true"
+
+  run pyenv-virtualenv-delete -f "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
+
+  assert_success
+
+  unstub pyenv-hooks
+  unstub pyenv-rehash
+
+  [ ! -d "${PYENV_ROOT}/versions/2.7.11/envs/venv27" ]
+  [ ! -L "${PYENV_ROOT}/versions/venv27" ]
+}
+
+@test "delete virtualenv by full path of symlink" {
+  mkdir -p "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
+  ln -fs "${PYENV_ROOT}/versions/2.7.11/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+
+  stub pyenv-hooks "virtualenv-delete : true"
+  stub pyenv-rehash "true"
+
+  run pyenv-virtualenv-delete -f "${PYENV_ROOT}/versions/venv27"
+
+  assert_success
+
+  unstub pyenv-hooks
+  unstub pyenv-rehash
+
+  [ ! -d "${PYENV_ROOT}/versions/2.7.11/envs/venv27" ]
+  [ ! -L "${PYENV_ROOT}/versions/venv27" ]
+}

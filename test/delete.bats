@@ -184,3 +184,36 @@ OUT
   [ ! -d "${PYENV_ROOT}/versions/2.7.11/envs/venv27" ]
   [ ! -L "${PYENV_ROOT}/versions/venv27" ]
 }
+
+@test "not delete virtualenv by full path that does not exist" {
+  run pyenv-virtualenv-delete "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
+
+  assert_failure
+  assert_output "pyenv-virtualenv: virtualenv \`${PYENV_ROOT}/versions/2.7.11/envs/venv27' not installed"
+}
+
+@test "not delete virtualenv by full path of symlink that does not exist" {
+  stub pyenv-virtualenv-prefix "venv27 : false"
+
+  run pyenv-virtualenv-delete "${PYENV_ROOT}/versions/venv27"
+
+  assert_failure
+  assert_output "pyenv-virtualenv: virtualenv \`${PYENV_ROOT}/versions/venv27' not installed"
+
+  unstub pyenv-virtualenv-prefix
+}
+
+@test "not delete version by full path that is not a virtualenv" {
+  mkdir -p "${PYENV_ROOT}/versions/2.7.11"
+
+  stub pyenv-virtualenv-prefix "2.7.11 : false"
+
+  run pyenv-virtualenv-delete "${PYENV_ROOT}/versions/2.7.11"
+
+  assert_failure
+  assert_output "pyenv-virtualenv: \`${PYENV_ROOT}/versions/2.7.11' is not a virtualenv."
+
+  unstub pyenv-virtualenv-prefix
+
+  [ -d "${PYENV_ROOT}/versions/2.7.11" ]
+}

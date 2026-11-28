@@ -78,7 +78,11 @@ else
       ENV_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
       unset ENV_COMPAT_PREFIX
     elif [ -z "$FORCE" ]; then
-      echo "pyenv-virtualenv: \`$1' is not a virtualenv." 1>&2
+      if [ -e "${ENV_COMPAT_PREFIX}" ]; then
+        echo "pyenv-virtualenv: \`$1' is not a virtualenv." 1>&2
+      else
+        echo "pyenv-virtualenv: virtualenv \`$1' not installed" 1>&2
+      fi
       exit 1
     fi
   fi
